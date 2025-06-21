@@ -1,0 +1,33 @@
+{
+  "name": "manus-fsm-orchestrator",
+  "version": "1.0.0",
+  "description": "Minimal FSM-driven MCP server that replaces Manus's 6-step agent loop",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "fsm", 
+    "agent",
+    "orchestrator",
+    "claude",
+    "manus"
+  ],
+  "author": "Manus FSM Project",
+  "license": "MIT"
+}

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "manus_fsm_orchestrator": {
+      "command": "node",
+      "args": ["dist/index.js"],
+      "env": {}
+    }
+  }
+}

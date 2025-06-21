@@ -1,0 +1,131 @@
+{
+  "debug_test": {
+    "current_phase": "QUERY",
+    "initial_objective": "Test FSM",
+    "payload": {},
+    "last_activity": 1750492175229
+  },
+  "enhanced_test_session": {
+    "current_phase": "DONE",
+    "initial_objective": "Build a secure React authentication system with JWT tokens and password reset functionality",
+    "detected_role": "coder",
+    "payload": {
+      "interpreted_goal": "Build a complete React authentication system with JWT-based login, user registration, password reset via email, and secure session management. Include comprehensive testing and security best practices.",
+      "enhanced_goal": "Build React authentication system with: 1) JWT token management with refresh tokens, 2) Secure password hashing with bcrypt, 3) Email verification system, 4) Password reset with time-limited tokens, 5) React context for auth state, 6) Protected routes, 7) Comprehensive unit and integration tests, 8) Security headers and CSRF protection",
+      "knowledge_gathered": "Required knowledge: React 18+ with hooks, JWT best practices, bcrypt for password hashing, nodemailer for email, express-rate-limit for security, jest/testing-library for testing, OWASP security guidelines for auth systems. Dependencies: @auth0/nextjs-auth0 alternative or custom implementation.",
+      "plan_created": true,
+      "execution_success": true,
+      "current_task_completed": "(ROLE: coder) (CONTEXT: authentication_backend) - Completed JWT API implementation",
+      "more_tasks_pending": true,
+      "task_agent_spawned": "Task() called with coder meta-prompt for React frontend implementation"
+    },
+    "current_task_index": 0,
+    "reasoning_effectiveness": 0.8,
+    "last_activity": 1750494029583
+  },
+  "refined_test_session": {
+    "current_phase": "EXECUTE",
+    "initial_objective": "Build a React authentication system",
+    "detected_role": "coder",
+    "payload": {
+      "current_task_index": 1,
+      "current_todos": [
+        "(ROLE: coder) (CONTEXT: backend) (PROMPT: Build JWT API) (OUTPUT: production_api)",
+        "Run tests",
+        "(ROLE: critic) (CONTEXT: security) (PROMPT: Security audit) (OUTPUT: security_report)"
+      ],
+      "phase_transition_count": 0,
+      "interpreted_goal": "Build React auth system",
+      "enhanced_goal": "Build React auth with JWT + tests",
+      "knowledge_gathered": "React, JWT, bcrypt, testing frameworks",
+      "plan_created": true,
+      "execution_success": true,
+      "current_task_completed": "JWT API implementation completed",
+      "more_tasks_pending": true
+    },
+    "reasoning_effectiveness": 0.9,
+    "last_activity": 1750494776776
+  },
+  "critical_test_session": {
+    "current_phase": "EXECUTE",
+    "initial_objective": "Research best practices for React authentication systems",
+    "detected_role": "researcher",
+    "payload": {
+      "current_task_index": 0,
+      "current_todos": [
+        "Test basic auth flow",
+        "(ROLE: coder) (CONTEXT: security) (PROMPT: Implement JWT refresh) (OUTPUT: secure_tokens)"
+      ],
+      "phase_transition_count": 0,
+      "interpreted_goal": "Research React auth best practices",
+      "enhanced_goal": "Research comprehensive React auth with JWT, OAuth, security",
+      "plan_created": true
+    },
+    "reasoning_effectiveness": 0.8,
+    "last_activity": 1750505010571
+  },
+  "nodejs-api-demo-2025-06-21": {
+    "current_phase": "KNOWLEDGE",
+    "initial_objective": "Create a Node.js API server with user authentication, input validation, and basic security middleware",
+    "detected_role": "critic",
+    "payload": {
+      "current_task_index": 0,
+      "current_todos": [],
+      "phase_transition_count": 0,
+      "interpreted_goal": "Build a production-ready Node.js API server with: 1) JWT-based user authentication system, 2) Comprehensive input validation middleware, 3) Security middleware including CORS, helmet, rate limiting, 4) User registration and login endpoints, 5) Password hashing with bcrypt, 6) Error handling and logging, 7) Environment configuration, 8) Basic API documentation",
+      "enhanced_goal": "Build enterprise-grade Node.js API server with: 1) JWT authentication with refresh tokens and role-based access control, 2) Comprehensive input validation using Joi/express-validator, 3) Advanced security: helmet, cors, rate-limiting, request sanitization, 4) User management: registration, login, password reset, email verification, 5) Database integration with proper connection pooling, 6) Comprehensive error handling with proper HTTP status codes, 7) Structured logging with Winston, 8) Environment-based configuration, 9) API documentation with Swagger/OpenAPI, 10) Unit and integration tests, 11) Docker containerization, 12) Health check endpoints"
+    },
+    "reasoning_effectiveness": 0.8,
+    "last_activity": 1750510704209
+  },
+  "demo_session_001": {
+    "current_phase": "DONE",
+    "initial_objective": "Create a simple hello world Python script",
+    "detected_role": "researcher",
+    "payload": {
+      "current_task_index": 0,
+      "current_todos": [],
+      "phase_transition_count": 0,
+      "interpreted_goal": "Create a simple Python script that prints 'Hello World' to demonstrate basic Python functionality",
+      "enhanced_goal": "Create a simple, well-structured Python script named 'hello_world.py' that prints 'Hello World' with proper Python conventions including shebang line, main function structure, and executable permissions",
+      "knowledge_gathered": "Python hello world script best practices: use #!/usr/bin/env python3 shebang, implement main() function, use if __name__ == '__main__' guard, include module docstring, follow PEP 8 naming conventions",
+      "plan_created": true,
+      "execution_results": "Created hello_world.py with complete structure including shebang, docstring, main function, and proper guard clause. 4 of 5 tasks completed. Currently testing script execution.",
+      "tasks_completed": 4,
+      "tasks_remaining": 1,
+      "current_task": "test_script_execution",
+      "files_created": [
+        "hello_world.py"
+      ]
+    },
+    "reasoning_effectiveness": 0.7000000000000001,
+    "last_activity": 1750510852562
+  },
+  "github_prep_001": {
+    "current_phase": "VERIFY",
+    "initial_objective": "Prepare and push this repository to GitHub at https://github.com/dnnyngyen/manus-fleur",
+    "detected_role": "researcher",
+    "payload": {
+      "current_task_index": 0,
+      "current_todos": [],
+      "phase_transition_count": 0,
+      "interpreted_goal": "Initialize local git repository, prepare project files for GitHub, and push to remote repository at https://github.com/dnnyngyen/manus-fleur",
+      "enhanced_goal": "Prepare repository for GitHub by: 1) Initializing git repository, 2) Creating .gitignore file, 3) Staging all appropriate files, 4) Creating meaningful initial commit, 5) Adding remote origin, 6) Pushing to GitHub with proper branch setup",
+      "knowledge_gathered": "Git workflow knowledge: git init, git remote add origin, git add, git commit, git push -u origin main. Best practices: create .gitignore for Python (__pycache__, *.pyc, .env, venv/), use descriptive commit messages, check git status before operations",
+      "plan_created": true,
+      "execution_results": "Directory inspection completed. Found Node.js/TypeScript MCP project with documentation files, source code, and build artifacts. No malicious files detected. Ready to initialize git repository.",
+      "current_task": "initialize_git_repo",
+      "files_found": [
+        "README.md",
+        "package.json",
+        "tsconfig.json",
+        "src/",
+        "dist/",
+        "documentation files"
+      ],
+      "next_action": "git_init"
+    },
+    "reasoning_effectiveness": 0.7000000000000001,
+    "last_activity": 1750511051283
+  }
+}
