@@ -129,8 +129,37 @@ This implementation replaces that entire infrastructure with:
 - **Phase-specific prompts for behavior injection**
 - **Tool gating for security**
 - **Claude Code's native tools for execution**
+- **Natural thinking prompts for visible reasoning**
 
-The result: **Same agent loop behavior, 90% less complexity.**
+The result: **Same agent loop behavior, 90% less complexity, with transparent reasoning.**
+
+## 🧠 Natural Thinking Integration
+
+**New Feature**: Structured reasoning visibility through Claude's native thinking behavior.
+
+### **Before (No Guided Thinking)**
+```
+⏺ TodoWrite([{content: "Build authentication system"}])
+  ⎿ Direct action without visible reasoning
+```
+
+### **After (Guided Natural Thinking)**
+```
+✻ Thinking…
+  Strategic analysis: What is the optimal task breakdown strategy? 
+  Should I use specialized Task() agents or direct execution?
+  Dependencies: JWT → Password Reset → Middleware...
+
+⏺ TodoWrite([{content: "(ROLE: coder) (CONTEXT: auth_system)..."}])
+  ⎿ Action informed by visible reasoning process
+```
+
+### **How It Works**
+- Each FSM phase prompts Claude to think through structured questions
+- Natural ✻ Thinking… appears in logs showing reasoning process
+- No external tools needed - uses Claude's native thinking
+- Preserves single-tool-per-iteration principle
+- Task() agents also receive thinking prompts for sub-reasoning
 
 ---
 

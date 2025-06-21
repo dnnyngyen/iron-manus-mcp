@@ -72,3 +72,18 @@ export interface SessionState {
   reasoning_effectiveness: number; // Performance tracking
   last_activity: number;
 }
+
+// Enhanced verification result with strict completion metrics
+export interface VerificationResult {
+  isValid: boolean;
+  completionPercentage: number;
+  reason: string;
+  criticalTasksCompleted: number;
+  totalCriticalTasks: number;
+  taskBreakdown: {
+    completed: number;
+    in_progress: number;
+    pending: number;
+    total: number;
+  };
+}

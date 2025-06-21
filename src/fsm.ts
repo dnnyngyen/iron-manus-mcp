@@ -1,6 +1,6 @@
 // Core FSM logic - replaces Manus's entire PyArmor-protected FastAPI server
 // Implements the 6-step agent loop + 3 modules + fractal orchestration
-import { ManusOrchestratorInput, ManusOrchestratorOutput, Phase, Role, TodoItem, MetaPrompt } from './types.js';
+import { ManusOrchestratorInput, ManusOrchestratorOutput, Phase, Role, TodoItem, MetaPrompt, VerificationResult } from './types.js';
 import { generateRoleEnhancedPrompt, detectRole, PHASE_ALLOWED_TOOLS } from './prompts.js';
 import { stateManager } from './state.js';
 
@@ -106,15 +106,36 @@ export function processManusFSM(input: ManusOrchestratorInput): ManusOrchestrato
       
     case 'VERIFY':
       if (input.phase_completed === 'VERIFY') {
-        // Check verification result
-        if (input.payload?.verification_passed === true) {
+        // Enhanced verification with strict completion percentage validation
+        const verificationResult = validateTaskCompletion(session, input.payload);
+        
+        if (verificationResult.isValid && input.payload?.verification_passed === true) {
           nextPhase = 'DONE';
         } else {
-          // If verification failed, retry the failed task (don't increment task index)
-          if (session.payload.current_task_index > 0) {
-            session.payload.current_task_index = session.payload.current_task_index - 1;
+          // Log validation failure details
+          console.warn(`Verification failed: ${verificationResult.reason}`);
+          console.warn(`Completion percentage: ${verificationResult.completionPercentage}%`);
+          
+          // Store verification failure context for rollback
+          session.payload.verification_failure_reason = verificationResult.reason;
+          session.payload.last_completion_percentage = verificationResult.completionPercentage;
+          
+          // Rollback logic based on completion percentage
+          if (verificationResult.completionPercentage < 50) {
+            // Severe incompletion - restart from planning
+            nextPhase = 'PLAN';
+            session.payload.current_task_index = 0;
+          } else if (verificationResult.completionPercentage < 80) {
+            // Moderate incompletion - retry from current task
+            nextPhase = 'EXECUTE';
+            // Don't decrement task index if completion is too low
+          } else {
+            // Minor incompletion - retry previous task
+            if (session.payload.current_task_index > 0) {
+              session.payload.current_task_index = session.payload.current_task_index - 1;
+            }
+            nextPhase = 'EXECUTE';
           }
-          nextPhase = 'EXECUTE';
         }
       }
       break;
@@ -155,7 +176,23 @@ export function processManusFSM(input: ManusOrchestratorInput): ManusOrchestrato
     // Add fractal execution guidance
     augmentedPrompt += `\n\n**🔄 FRACTAL EXECUTION PROTOCOL:**\n1. Check current todo (index ${currentTaskIndex}) for meta-prompt patterns\n2. If todo contains (ROLE:...) pattern, use Task() tool to spawn specialized agent\n3. If todo is direct execution, use appropriate tools (Bash/Browser/etc.)\n4. After each action, report results back\n\n**⚡ SINGLE TOOL PER ITERATION:** Choose ONE tool call per turn (Manus requirement).`;
   } else if (nextPhase === 'VERIFY') {
+    const todos = session.payload.current_todos || [];
+    const taskBreakdown = calculateTaskBreakdown(todos);
+    const completionPercentage = calculateCompletionPercentage(taskBreakdown);
+    const criticalTasks = todos.filter((todo: any) => 
+      todo.priority === 'high' || 
+      todo.type === 'TaskAgent' || 
+      todo.meta_prompt
+    );
+    const criticalTasksCompleted = criticalTasks.filter((todo: any) => todo.status === 'completed').length;
+    
     augmentedPrompt += `\n\n**✅ VERIFICATION CONTEXT:**\n- Original Objective: ${session.initial_objective}\n- Final Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Role Applied: ${session.detected_role}`;
+    augmentedPrompt += `\n\n**📊 COMPLETION METRICS:**\n- Overall Completion: ${completionPercentage}% (${taskBreakdown.completed}/${taskBreakdown.total} tasks)\n- Critical Tasks Completed: ${criticalTasksCompleted}/${criticalTasks.length}\n- Tasks Breakdown: ${taskBreakdown.completed} completed, ${taskBreakdown.in_progress} in-progress, ${taskBreakdown.pending} pending`;
+    augmentedPrompt += `\n\n**⚠️ VERIFICATION REQUIREMENTS:**\n- Critical tasks must be 100% complete\n- Overall completion must be ≥95%\n- No high-priority tasks can remain pending\n- No tasks can remain in-progress\n- Execution success rate must be ≥70%\n- verification_passed=true requires backing metrics`;
+    
+    if (session.payload.verification_failure_reason) {
+      augmentedPrompt += `\n\n**🚨 PREVIOUS VERIFICATION FAILURE:**\n${session.payload.verification_failure_reason}\nLast Completion: ${session.payload.last_completion_percentage}%`;
+    }
   }
 
   // Determine status
@@ -210,4 +247,113 @@ export function updateReasoningEffectiveness(sessionId: string, success: boolean
   }
   
   stateManager.updateSessionState(sessionId, session);
+}
+
+// Enhanced verification logic with strict completion percentage thresholds
+
+export function validateTaskCompletion(session: any, verificationPayload: any): VerificationResult {
+  const todos = session.payload.current_todos || [];
+  const currentTaskIndex = session.payload.current_task_index || 0;
+  
+  // Calculate task completion metrics
+  const taskBreakdown = calculateTaskBreakdown(todos);
+  const completionPercentage = calculateCompletionPercentage(taskBreakdown);
+  
+  // Identify critical tasks (high priority or meta-prompt tasks)
+  const criticalTasks = todos.filter((todo: any) => 
+    todo.priority === 'high' || 
+    todo.type === 'TaskAgent' || 
+    todo.meta_prompt
+  );
+  const criticalTasksCompleted = criticalTasks.filter((todo: any) => todo.status === 'completed').length;
+  
+  // Strict validation rules
+  const result: VerificationResult = {
+    isValid: false,
+    completionPercentage,
+    reason: '',
+    criticalTasksCompleted,
+    totalCriticalTasks: criticalTasks.length,
+    taskBreakdown
+  };
+  
+  // Rule 1: 100% critical task completion required
+  if (criticalTasks.length > 0 && criticalTasksCompleted < criticalTasks.length) {
+    result.reason = `Critical tasks incomplete: ${criticalTasksCompleted}/${criticalTasks.length} completed. 100% critical task completion required.`;
+    return result;
+  }
+  
+  // Rule 2: Minimum 95% overall completion for non-critical scenarios
+  if (completionPercentage < 95) {
+    result.reason = `Overall completion ${completionPercentage}% below required threshold of 95%.`;
+    return result;
+  }
+  
+  // Rule 3: No pending high-priority tasks
+  const pendingHighPriority = todos.filter((todo: any) => 
+    todo.status === 'pending' && todo.priority === 'high'
+  );
+  if (pendingHighPriority.length > 0) {
+    result.reason = `${pendingHighPriority.length} high-priority tasks still pending.`;
+    return result;
+  }
+  
+  // Rule 4: All in-progress tasks must be resolved
+  const inProgressTasks = todos.filter((todo: any) => todo.status === 'in_progress');
+  if (inProgressTasks.length > 0) {
+    result.reason = `${inProgressTasks.length} tasks still in progress. All tasks must be completed or explicitly marked as pending.`;
+    return result;
+  }
+  
+  // Rule 5: Verify execution success rate
+  const executionSuccessRate = session.reasoning_effectiveness || 0;
+  if (executionSuccessRate < 0.7) {
+    result.reason = `Execution success rate ${(executionSuccessRate * 100).toFixed(1)}% below required threshold of 70%.`;
+    return result;
+  }
+  
+  // Rule 6: Validate verification payload consistency
+  if (verificationPayload?.verification_passed === true) {
+    // Additional validation: ensure verification_passed claim is backed by actual metrics
+    if (completionPercentage < 100 && criticalTasks.length > 0) {
+      result.reason = `Verification claim inconsistent with completion metrics. Critical tasks exist but completion is ${completionPercentage}%.`;
+      return result;
+    }
+  }
+  
+  // All validation rules passed
+  result.isValid = true;
+  result.reason = `Validation passed: ${completionPercentage}% completion, ${criticalTasksCompleted}/${criticalTasks.length} critical tasks completed.`;
+  
+  return result;
+}
+
+function calculateTaskBreakdown(todos: any[]): { completed: number; in_progress: number; pending: number; total: number } {
+  const breakdown = {
+    completed: 0,
+    in_progress: 0,
+    pending: 0,
+    total: todos.length
+  };
+  
+  todos.forEach(todo => {
+    switch (todo.status) {
+      case 'completed':
+        breakdown.completed++;
+        break;
+      case 'in_progress':
+        breakdown.in_progress++;
+        break;
+      case 'pending':
+        breakdown.pending++;
+        break;
+    }
+  });
+  
+  return breakdown;
+}
+
+function calculateCompletionPercentage(breakdown: { completed: number; total: number }): number {
+  if (breakdown.total === 0) return 100; // No tasks means 100% completion
+  return Math.round((breakdown.completed / breakdown.total) * 100);
 }
