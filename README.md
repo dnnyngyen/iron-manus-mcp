@@ -110,6 +110,12 @@ manus-fsm-orchestrator/
    claude mcp add ./dist/index.js
    ```
 
+4. **For Windsurf IDE Integration:**
+   ```bash
+   # The project includes windsurf-config.json for MCP integration
+   # Windsurf will automatically detect and load the configuration
+   ```
+
 ### Available Scripts
 
 - `npm run build` - Compile TypeScript to JavaScript

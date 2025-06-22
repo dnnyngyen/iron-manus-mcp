@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "manus-fsm-orchestrator": {
+      "command": "node",
+      "args": ["/Users/dannynguyen/Downloads/manus-fleur-mcp/dist/index.js"],
+      "env": {}
+    }
+  }
+}
