@@ -1,33 +1,81 @@
 # Manus FSM Orchestrator
+## Software 3.0 AI Operating System Kernel
 
-A lightweight, transparent MCP server that implements deterministic agent orchestration through a finite state machine. This tool provides structured multi-phase task execution with cognitive enhancement and role-based reasoning.
+An **AI Operating System Kernel** that implements **Software 3.0 computing** - where natural language becomes executable code running on a kernel-managed system. Claude operates as a sophisticated **application process** executing natural language programs in **user space**, while the FSM serves as the **kernel** with ultimate authority over system resources.
 
 ## Overview
 
-The Manus FSM Orchestrator replaces complex multi-tool agent architectures with a single, powerful orchestration tool that guides Claude through a deterministic 6-phase workflow. Each phase applies specialized prompts and tool restrictions to ensure systematic task completion.
+The Manus FSM Orchestrator creates a **kernel-level control plane** that manages AI processes with the same rigor as an operating system manages applications - through system calls, environment variables, and process isolation. Claude feels autonomous and powerful (like any good application) while operating entirely within a **sandbox** created by the FSM kernel.
+
+**Key Innovation**: The first **Software 3.0 operating system** that treats **natural language as executable code** running on a kernel-managed system. AI agents become **sandboxed application processes** executing natural language programs with strict control through elegant system-level architecture.
 
 ## Key Features
 
-- **Single Tool Architecture**: One `manus_orchestrator` tool controls the entire agent workflow
-- **Deterministic FSM**: Ensures predictable phase transitions and task progression  
-- **Cognitive Enhancement**: Role-based reasoning with 2.3x-3.2x cognitive multipliers
-- **Phase-Specific Prompts**: Specialized system prompts for each workflow phase
-- **Tool Gating**: Security through phase-restricted tool access
-- **Fractal Orchestration**: Supports spawning specialized Task() agents for complex work
-- **Performance Tracking**: Built-in analytics and session state management
+### OS Kernel Architecture
+- **Kernel-Level Control**: FSM operates in "kernel mode" with unrestricted access; Claude operates in "user mode" with restricted access
+- **System Call Interface**: Claude cannot access resources directly - must request through `manus_orchestrator` system calls
+- **Process Isolation**: Claude's execution is completely contained within its sandbox with strict security boundaries
+- **Resource Management**: Kernel controls memory (context), CPU (phase timing), and I/O (tool access)
+
+### Software 3.0 Natural Language Computing
+- **Natural Language as Code**: Prompts are executable programs that define behavior, logic flow, and execution patterns
+- **Prompt Compilation**: 6-layer template system compiles natural language into sophisticated agent behavior
+- **Runtime Program Modification**: Context injection allows programs to modify themselves based on state
+- **Meta-Programming**: Process spawning through natural language DSL: `(ROLE: X) (CONTEXT: Y) (PROMPT: Z) (OUTPUT: W)`
+
+### Application Process Management
+- **Sandboxed Execution**: Claude operates as sophisticated application with complex internal logic but kernel-managed boundaries
+- **Process Communication**: All agent processes communicate through kernel's system call interface
+- **Memory Management**: Session state persistence across phase transitions with kernel-controlled context injection
+- **Privilege Separation**: Clear separation between system-level operations (FSM) and application-level operations (Claude)
 
 ## Workflow Phases
 
-The FSM orchestrator implements a 6-phase workflow that ensures systematic task completion:
+The FSM kernel implements a 6-phase workflow that manages Claude's execution like an OS manages application processes:
 
-| Phase | Purpose | Available Tools |
-|-------|---------|----------------|
-| **QUERY** | Interpret and clarify user objectives | `manus_orchestrator` |
-| **ENHANCE** | Refine understanding with cognitive enhancement | `manus_orchestrator` |
-| **KNOWLEDGE** | Gather required information and context | `manus_orchestrator` |
-| **PLAN** | Create structured implementation plan | `TodoWrite`, `manus_orchestrator` |
-| **EXECUTE** | Implement solution using all available tools | All tools |
-| **VERIFY** | Quality assurance and completion validation | Read-only tools |
+| Phase | Kernel Function | System Calls Available | Application Behavior |
+|-------|-----------------|------------------------|---------------------|
+| **QUERY** | Process initialization | `manus_orchestrator` | Analyze user objectives |
+| **ENHANCE** | Environment configuration | `manus_orchestrator` | Refine understanding |
+| **KNOWLEDGE** | Resource allocation | `WebSearch`, `WebFetch`, `mcp__ide__executeCode` | Gather required information |
+| **PLAN** | Process scheduling | `TodoWrite`, `manus_orchestrator` | Create structured plan |
+| **EXECUTE** | Runtime execution | All available system calls | Implement solution |
+| **VERIFY** | Quality control | Read-only system calls | Validate completion |
+
+### Software 3.0 Programming Paradigm
+
+**Software Evolution**:
+- **Software 1.0**: Hand-written code (if/else, loops, functions)
+- **Software 2.0**: Neural networks learn patterns from data  
+- **Software 3.0**: Natural language prompts as executable programs
+
+**How Natural Language Becomes Code**:
+```typescript
+// Software 1.0: Traditional code
+function analyzeTasks() {
+  if (tasks.length > 0) {
+    return tasks.filter(t => t.status === 'pending');
+  }
+}
+
+// Software 3.0: Natural language as executable code
+const QUERY_PROMPT = `Think through your analysis approach before proceeding. Consider:
+- What is the user really asking for at its core?
+- What are the key requirements and constraints?`;
+```
+
+**Key Software 3.0 Elements**:
+- **Natural Language Control Flow**: "Think through... then proceed with..."
+- **Conditional Logic in Prose**: "If todos with meta-prompts... else direct execution"  
+- **Function Calls as Instructions**: "Use TodoRead to check current tasks"
+- **Template-Based Compilation**: Natural language templates compile into executable agent behavior
+
+### OS Kernel + Software 3.0 Integration
+
+- **System Calls**: Tools that execute Software 3.0 natural language programs (like `read()`, `write()`, `fork()` in Unix)
+- **Process Phases**: Different execution modes running different natural language programs
+- **Meta-Prompting**: `fork()` system call that compiles and spawns new Software 3.0 programs for specialized agents  
+- **Prompt Compilation**: 6-layer template system that compiles natural language into kernel-executable instructions
 
 ## Architecture
 
@@ -179,10 +227,20 @@ The orchestrator leverages several key techniques:
 
 MIT License - see LICENSE file for details.
 
+## Documentation
+
+For detailed technical information, see the comprehensive documentation in the `docs/` directory:
+
+- **[Architecture Guide](./docs/001_ARCHITECTURE_GUIDE.md)** - Complete system architecture and 6-layer prompt engineering details
+- **[Orchestration Loop](./docs/002_ORCHESTRATION_LOOP.md)** - Step-by-step workflow execution and phase transitions  
+- **[System Diagrams](./docs/003_System_Diagram.md)** - Visual architecture flows and ASCII diagrams
+- **[Prompt Architecture](./docs/004_PROMPT_ARCHITECTURE.md)** - Deep dive into prompt engineering implementation
+- **[Prompt Flow Diagrams](./docs/005_PROMPT_FLOW_DIAGRAMS.md)** - Visual prompt compilation and processing flows
+
 ## Support
 
 For issues, questions, or contributions, please use the GitHub issue tracker.
 
 ---
 
-*The Manus FSM Orchestrator demonstrates that sophisticated agent orchestration can be achieved through elegant, minimal architectures rather than complex multi-component systems.*
+*The Manus FSM Orchestrator demonstrates that sophisticated agent orchestration can be achieved through elegant prompt engineering architectures that guide natural reasoning patterns rather than constraining them.*
