@@ -2,10 +2,10 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { processManusFSM, extractMetaPromptFromTodo } from './core/fsm.js';
-import { ManusOrchestratorInput } from './core/types.js';
-import { stateManager } from './core/state.js';
-import { EnhancedManusOrchestratorSchema, ToolParameterValidator } from './utils/enhanced-tool-schemas.js';
+import { processManusFSM, extractMetaPromptFromTodo } from './fsm.js';
+import { ManusOrchestratorInput } from './types.js';
+import { stateManager } from './state.js';
+import { EnhancedManusOrchestratorSchema, ToolParameterValidator } from './enhanced-tool-schemas.js';
 
 const server = new Server(
   {
