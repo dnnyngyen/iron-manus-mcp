@@ -58,3 +58,18 @@ pids/
 # Temporary files
 tmp/
 temp/
+
+# Personal notes and archive files (keep local only)
+archive/
+gitignore.archive/
+*POSITIONING*.md
+*DISC*.md
+*SETUP*.md
+windsurf-config.json
+.windsurfrc
+
+# Local development artifacts
+.claude/
+manus_component_*.json
+manus_performance_*.json
+manus_unified_*.json
