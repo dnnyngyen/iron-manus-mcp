@@ -123,14 +123,14 @@ export interface TodoItem {
 
 // V0 Component mapping for duality support (moved to ComponentCognitiveDuality structure)
 
-export interface ManusOrchestratorInput {
+export interface MessageJARVIS {
   session_id: string;
   phase_completed?: Phase;
   initial_objective?: string; // Only on first call
   payload?: Record<string, any>; // Phase-specific data (event stream simulation)
 }
 
-export interface ManusOrchestratorOutput {
+export interface FromJARVIS {
   next_phase: Phase;
   system_prompt: string; // Role-enhanced, cognitively augmented prompt
   allowed_next_tools: string[]; // Tool gating - enforces "single tool per iteration"

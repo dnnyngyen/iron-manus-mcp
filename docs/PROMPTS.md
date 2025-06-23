@@ -1,4 +1,4 @@
-# Manus FSM Prompt Architecture Guide
+# Iron Manus JARVIS Prompt Architecture Guide
 ## Software 3.0: Natural Language as Code in Practice
 
 ### Table of Contents
@@ -15,7 +15,7 @@
 
 ## Executive Summary
 
-**What**: Manus FSM represents the first production implementation of **Software 3.0** - where natural language becomes executable code through sophisticated prompt engineering architectures.
+**What**: Iron Manus JARVIS implements **Software 3.0** - where natural language becomes executable code through prompt engineering architectures. It follows the Iron Man vision of AI as an augmentation suit for human intelligence.
 
 **Software 3.0 Innovation**: Instead of writing traditional code, we write **prompt programs** that compile into LLM behavior. Natural language prompts become the primary programming language, with traditional code serving as infrastructure.
 
@@ -30,9 +30,9 @@
 - **Software 2.0**: Neural networks learn patterns from data
 - **Software 3.0**: Natural language prompts as executable programs
 
-### Manus FSM as Software 3.0
+### Iron Manus JARVIS as Software 3.0
 
-In Manus FSM, **prompts are the primary programming language**:
+In Iron Manus JARVIS, **prompts are the primary programming language**:
 
 ```typescript
 // Software 2.0: Traditional code
@@ -75,7 +75,7 @@ After analyzing the situation, proceed with:
 2. Clarify any ambiguous aspects 
 3. Identify what type of task this is
 4. Detect the primary role needed
-5. Call manus_orchestrator with phase_completed: 'QUERY'`,
+5. Call JARVIS with phase_completed: 'QUERY'`,
 
   EXECUTE: `You are in the EXECUTE phase (Manus Datasource Module). Your task:
 
@@ -90,7 +90,7 @@ After analyzing the execution approach, proceed with:
 2. For todos with meta-prompts (ROLE/CONTEXT/PROMPT/OUTPUT), use Task() tool
 3. For direct execution todos, use Bash, Browser, Read, Write, Edit tools
 4. **Single tool per iteration** - call one tool, then return
-5. After each significant action, call manus_orchestrator`
+5. After each significant action, call JARVIS`
 };
 ```
 
@@ -98,7 +98,7 @@ After analyzing the execution approach, proceed with:
 - **Natural language control flow**: "Think through... then proceed with..."
 - **Conditional logic in prose**: "If todos with meta-prompts... else direct execution"
 - **Error handling instructions**: "What potential challenges might you encounter?"
-- **API calls as natural language**: "Call manus_orchestrator with phase_completed"
+- **API calls as natural language**: "Call JARVIS with phase_completed"
 
 ### Layer 2: Role-Specific Thinking Methodologies (`src/core/prompts.ts:17-154`)
 
@@ -231,10 +231,10 @@ ${thinkGuidance}
 
 ```typescript
 export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
-  INIT: ['manus_orchestrator'],
-  QUERY: ['manus_orchestrator'], 
-  ENHANCE: ['manus_orchestrator'],
-  KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'manus_orchestrator'],
+  INIT: ['JARVIS'],
+  QUERY: ['JARVIS'], 
+  ENHANCE: ['JARVIS'],
+  KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'JARVIS'],
   PLAN: ['TodoWrite'],
   EXECUTE: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode'],
   VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode'],
@@ -242,8 +242,8 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
 };
 
 export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
-  QUERY: 'Think through the goal analysis, then call manus_orchestrator with phase_completed: "QUERY"',
-  KNOWLEDGE: 'Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), manus_orchestrator (skip research)',
+  QUERY: 'Think through the goal analysis, then call JARVIS with phase_completed: "QUERY"',
+  KNOWLEDGE: 'Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), JARVIS (skip research)',
   EXECUTE: 'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), mcp__ide__executeCode (Python analysis/computation)',
   VERIFY: 'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), mcp__ide__executeCode (analytical verification)'
 };
@@ -296,7 +296,7 @@ Infinite depth of natural language program generation...
 Input → Function → Output
 ```
 
-**Software 3.0 in Manus FSM:**
+**Software 3.0 in Iron Manus JARVIS:**
 ```
 User Input → Prompt Cascade → Context Injection → Natural Language Reasoning → Tool Selection → Output
 ```
@@ -609,7 +609,7 @@ const FUNCTIONAL_FLOW = `
 1. Use TodoRead to see your current tasks
 2. For todos with meta-prompts, use Task() tool to spawn specialized agents  
 3. For direct execution todos, use Bash, Browser, Read, Write, Edit tools
-4. After each significant action, call manus_orchestrator with results
+4. After each significant action, call JARVIS with results
 `;
 ```
 
@@ -831,7 +831,7 @@ Generate additional sub-programs if needed using the same meta-prompt syntax.`;
 
 ## Summary
 
-**Manus FSM represents the first production implementation of Software 3.0** - where natural language becomes the primary programming language and traditional code serves as infrastructure.
+**Iron Manus JARVIS implements Software 3.0** - where natural language becomes the primary programming language and traditional code serves as infrastructure, following the Iron Man vision of human-AI collaboration.
 
 ### Key Software 3.0 Innovations:
 
@@ -844,10 +844,10 @@ Generate additional sub-programs if needed using the same meta-prompt syntax.`;
 
 ### The Future of Programming:
 
-Software 3.0 represents a fundamental shift from **writing code** to **writing prompts**. In Manus FSM, developers program by:
+Software 3.0 represents a fundamental shift from **writing code** to **writing prompts**. In Iron Manus JARVIS, developers program by:
 - Designing natural language templates (prompt engineering)
 - Creating compilation pipelines (layer assembly) 
 - Building runtime systems (context injection)
 - Implementing meta-languages (meta-prompt syntax)
 
-**The result**: Sophisticated software behavior emerges from natural language programming rather than traditional code, making the system more maintainable, more understandable, and more adaptable than traditional software architectures.
+**The result**: Software behavior emerges from natural language programming rather than traditional code, making the system maintainable, understandable, and adaptable.

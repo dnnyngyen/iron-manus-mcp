@@ -1,5 +1,5 @@
 {
-  "name": "manus-fsm-orchestrator",
+  "name": "iron-manus-mcp",
   "version": "1.0.0",
   "description": "Minimal FSM-driven MCP server that replaces Manus's 6-step agent loop",
   "type": "module",

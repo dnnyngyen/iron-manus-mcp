@@ -1,26 +1,25 @@
-# Node.js
+# Dependencies
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
 # Build outputs
 dist/
 build/
-*.tgz
-*.tar.gz
+*.tsbuildinfo
+
+# Runtime state files
+JARVIS_state.json
+manus_fsm_state.json
+manus_*.json
+*_state.json
+
+# Archive and temporary files
+gitignore.archive/
+temp-files/
+*.tmp
+*.temp
 
 # IDE and editor files
 .vscode/
@@ -38,13 +37,6 @@ build/
 ehthumbs.db
 Thumbs.db
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
 # Logs
 logs/
 *.log
@@ -55,21 +47,23 @@ pids/
 *.seed
 *.pid.lock
 
-# Temporary files
-tmp/
-temp/
+# Coverage directory used by tools like istanbul
+coverage/
+.nyc_output/
 
-# Personal notes and archive files (keep local only)
-archive/
-gitignore.archive/
-*POSITIONING*.md
-*DISC*.md
-*SETUP*.md
-windsurf-config.json
-.windsurfrc
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Local development artifacts
-.claude/
-manus_component_*.json
-manus_performance_*.json
-manus_unified_*.json
+# Package manager lock files (keep package-lock.json, ignore others)
+yarn.lock
+pnpm-lock.yaml
+
+# Jest
+jest.config.js
+
+# Hooks (unless needed for project)
+hooks/

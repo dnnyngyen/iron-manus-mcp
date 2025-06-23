@@ -1,246 +1,172 @@
-# Manus FSM Orchestrator
-## Software 3.0 AI Operating System Kernel
+# Iron Manus JARVIS - Native Task Agent System
 
-An **AI Operating System Kernel** that implements **Software 3.0 computing** - where natural language becomes executable code running on a kernel-managed system. Claude operates as a sophisticated **application process** executing natural language programs in **user space**, while the FSM serves as the **kernel** with ultimate authority over system resources.
+## An Experimental Software 3.0 Implementation
 
-## Overview
+**My first project** exploring how Claude's native tools can be leveraged for autonomous development. The goal: demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
 
-The Manus FSM Orchestrator creates a **kernel-level control plane** that manages AI processes with the same rigor as an operating system manages applications - through system calls, environment variables, and process isolation. Claude feels autonomous and powerful (like any good application) while operating entirely within a **sandbox** created by the FSM kernel.
+## What Makes This Different
 
-**Key Innovation**: The first **Software 3.0 operating system** that treats **natural language as executable code** running on a kernel-managed system. AI agents become **sandboxed application processes** executing natural language programs with strict control through elegant system-level architecture.
+1. **Uses Claude's own tools** - No external APIs or complex orchestration
+2. **Natural language as code** - Prompts become executable programs  
+3. **Recursive agent spawning** - Agents can create specialized sub-agents
+4. **Minimal complexity** - Single MCP tool handles everything
 
-## Key Features
+Iron Manus JARVIS hijacks Claude's built-in `Task()` and `TodoWrite/TodoRead` tools to create autonomous task agents. **For developers who want AI autopilot**: Describe what you want, watch JARVIS break it down and spawn specialized agents that work autonomously.
 
-### OS Kernel Architecture
-- **Kernel-Level Control**: FSM operates in "kernel mode" with unrestricted access; Claude operates in "user mode" with restricted access
-- **System Call Interface**: Claude cannot access resources directly - must request through `manus_orchestrator` system calls
-- **Process Isolation**: Claude's execution is completely contained within its sandbox with strict security boundaries
-- **Resource Management**: Kernel controls memory (context), CPU (phase timing), and I/O (tool access)
+## Software 3.0 Context
 
-### Software 3.0 Natural Language Computing
-- **Natural Language as Code**: Prompts are executable programs that define behavior, logic flow, and execution patterns
-- **Prompt Compilation**: 6-layer template system compiles natural language into sophisticated agent behavior
-- **Runtime Program Modification**: Context injection allows programs to modify themselves based on state
-- **Meta-Programming**: Process spawning through natural language DSL: `(ROLE: X) (CONTEXT: Y) (PROMPT: Z) (OUTPUT: W)`
+Building on Andrej Karpathy's vision where AI becomes augmentation suits for human intelligence:
 
-### Application Process Management
-- **Sandboxed Execution**: Claude operates as sophisticated application with complex internal logic but kernel-managed boundaries
-- **Process Communication**: All agent processes communicate through kernel's system call interface
-- **Memory Management**: Session state persistence across phase transitions with kernel-controlled context injection
-- **Privilege Separation**: Clear separation between system-level operations (FSM) and application-level operations (Claude)
-
-## Workflow Phases
-
-The FSM kernel implements a 6-phase workflow that manages Claude's execution like an OS manages application processes:
-
-| Phase | Kernel Function | System Calls Available | Application Behavior |
-|-------|-----------------|------------------------|---------------------|
-| **QUERY** | Process initialization | `manus_orchestrator` | Analyze user objectives |
-| **ENHANCE** | Environment configuration | `manus_orchestrator` | Refine understanding |
-| **KNOWLEDGE** | Resource allocation | `WebSearch`, `WebFetch`, `mcp__ide__executeCode` | Gather required information |
-| **PLAN** | Process scheduling | `TodoWrite`, `manus_orchestrator` | Create structured plan |
-| **EXECUTE** | Runtime execution | All available system calls | Implement solution |
-| **VERIFY** | Quality control | Read-only system calls | Validate completion |
-
-### Software 3.0 Programming Paradigm
-
-**Software Evolution**:
 - **Software 1.0**: Hand-written code (if/else, loops, functions)
 - **Software 2.0**: Neural networks learn patterns from data  
-- **Software 3.0**: Natural language prompts as executable programs
+- **Software 3.0**: Natural language as executable programs with AI augmentation
 
-**How Natural Language Becomes Code**:
+This project explores Software 3.0 by turning **prompts into programs** that compile into agent behavior through Claude's native tooling. Instead of traditional code orchestrating AI, natural language becomes the orchestration layer itself.
+
+## The Core Innovation
+
+### Native Task Agents (Not External APIs)
+
+- **Uses Claude's Task() tool** to spawn actual Claude instances as specialized agents
+- **TodoWrite/TodoRead becomes task decomposition** - automatic breakdown and execution tracking
+- **Meta-prompt syntax parsing** - `(ROLE: coder) (CONTEXT: auth) (PROMPT: build JWT) (OUTPUT: code)`
+- **Sequential Thinking fork** - repurposed as a finite state machine for workflow control
+
+### How It Works
+
+1. **You describe a goal** - "Build a React dashboard with auth and real-time charts"
+2. **JARVIS auto-decomposes** - Uses TodoWrite to break into specialized tasks
+3. **Agents spawn via Task()** - Creates coder, analyzer, ui_architect agents automatically  
+4. **Autonomous execution** - Each agent works independently then reports back
+5. **Minimal intervention** - You mostly just watch it work
+
+## Example Usage
+
 ```typescript
-// Software 1.0: Traditional code
-function analyzeTasks() {
-  if (tasks.length > 0) {
-    return tasks.filter(t => t.status === 'pending');
+// Just call JARVIS with your goal
+await mcp.callTool({
+  name: 'JARVIS',
+  args: {
+    session_id: 'my-session',
+    initial_objective: 'Build a dashboard with user auth and data visualization'
   }
-}
+});
 
-// Software 3.0: Natural language as executable code
-const QUERY_PROMPT = `Think through your analysis approach before proceeding. Consider:
-- What is the user really asking for at its core?
-- What are the key requirements and constraints?`;
+// JARVIS automatically:
+// 1. Breaks down the goal using TodoWrite
+// 2. Spawns Task(ui_architect) for component design
+// 3. Spawns Task(coder) for auth implementation  
+// 4. Spawns Task(analyzer) for performance optimization
+// 5. Coordinates everything through the 6-phase FSM
 ```
-
-**Key Software 3.0 Elements**:
-- **Natural Language Control Flow**: "Think through... then proceed with..."
-- **Conditional Logic in Prose**: "If todos with meta-prompts... else direct execution"  
-- **Function Calls as Instructions**: "Use TodoRead to check current tasks"
-- **Template-Based Compilation**: Natural language templates compile into executable agent behavior
-
-### OS Kernel + Software 3.0 Integration
-
-- **System Calls**: Tools that execute Software 3.0 natural language programs (like `read()`, `write()`, `fork()` in Unix)
-- **Process Phases**: Different execution modes running different natural language programs
-- **Meta-Prompting**: `fork()` system call that compiles and spawns new Software 3.0 programs for specialized agents  
-- **Prompt Compilation**: 6-layer template system that compiles natural language into kernel-executable instructions
-
-## Architecture
-
-The Manus FSM Orchestrator implements a minimal, focused architecture with novel LLM-native orchestration patterns:
-
-```
-Core Components:
-└── manus_orchestrator (Single MCP tool with FSM control)
-    ├── State Manager (Session and phase tracking)
-    ├── Phase-specific Prompts (Cognitive enhancement)
-    ├── Tool Gating (Security and workflow control)
-    └── Transition Logic (Deterministic phase progression)
-```
-
-**Key Design Principles:**
-- **LLM-as-Governor Pattern**: FSM serves as cognitive control mechanism for AI reasoning flows
-- **Protocol Constraint Exploitation**: Uses MCP limitations as architectural opportunities for infrastructure consolidation
-- **Dynamic Meta-Prompt Generation**: Systematic creation of specialized agents with role-specific cognitive frameworks
-- **Deterministic Orchestration**: Predictable workflow progression through protocol-level constraint enforcement
-
-**Architectural Innovations:**
-- **Direct-to-LLM-Runtime Orchestration**: Phase-based workflow control with adaptive performance tracking
-- **Single-Tool Infrastructure**: Replaces complex multi-component architectures through MCP constraint exploitation
-- **Fractal Agent Delegation**: Hierarchical task decomposition with specialized meta-prompt extraction
-- **Cognitive Enhancement Integration**: Role-specific reasoning multipliers (2.3x-3.2x) with framework application
-
-## How It Works
-
-The orchestrator implements a deterministic workflow through phase-controlled prompt injection:
-
-1. **Initialize**: User provides objective, FSM creates session in `INIT` phase
-2. **Phase Transition**: Claude calls `manus_orchestrator`, FSM transitions to next phase
-3. **Prompt Injection**: FSM injects phase-specific system prompts and tool restrictions
-4. **Execution**: Claude follows enhanced prompts to complete phase objectives
-5. **Iteration**: Process repeats through all phases until task completion
-
-The FSM controls Claude's behavior through strategic prompt injection, eliminating the need for complex external orchestration systems.
-
-## Project Structure
-
-```
-manus-fsm-orchestrator/
-├── src/
-│   ├── types.ts                 # Core type definitions and interfaces
-│   ├── prompts.ts              # Phase-specific prompt templates
-│   ├── state.ts                # Session state management
-│   ├── fsm.ts                  # Finite state machine logic
-│   ├── enhanced-tool-schemas.ts # Tool schema definitions
-│   └── index.ts                # MCP server entry point
-├── dist/                       # Compiled JavaScript output
-├── archive/                    # Legacy documentation and examples
-├── package.json               # Project configuration and dependencies
-├── tsconfig.json             # TypeScript configuration
-└── README.md                 # Project documentation
-```
-
-## Installation & Setup
-
-### Prerequisites
-
-- Node.js 18.0.0 or higher
-- Claude Code CLI with MCP support
-
-### Installation
-
-1. **Clone and install dependencies:**
-   ```bash
-   git clone <repository-url>
-   cd manus-fsm-orchestrator
-   npm install
-   ```
-
-2. **Build the project:**
-   ```bash
-   npm run build
-   ```
-
-3. **Register with Claude Code:**
-   ```bash
-   claude mcp add ./dist/index.js
-   ```
-
-4. **For Windsurf IDE Integration:**
-   ```bash
-   # The project includes windsurf-config.json for MCP integration
-   # Windsurf will automatically detect and load the configuration
-   ```
-
-### Available Scripts
-
-- `npm run build` - Compile TypeScript to JavaScript
-- `npm run start` - Start the MCP server
-- `npm run dev` - Build and start in development mode
-- `npm run clean` - Remove compiled output
-
-## Usage
-
-### Basic Usage
-
-The orchestrator is invoked through a single tool call with session-based state management:
-
-```javascript
-// Initial invocation with user objective
-manus_orchestrator({
-  session_id: "unique_session_id",
-  initial_objective: "Create a React application with user authentication"
-})
-
-// Subsequent calls to progress through phases
-manus_orchestrator({
-  session_id: "unique_session_id",
-  phase_completed: "QUERY",
-  payload: { /* phase-specific data */ }
-})
-```
-
-### Session Management
-
-Each orchestration sequence requires a unique `session_id` to track state across phases. The FSM automatically manages phase transitions and applies appropriate cognitive enhancements.
-
-## Key Benefits
-
-- **Simplicity**: Single tool replaces complex multi-tool architectures
-- **Transparency**: Open-source implementation with clear, readable code
-- **Determinism**: Predictable workflow progression through FSM control
-- **Cognitive Enhancement**: Role-based reasoning with performance multipliers
-- **Security**: Phase-gated tool access ensures controlled execution
-- **Maintainability**: Minimal codebase with clean separation of concerns
 
 ## Technical Implementation
 
-The orchestrator leverages several key techniques:
+### 6-Phase Finite State Machine
 
-- **Finite State Machine**: Manages deterministic phase transitions
-- **Prompt Injection**: Phase-specific system prompts control behavior
-- **Tool Gating**: Security through restricted tool access per phase
-- **Session Management**: Stateful tracking across orchestration sequences
-- **Cognitive Enhancement**: Role-based reasoning with performance multipliers
+- **QUERY** - Understand what you want
+- **ENHANCE** - Add missing details and requirements
+- **KNOWLEDGE** - Research if needed
+- **PLAN** - Break into tasks (creates meta-prompts for agents)
+- **EXECUTE** - Run tasks (spawns Task() agents or direct execution)
+- **VERIFY** - Check completion and quality
 
-## Contributing
+### Natural Language Programming
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+The system compiles natural language into executable agent behavior:
 
-## License
+```typescript
+// Traditional Software 1.0
+function processTask(task) {
+  if (task.type === 'complex') {
+    return spawnAgent(task);
+  }
+  return executeDirectly(task);
+}
 
-MIT License - see LICENSE file for details.
+// Software 3.0 in Iron Manus
+const EXECUTE_PROMPT = `Think through your execution strategy:
+- If todo contains (ROLE:...) pattern, use Task() tool to spawn specialized agent
+- If todo is direct execution, use appropriate tools (Bash/Browser/etc.)
+- Single tool per iteration, then report back`;
+```
 
-## Documentation
+### Meta-Prompt Agent Spawning
 
-For detailed technical information, see the comprehensive documentation in the `docs/` directory:
+When JARVIS creates a todo like:
 
-- **[Architecture Guide](./docs/001_ARCHITECTURE_GUIDE.md)** - Complete system architecture and 6-layer prompt engineering details
-- **[Orchestration Loop](./docs/002_ORCHESTRATION_LOOP.md)** - Step-by-step workflow execution and phase transitions  
-- **[System Diagrams](./docs/003_System_Diagram.md)** - Visual architecture flows and ASCII diagrams
-- **[Prompt Architecture](./docs/004_PROMPT_ARCHITECTURE.md)** - Deep dive into prompt engineering implementation
-- **[Prompt Flow Diagrams](./docs/005_PROMPT_FLOW_DIAGRAMS.md)** - Visual prompt compilation and processing flows
+```text
+(ROLE: coder) (CONTEXT: authentication) (PROMPT: Implement JWT auth with refresh tokens) (OUTPUT: production_code)
+```
 
-## Support
+It automatically spawns a Task() agent with a specialized prompt that includes:
 
-For issues, questions, or contributions, please use the GitHub issue tracker.
+- Role-specific thinking methodologies
+- Context about the auth domain
+- Detailed implementation instructions
+- Quality standards and validation rules
+
+### Sequential Thinking Fork
+
+Credit to Sequential Thinking, but we use it differently:
+
+- **Not for reasoning chains** - Used as FSM controller
+- **Prompt injection engine** - Enforces workflow and injects specialized prompts
+- **State management** - Tracks session progress and agent coordination
+
+## Architecture
+
+```text
+iron-manus-mcp/
+├── src/
+│   ├── index.ts          # MCP server with single JARVIS tool
+│   ├── core/
+│   │   ├── fsm.ts        # 6-phase state machine logic
+│   │   ├── prompts.ts    # Phase-specific prompt templates
+│   │   ├── state.ts      # Session and agent state management
+│   │   └── types.ts      # Core interfaces
+│   └── utils/
+└── docs/
+    ├── ARCHITECTURE.md   # Deep dive into the FSM design
+    ├── ORCHESTRATION.md  # Phase-by-phase workflow explanation
+    ├── PROMPTS.md        # How prompt injection works
+    └── visuals/          # Examples and diagrams
+```
+
+## Installation
+
+1. **Clone and build:**
+
+   ```bash
+   git clone <repo-url>
+   cd iron-manus-mcp
+   npm install
+   npm run build
+   ```
+
+2. **Add to Claude Code:**
+
+   ```bash
+   # Add to your MCP config
+   ```
+
+## Why This Experiment Matters
+
+- **Genuinely novel approach** - Hijacking Claude's native tools for agent behavior
+- **Software 3.0 exploration** - Natural language becomes the programming layer
+- **Elegant simplicity** - Single MCP tool replaces complex agent frameworks
+- **Recursive capabilities** - Agents spawn sub-agents through meta-prompting
+- **Zero external dependencies** - Everything runs through Claude's existing capabilities
+
+## Credits & Inspiration
+
+- **Andrej Karpathy** - Software 3.0 vision and "Iron Man suits for AI" concept
+- **Sequential Thinking** - Forked their approach but repurposed as FSM controller
+- **Claude's native tools** - Task(), TodoWrite/TodoRead are the foundation
+- **Iron Man inspiration** - JARVIS as AI augmentation suit metaphor
 
 ---
 
-*The Manus FSM Orchestrator demonstrates that sophisticated agent orchestration can be achieved through elegant prompt engineering architectures that guide natural reasoning patterns rather than constraining them.*
+This is my first project exploring how Claude's native features can be leveraged for autonomous development. The goal is to demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
+
+Check [ARCHITECTURE.md](./docs/ARCHITECTURE.md) for the technical deep dive.

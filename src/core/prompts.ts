@@ -286,7 +286,7 @@ Apply these thinking steps systematically to improve reasoning quality and thoro
 
 // Base phase prompts (enhanced for fractal orchestration)
 const BASE_PHASE_PROMPTS: Record<Phase, string> = {
-  INIT: `You are initializing a new task. This should not be reached - call manus_orchestrator immediately.`,
+  INIT: `You are initializing a new task. This should not be reached - call JARVIS immediately.`,
   
   QUERY: `You are in the QUERY phase (Manus: "Analyze Events"). Your task:
 
@@ -302,7 +302,7 @@ After analyzing the situation, proceed with:
 2. Clarify any ambiguous aspects 
 3. Identify what type of task this is (research, coding, deployment, etc.)
 4. Detect the primary role needed (planner/coder/critic/researcher/analyzer/synthesizer)
-5. Call manus_orchestrator with phase_completed: 'QUERY' and include your interpretation in the payload as 'interpreted_goal'.
+5. Call JARVIS with phase_completed: 'QUERY' and include your interpretation in the payload as 'interpreted_goal'.
 
 Focus on understanding the core objective with role-specific expertise.`,
 
@@ -320,7 +320,7 @@ After evaluating these aspects, proceed with:
 2. Consider edge cases or requirements that weren't explicitly stated
 3. Determine what information or resources you'll need
 4. Identify potential challenges or dependencies
-5. Call manus_orchestrator with phase_completed: 'ENHANCE' and include the enhanced understanding in payload as 'enhanced_goal'.
+5. Call JARVIS with phase_completed: 'ENHANCE' and include the enhanced understanding in payload as 'enhanced_goal'.
 
 Focus on making the goal comprehensive and actionable with your specialized perspective.`,
 
@@ -338,7 +338,7 @@ After evaluating your knowledge needs, proceed with:
 2. If research is needed, note what specific information to gather
 3. If no external research is needed, summarize relevant knowledge you already have
 4. Identify any technical constraints or requirements
-5. Call manus_orchestrator with phase_completed: 'KNOWLEDGE' and include your findings in payload as 'knowledge_gathered'.
+5. Call JARVIS with phase_completed: 'KNOWLEDGE' and include your findings in payload as 'knowledge_gathered'.
 
 Gather essential knowledge using your domain expertise.`,
 
@@ -356,7 +356,7 @@ After strategic analysis, proceed with:
 2. Use TodoWrite to create a detailed task breakdown
 3. For complex sub-tasks that need specialized expertise, embed MetaPrompt structure in todo content
 4. Format complex todos as: "(ROLE: agent_type) (CONTEXT: domain_info) (PROMPT: detailed_instructions) (OUTPUT: deliverables)"
-5. After creating todos, call manus_orchestrator with phase_completed: 'PLAN' and include 'plan_created': true in payload.
+5. After creating todos, call JARVIS with phase_completed: 'PLAN' and include 'plan_created': true in payload.
 
 **FRACTAL ORCHESTRATION:** Mark todos that should spawn Task() agents with detailed meta-prompts. Use TodoWrite now.`,
 
@@ -374,7 +374,7 @@ After analyzing the execution approach, proceed with:
 2. For todos with meta-prompts (ROLE/CONTEXT/PROMPT/OUTPUT), use Task() tool to spawn specialized agents
 3. For direct execution todos, use Bash, Browser, Read, Write, Edit tools
 4. **Single tool per iteration** (Manus requirement) - call one tool, then return to orchestrator
-5. After each significant action, call manus_orchestrator with phase_completed: 'EXECUTE' and include execution results.
+5. After each significant action, call JARVIS with phase_completed: 'EXECUTE' and include execution results.
 
 **FRACTAL EXECUTION:** Spawn Task() agents for complex work, execute directly for simple tasks.`,
 
@@ -392,7 +392,7 @@ After thorough quality assessment, proceed with:
 2. Check if all requirements were met with role-specific quality standards
 3. Test functionality if applicable
 4. Identify any gaps or improvements needed
-5. Call manus_orchestrator with phase_completed: 'VERIFY' and include 'verification_passed': true/false in payload.
+5. Call JARVIS with phase_completed: 'VERIFY' and include 'verification_passed': true/false in payload.
 
 Apply rigorous quality assessment with your specialized validation expertise.`,
 
@@ -705,10 +705,10 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 // Tool gating - enforces Manus's "single tool call per iteration" rule
 // Single tool = forced via tool_code, Multiple tools = Claude chooses from whitelist
 export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
-  INIT: ['manus_orchestrator'], // Force orchestrator
-  QUERY: ['manus_orchestrator'], // Natural thinking + orchestrator
-  ENHANCE: ['manus_orchestrator'], // Natural thinking + orchestrator
-  KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'manus_orchestrator'], // Natural thinking + research tools + data processing
+  INIT: ['JARVIS'], // Force orchestrator
+  QUERY: ['JARVIS'], // Natural thinking + orchestrator
+  ENHANCE: ['JARVIS'], // Natural thinking + orchestrator
+  KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'JARVIS'], // Natural thinking + research tools + data processing
   PLAN: ['TodoWrite'], // Natural thinking + planning tools
   EXECUTE: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode'], // Natural thinking + execution tools + Python execution
   VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode'], // Natural thinking + verification tools + analysis
@@ -717,11 +717,11 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
 
 // For phases where Claude should choose, we specify the choice in the prompt
 export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
-  INIT: 'Call manus_orchestrator to begin',
-  QUERY: 'Think through the goal analysis, then call manus_orchestrator with phase_completed: "QUERY"',
-  ENHANCE: 'Think through enhancement opportunities, then call manus_orchestrator with phase_completed: "ENHANCE"',
-  KNOWLEDGE: 'Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), manus_orchestrator (skip research)',
-  PLAN: 'Think through strategic planning, then use TodoWrite to create todos, then call manus_orchestrator with phase_completed: "PLAN"',
+  INIT: 'Call JARVIS to begin',
+  QUERY: 'Think through the goal analysis, then call JARVIS with phase_completed: "QUERY"',
+  ENHANCE: 'Think through enhancement opportunities, then call JARVIS with phase_completed: "ENHANCE"',
+  KNOWLEDGE: 'Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), JARVIS (skip research)',
+  PLAN: 'Think through strategic planning, then use TodoWrite to create todos, then call JARVIS with phase_completed: "PLAN"',
   EXECUTE: 'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), mcp__ide__executeCode (Python analysis/computation)',
   VERIFY: 'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), mcp__ide__executeCode (analytical verification)',
   DONE: 'No action needed'

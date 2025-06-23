@@ -2,8 +2,8 @@
 // Implements the 6-step agent loop + 3 modules + fractal orchestration + reasoning rules validation
 // + Component-Cognitive Duality unified API for seamless mode switching
 import { 
-  ManusOrchestratorInput, 
-  ManusOrchestratorOutput, 
+  MessageJARVIS, 
+  FromJARVIS, 
   Phase, 
   Role, 
   TodoItem, 
@@ -101,7 +101,7 @@ function getExtractionPerformanceMetrics() {
   };
 }
 
-export function processManusFSM(input: ManusOrchestratorInput): ManusOrchestratorOutput {
+export function processState(input: MessageJARVIS): FromJARVIS {
   const sessionId = input.session_id;
   const session = stateManager.getSessionState(sessionId);
   
@@ -353,7 +353,7 @@ export function processManusFSM(input: ManusOrchestratorInput): ManusOrchestrato
   // Determine status
   const status = nextPhase === 'DONE' ? 'DONE' : 'IN_PROGRESS';
 
-  const output: ManusOrchestratorOutput = {
+  const output: FromJARVIS = {
     next_phase: nextPhase,
     system_prompt: augmentedPrompt,
     allowed_next_tools: allowedTools,
@@ -546,7 +546,7 @@ function calculateCompletionPercentage(breakdown: { completed: number; total: nu
 }
 
 // Helper function to create validation context for reasoning rules engine
-function createValidationContext(session: any, phase: Phase, reasoning: string, input: ManusOrchestratorInput): ValidationContext {
+function createValidationContext(session: any, phase: Phase, reasoning: string, input: MessageJARVIS): ValidationContext {
   // Determine objective complexity based on task count and reasoning length
   let objectiveComplexity: ComplexityLevel = ComplexityLevel.SIMPLE;
   const taskCount = (session.payload.current_todos || []).length;
@@ -585,7 +585,7 @@ function createValidationContext(session: any, phase: Phase, reasoning: string, 
 // Seamless switching between component generation and cognitive orchestration modes
 // ============================================================================
 
-export interface ComponentCognitiveDualityInput extends ManusOrchestratorInput {
+export interface ComponentCognitiveDualityInput extends MessageJARVIS {
   // Mode selection
   orchestration_mode?: 'cognitive_only' | 'component_only' | 'hybrid_duality';
   
@@ -600,7 +600,7 @@ export interface ComponentCognitiveDualityInput extends ManusOrchestratorInput {
   constraint_resolution?: 'strict' | 'flexible' | 'adaptive';
 }
 
-export interface ComponentCognitiveDualityOutput extends ManusOrchestratorOutput {
+export interface ComponentCognitiveDualityOutput extends FromJARVIS {
   // Enhanced output with duality information
   orchestration_mode: 'cognitive_only' | 'component_only' | 'hybrid_duality';
   duality_metrics?: {
@@ -650,12 +650,12 @@ export function processComponentCognitiveDuality(
   }
   
   // Process based on orchestration mode
-  let baseOutput: ManusOrchestratorOutput;
+  let baseOutput: FromJARVIS;
   
   switch (orchestrationMode) {
     case 'cognitive_only':
       // Pure cognitive orchestration - use standard Manus FSM
-      baseOutput = processManusFSM(input);
+      baseOutput = processState(input);
       break;
       
     case 'component_only':
@@ -691,7 +691,7 @@ export function processComponentCognitiveDuality(
 function processComponentGenerationMode(
   input: ComponentCognitiveDualityInput,
   duality: ComponentCognitiveDuality
-): ManusOrchestratorOutput {
+): FromJARVIS {
   const sessionId = input.session_id;
   const session = stateManager.getSessionState(sessionId);
   const constraints = stateManager.getUnifiedConstraints(sessionId);
@@ -706,7 +706,7 @@ function processComponentGenerationMode(
   );
   
   // Process with component-focused FSM logic
-  const baseOutput = processManusFSM(input);
+  const baseOutput = processState(input);
   
   // Override system prompt with component generation focus
   return {
@@ -720,7 +720,7 @@ function processComponentGenerationMode(
 function processHybridDualityMode(
   input: ComponentCognitiveDualityInput,
   duality: ComponentCognitiveDuality
-): ManusOrchestratorOutput {
+): FromJARVIS {
   const sessionId = input.session_id;
   const session = stateManager.getSessionState(sessionId);
   const constraints = stateManager.getUnifiedConstraints(sessionId);
@@ -735,7 +735,7 @@ function processHybridDualityMode(
   );
   
   // Process with enhanced FSM logic
-  const baseOutput = processManusFSM(input);
+  const baseOutput = processState(input);
   
   // Override system prompt with hybrid duality integration
   return {

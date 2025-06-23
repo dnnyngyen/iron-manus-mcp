@@ -1,4 +1,4 @@
-# Manus FSM Architecture Guide
+# Iron Manus JARVIS Architecture Guide
 ## The Complete Guide to Deterministic Agent Control
 
 ### Table of Contents
@@ -16,9 +16,9 @@
 
 ## Executive Summary
 
-**What**: Manus FSM is an **AI Operating System Kernel** that implements Software 3.0 natural language computing through strict hierarchical control and sandboxed execution environments.
+**What**: Iron Manus JARVIS is an **AI Operating System Kernel** that implements Software 3.0 natural language computing through strict hierarchical control and sandboxed execution environments.
 
-**Why**: Traditional LLM interactions lack systematic structure and consistency. Manus FSM creates a **kernel-level control plane** that manages AI processes with the same rigor as an operating system manages applications - through system calls, environment variables, and process isolation.
+**Why**: Traditional LLM interactions lack systematic structure and consistency. Iron Manus JARVIS creates a **kernel-level control plane** that manages AI processes with the same rigor as an operating system manages applications - through system calls, environment variables, and process isolation.
 
 **How**: Through a **6-layer kernel architecture** that functions like an OS kernel managing a sandboxed application process. The FSM serves as the **ultimate authority** that allocates resources (tools), schedules processes (phases), and defines unbreakable rules (constraints) while Claude operates as a sophisticated **application in user space**.
 
@@ -26,18 +26,18 @@
 
 ## The OS Kernel & Sandboxed Application Architecture
 
-This is the most technically precise analogy for understanding Manus FSM's "Software 3.0" implementation where natural language becomes executable code running on a kernel-managed system.
+This is the most technically precise analogy for understanding Iron Manus JARVIS's "Software 3.0" implementation where natural language becomes executable code running on a kernel-managed system.
 
 ### 🔧 **The System (MCP Server / FSM): The Operating System Kernel**
 
-The **Manus FSM serves as the OS Kernel** - the ultimate authority that manages all system resources and defines the absolute, unbreakable rules of the execution environment.
+**Iron Manus JARVIS serves as the OS Kernel** - the ultimate authority that manages all system resources and defines the absolute, unbreakable rules of the execution environment.
 
 **Kernel Responsibilities**:
 - **Resource Management**: Controls which tools (hardware) Claude can access at any time
 - **Process Scheduling**: Manages phase transitions and execution flow  
 - **Memory Management**: Maintains session state and context across phases
 - **Security Enforcement**: Enforces tool constraints and prevents unauthorized access
-- **System Call Interface**: Provides the `manus_orchestrator` system call for process communication
+- **System Call Interface**: Provides the `JARVIS` system call for process communication
 
 **Just like a real OS kernel**: It doesn't do the application's work, but it dictates what any application is allowed to do. The FSM has **kernel-level authority** over Claude's execution environment.
 
@@ -125,7 +125,7 @@ This is exactly like command-line arguments passed to a new process:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    MANUS FSM STACK                         │
+│                    IRON MANUS JARVIS STACK                         │
 ├─────────────────────────────────────────────────────────────┤
 │ Claude Agent           │ Guided reasoning within prompts    │
 ├─────────────────────────────────────────────────────────────┤
@@ -143,12 +143,12 @@ This is exactly like command-line arguments passed to a new process:
 
 **`src/index.ts` (Lines 73-74)**: MCP Server entry point
 ```typescript
-const output = processManusFSM(input);
+const output = processState(input);
 ```
 
 **`src/core/fsm.ts` (Lines 104-372)**: Core FSM logic
 ```typescript
-export function processManusFSM(input: ManusOrchestratorInput): ManusOrchestratorOutput
+export function processState(input: MessageJARVIS): FromJARVIS
 ```
 
 **`src/core/prompts.ts`**: Multi-layer prompt engineering system
@@ -159,7 +159,7 @@ export function processManusFSM(input: ManusOrchestratorInput): ManusOrchestrato
 - `PHASE_ALLOWED_TOOLS` (Lines 662-671): Layer 5 - Tool constraint guidance
 
 **`src/core/fsm.ts`**: Context injection and prompt cascade orchestration
-- `processManusFSM` (Lines 104-372): Layer 3 - Dynamic context injection
+- `processState` (Lines 104-372): Layer 3 - Dynamic context injection
 - `extractMetaPromptFromTodo` (Lines 398-413): Meta-prompt parsing for agent spawning
 
 **`src/core/state.ts`**: Session state and context persistence
@@ -243,7 +243,7 @@ Think through your analysis approach before proceeding. Consider:
 
 **Prompt Engineering**: Layer 1 (phase) + Layer 2 (role methodology) + Layer 5 (tool constraint)
 **What Claude Sees**: "Think through your analysis approach..." + role-specific thinking steps + single tool option
-**What Claude Does**: Follows thinking methodology within prompt-guided reasoning → calls `manus_orchestrator` with `interpreted_goal`
+**What Claude Does**: Follows thinking methodology within prompt-guided reasoning → calls `JARVIS` with `interpreted_goal`
 
 #### **Phase 2: ENHANCE** - "Select Tools"
 **Purpose**: Goal refinement and requirement specification
@@ -257,12 +257,12 @@ if (nextPhase === 'ENHANCE' && session.payload.interpreted_goal) {
 
 **Prompt Engineering**: Layer 1 + Layer 2 + Layer 3 (context injection) + Layer 5
 **What Claude Sees**: Enhancement prompts + role methodology + previous phase context + single tool option  
-**What Claude Does**: Operates within prompt-guided enhancement patterns → calls `manus_orchestrator` with `enhanced_goal`
+**What Claude Does**: Operates within prompt-guided enhancement patterns → calls `JARVIS` with `enhanced_goal`
 
 #### **Phase 3: KNOWLEDGE** - "Wait for Execution"
 **Purpose**: Information gathering and domain research
 
-**Tool Constraint**: `['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'manus_orchestrator']`
+**Tool Constraint**: `['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'JARVIS']`
 **Innovation**: First phase with bounded tool choice (multiple options within whitelist)
 
 **Prompt Engineering**: Layer 1 + Layer 2 + Layer 5 (multiple constrained tools)
@@ -315,7 +315,7 @@ augmentedPrompt += `**📊 EXECUTION CONTEXT:**
 1. `TodoRead` → Claude checks current task (feels natural, but prompted to do so)
 2. **Meta-prompt detection** → Layer 4 prompts guide Claude to recognize `(ROLE:...)` patterns → Claude calls `Task()` with generated specialized prompts
 3. **Direct execution** → Layer 5 tool constraints guide Claude toward `Bash`/`Read`/`Write` for simple tasks
-4. **Single tool per iteration** → Layer 5 enforcement ensures Claude reports back via `manus_orchestrator`
+4. **Single tool per iteration** → Layer 5 enforcement ensures Claude reports back via `JARVIS`
 
 **Fractal Iteration Control** (`src/core/fsm.ts:208-217`):
 ```typescript
@@ -523,7 +523,7 @@ interface SessionState {
 ```
 
 ### State Persistence (`src/core/state.ts`)
-- **JSON file storage**: `manus_fsm_state.json`
+- **JSON file storage**: `JARVIS_state.json`
 - **Session isolation**: Multiple concurrent sessions supported
 - **Performance tracking**: Reasoning effectiveness over time
 - **Rollback support**: Can restore previous states on verification failure
@@ -629,7 +629,7 @@ export function updateReasoningEffectiveness(sessionId: string, success: boolean
    - Contains `(ROLE:...)` → Use `Task()` for specialized agent
    - Simple description → Use direct tools (`Bash`, `Read`, `Write`, `Edit`)
    - Requires analysis → Use `mcp__ide__executeCode` for Python computation
-3. **Single tool only** → Report results back via `manus_orchestrator`
+3. **Single tool only** → Report results back via `JARVIS`
 
 ### For Implementers Building Similar Systems
 
@@ -666,10 +666,10 @@ INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DON
 
 ### Tool Constraints by Phase
 ```
-INIT:      ['manus_orchestrator']
-QUERY:     ['manus_orchestrator'] 
-ENHANCE:   ['manus_orchestrator']
-KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'manus_orchestrator']
+INIT:      ['JARVIS']
+QUERY:     ['JARVIS'] 
+ENHANCE:   ['JARVIS']
+KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'JARVIS']
 PLAN:      ['TodoWrite']
 EXECUTE:   ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode']
 VERIFY:    ['TodoRead', 'Read', 'mcp__ide__executeCode']
@@ -715,7 +715,7 @@ ui_refiner:     Quality assessment, user testing, iterative improvement
 
 ## Summary
 
-The Manus FSM Framework represents a breakthrough in prompt engineering for AI agents. Through sophisticated multi-layer prompt cascades, context injection, and meta-prompting, it achieves reliable, predictable agent behavior while maintaining the complete experience of natural reasoning.
+The Iron Manus JARVIS Framework represents a breakthrough in prompt engineering for AI agents. Through sophisticated multi-layer prompt cascades, context injection, and meta-prompting, it achieves reliable, predictable agent behavior while maintaining the complete experience of natural reasoning.
 
 **Key Innovation**: The first system to prove that sophisticated agent control can emerge from elegant prompt engineering rather than rigid constraints. It doesn't fight Claude's reasoning - it architecturally guides it through carefully designed prompt cascades.
 

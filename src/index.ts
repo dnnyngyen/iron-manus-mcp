@@ -2,14 +2,14 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { processManusFSM, extractMetaPromptFromTodo } from './core/fsm.js';
-import { ManusOrchestratorInput } from './core/types.js';
+import { processState, extractMetaPromptFromTodo } from './core/fsm.js';
+import { MessageJARVIS } from './core/types.js';
 import { stateManager } from './core/state.js';
 import { EnhancedManusOrchestratorSchema, ToolParameterValidator } from './utils/enhanced-tool-schemas.js';
 
 const server = new Server(
   {
-    name: 'manus-fsm-orchestrator',
+    name: 'JARVIS',
     version: '1.0.0',
   },
   {
@@ -21,49 +21,50 @@ const server = new Server(
 
 // Single tool that controls the entire agent loop
 server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return {
-    tools: [
-      {
-        name: 'manus_orchestrator',
-        description: '🚀 **MANUS FSM ORCHESTRATOR** - Accurate replication of Manus\'s PyArmor-protected architecture. Implements the 6-step agent loop (Analyze Events → Select Tools → Wait for Execution → Iterate → Submit Results → Enter Standby) with 3 modules (Planner/Knowledge/Datasource) plus fractal orchestration. Features: Role-based cognitive enhancement (2.3x-3.2x reasoning multipliers), meta-prompt generation for Task() agent spawning, performance tracking, and single-tool-per-iteration enforcement. Hijacks Sequential Thinking for deterministic agent control.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            session_id: {
-              type: 'string',
-              description: 'Unique session identifier'
-            },
-            phase_completed: {
-              type: 'string',
-              enum: ['QUERY', 'ENHANCE', 'KNOWLEDGE', 'PLAN', 'EXECUTE', 'VERIFY'],
-              description: 'Phase that Claude just completed (omit for initial call)'
-            },
-            initial_objective: {
-              type: 'string',
-              description: 'User\'s goal (only on first call)'
-            },
-            payload: {
-              type: 'object',
-              description: 'Phase-specific data from Claude',
-              additionalProperties: true
-            }
+  const tools = [
+    {
+      name: 'JARVIS',
+      description: '🚀 **JARVIS Finite State Machine Controller** - Accurate replication of Manus\'s PyArmor-protected architecture. Implements the 6-step agent loop (Analyze Events → Select Tools → Wait for Execution → Iterate → Submit Results → Enter Standby) with 3 modules (Planner/Knowledge/Datasource) plus fractal orchestration. Features: Role-based cognitive enhancement (2.3x-3.2x reasoning multipliers), meta-prompt generation for Task() agent spawning, performance tracking, and single-tool-per-iteration enforcement. Hijacks Sequential Thinking for deterministic agent control.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          session_id: {
+            type: 'string',
+            description: 'Unique session identifier'
           },
-          required: ['session_id']
-        }
+          phase_completed: {
+            type: 'string',
+            enum: ['QUERY', 'ENHANCE', 'KNOWLEDGE', 'PLAN', 'EXECUTE', 'VERIFY'],
+            description: 'Phase that Claude just completed (omit for initial call)'
+          },
+          initial_objective: {
+            type: 'string',
+            description: 'User\'s goal (only on first call)'
+          },
+          payload: {
+            type: 'object',
+            description: 'Phase-specific data from Claude',
+            additionalProperties: true
+          }
+        },
+        required: ['session_id']
       }
-    ]
-  };
+    }
+  ];
+  
+  console.error(`DEBUG: Returning ${tools.length} tools:`, tools.map(t => t.name));
+  return { tools };
 });
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
   
-  if (name !== 'manus_orchestrator') {
+  if (name !== 'JARVIS') {
     throw new Error(`Unknown tool: ${name}`);
   }
 
   try {
-    const input = args as unknown as ManusOrchestratorInput;
+    const input = args as unknown as MessageJARVIS;
     
     // Validate required fields
     if (!input.session_id) {
@@ -71,10 +72,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     // Process through FSM
-    const output = processManusFSM(input);
+    const output = processState(input);
     
     // Enhanced response formatting with performance metrics and fractal orchestration info
-    let responseText = `# 🎯 **MANUS FSM - Phase: ${output.next_phase}**\n\n`;
+    let responseText = `# 🎯 **J.A.R.V.I.S. MODE: ${output.next_phase}**\n\n`;
     responseText += `${output.system_prompt}\n\n`;
     
     if (output.status === 'DONE') {
@@ -122,7 +123,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // Force single tool when only one option (QUERY, ENHANCE, PLAN phases)
       response.tool_code = {
         tool: output.allowed_next_tools[0],
-        args: output.allowed_next_tools[0] === 'manus_orchestrator' ? {
+        args: output.allowed_next_tools[0] === 'JARVIS' ? {
           session_id: input.session_id
         } : {}
       };
@@ -143,7 +144,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
     // Enhanced error handling with recovery guidance
-    let errorResponse = `# ❌ **MANUS FSM ERROR**\n\n`;
+    let errorResponse = `# ❌ **J.A.R.V.I.S. ERROR**\n\n`;
     errorResponse += `**Error**: ${errorMessage}\n\n`;
     errorResponse += `## 🔧 **Recovery Protocol**\n`;
     errorResponse += `1. Check session_id format (should be unique string)\n`;
@@ -152,7 +153,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     errorResponse += `4. Check payload structure for phase-specific data\n\n`;
     errorResponse += `## 📖 **Manus FSM Flow**\n`;
     errorResponse += `QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE\n\n`;
-    errorResponse += `**Next Action**: Call manus_orchestrator with corrected parameters.`;
+    errorResponse += `**Next Action**: Call JARVIS with corrected parameters.`;
     
     return {
       content: [
@@ -172,7 +173,7 @@ async function main() {
   await server.connect(transport);
   
   // Enhanced startup logging with architecture info
-  console.error('🚀 Manus FSM MCP Server started successfully');
+  console.error('🚀 Iron Manus MCP Server started successfully');
   console.error('📋 Architecture: 6-step agent loop + 3 modules + fractal orchestration');
   console.error('🎯 Capabilities: Role-based cognitive enhancement, meta-prompt generation, performance tracking');
   console.error('⚡ Ready to hijack Sequential Thinking and provide Manus-grade agent orchestration!');

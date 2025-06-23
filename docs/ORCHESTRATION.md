@@ -1,11 +1,11 @@
-The Manus FSM Orchestration Loop: Complete Chronological Breakdown
+Iron Manus JARVIS Orchestration Loop: Complete Chronological Breakdown
 
   Initial Invocation
 
-  Natural Language: User asks for analysis of the Manus codebase architecture
+  Natural Language: User asks for analysis of the Iron Manus codebase architecture
   MCP Server: Receives initial call with session_id and initial_objective
   Code Execution (src/index.ts:73-74):
-  const output = processManusFSM(input);
+  const output = processState(input);
 
   FSM Logic (src/core/fsm.ts:109-121):
   if (input.initial_objective) {
@@ -36,11 +36,11 @@ The Manus FSM Orchestration Loop: Complete Chronological Breakdown
   **🎯 ROLE-SPECIFIC FOCUS:** systematic_planning
   **📊 QUALITY THRESHOLD:** STRATEGIZE_AND_COORDINATE
 
-  Tool Constraint (src/core/prompts.ts:582): QUERY: ['manus_orchestrator']
+  Tool Constraint (src/core/prompts.ts:582): QUERY: ['JARVIS']
 
   What I See: "Think through your analysis approach" + role-specific cognitive enhancement
   What I Do: I analyze the objective, detect it's a technical evaluation task, identify the primary role as "analyzer"
-  Tool Call: manus_orchestrator with phase_completed: 'QUERY' and payload: {interpreted_goal: "Conduct comprehensive architectural analysis..."}
+  Tool Call: JARVIS with phase_completed: 'QUERY' and payload: {interpreted_goal: "Conduct comprehensive architectural analysis..."}
 
   MCP Server Response (src/core/fsm.ts:133-140):
   if (input.phase_completed === 'QUERY') {
@@ -56,7 +56,7 @@ The Manus FSM Orchestration Loop: Complete Chronological Breakdown
   Natural Language: I need to refine and enhance the interpreted goal
   MCP Server: Phase transitions QUERY→ENHANCE with interpreted goal stored
   System Prompt (src/core/prompts.ts:595-596):
-  Think through enhancement opportunities, then call manus_orchestrator with phase_completed: "ENHANCE"
+  Think through enhancement opportunities, then call JARVIS with phase_completed: "ENHANCE"
 
   Context Injection (src/core/fsm.ts:319-320):
   if (nextPhase === 'ENHANCE' && session.payload.interpreted_goal) {
@@ -65,7 +65,7 @@ The Manus FSM Orchestration Loop: Complete Chronological Breakdown
 
   What I See: Enhanced prompt with context from previous phase + cognitive enhancement
   What I Do: I take the interpreted goal and add missing details, edge cases, technical constraints
-  Tool Call: manus_orchestrator with phase_completed: 'ENHANCE' and payload: {enhanced_goal: "Comprehensive architectural quality assessment..."}
+  Tool Call: JARVIS with phase_completed: 'ENHANCE' and payload: {enhanced_goal: "Comprehensive architectural quality assessment..."}
 
   MCP Server Response (src/core/fsm.ts:143-150):
   if (input.phase_completed === 'ENHANCE') {
@@ -81,13 +81,13 @@ The Manus FSM Orchestration Loop: Complete Chronological Breakdown
   Natural Language: I need to assess if I need external information
   MCP Server: Phase transitions ENHANCE→KNOWLEDGE with enhanced goal stored
   System Prompt (src/core/prompts.ts:597):
-  Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), manus_orchestrator (skip research)
+  Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), JARVIS (skip research)
 
-  Tool Constraint (src/core/prompts.ts:585): KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'manus_orchestrator']
+  Tool Constraint (src/core/prompts.ts:585): KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'JARVIS']
 
   What I See: First phase where I have tool choice, but bounded to specific whitelist
   What I Do: I evaluate my domain knowledge, determine I have sufficient TypeScript/Node.js expertise, decide no external research needed
-  Tool Call: manus_orchestrator with phase_completed: 'KNOWLEDGE' and payload: {knowledge_gathered: "Sufficient domain knowledge available..."}
+  Tool Call: JARVIS with phase_completed: 'KNOWLEDGE' and payload: {knowledge_gathered: "Sufficient domain knowledge available..."}
 
   MCP Server Response (src/core/fsm.ts:152-159):
   if (input.phase_completed === 'KNOWLEDGE') {
@@ -103,7 +103,7 @@ The Manus FSM Orchestration Loop: Complete Chronological Breakdown
   Natural Language: I need to break down the enhanced goal into actionable steps
   MCP Server: Phase transitions KNOWLEDGE→PLAN with knowledge assessment stored
   System Prompt (src/core/prompts.ts:598):
-  Think through strategic planning, then use TodoWrite to create todos, then call manus_orchestrator with phase_completed: "PLAN"
+  Think through strategic planning, then use TodoWrite to create todos, then call JARVIS with phase_completed: "PLAN"
 
   Fractal Orchestration Guidance (src/core/fsm.ts:322-323):
   augmentedPrompt += `\n\n**🔄 FRACTAL ORCHESTRATION GUIDE:**\nFor complex sub-tasks that need specialized expertise, create todos with this format:\n"(ROLE: coder) 
@@ -119,7 +119,7 @@ The Manus FSM Orchestration Loop: Complete Chronological Breakdown
   - UI todos: "(ROLE: ui_architect) (CONTEXT: component_system) (PROMPT: Design component architecture...) (OUTPUT: ui_design_system)"
 
   Tool Call: TodoWrite with structured todo list
-  Then: manus_orchestrator with phase_completed: 'PLAN' and payload: {plan_created: true}
+  Then: JARVIS with phase_completed: 'PLAN' and payload: {plan_created: true}
 
   MCP Server Response (src/core/fsm.ts:162-188):
   if (input.phase_completed === 'PLAN') {
@@ -159,7 +159,7 @@ The Manus FSM Orchestration Loop: Complete Chronological Breakdown
   What I Do:
   - Iteration 1: LS to examine directory structure (direct execution)
   - Iteration 2: TodoWrite to mark task complete, update status
-  - Iteration 3: manus_orchestrator to report execution results
+  - Iteration 3: JARVIS to report execution results
 
   MCP Server Response (src/core/fsm.ts:191-217):
   if (input.phase_completed === 'EXECUTE') {
@@ -200,7 +200,7 @@ The Manus FSM Orchestration Loop: Complete Chronological Breakdown
 
   What I See: Verification context with completion metrics and strict requirements
   What I Do: I assess the work against original objective, check completion status
-  Tool Call: manus_orchestrator with phase_completed: 'VERIFY' and payload: {verification_passed: true/false}
+  Tool Call: JARVIS with phase_completed: 'VERIFY' and payload: {verification_passed: true/false}
 
   MCP Server Validation (src/core/fsm.ts:220-253):
   if (input.phase_completed === 'VERIFY') {

@@ -1405,5 +1405,17 @@
     },
     "reasoning_effectiveness": 0.7000000000000001,
     "last_activity": 1750702566696
+  },
+  "test-123": {
+    "current_phase": "ENHANCE",
+    "initial_objective": "Test the orchestrator functionality",
+    "detected_role": "researcher",
+    "payload": {
+      "current_task_index": 0,
+      "current_todos": [],
+      "phase_transition_count": 0
+    },
+    "reasoning_effectiveness": 0.8,
+    "last_activity": 1750712842255
   }
 }

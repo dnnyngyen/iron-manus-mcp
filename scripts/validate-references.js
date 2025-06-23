@@ -16,33 +16,33 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Reference data - simplified for immediate functionality
+// Reference data - updated for new file structure
 const REFERENCE_INDEX = {
-  'processManusFSM': {
+  'processState': {
     file: 'src/core/fsm.ts',
     line: 104,
-    referencedIn: ['src/index.ts:74', 'docs/001_ARCHITECTURE_GUIDE.md:149'],
+    referencedIn: ['src/index.ts:74', 'docs/ARCHITECTURE.md:149'],
     description: 'Main FSM processing function',
     type: 'function'
   },
   'validateTaskCompletion': {
     file: 'src/core/fsm.ts',
     line: 467,
-    referencedIn: ['src/core/fsm.ts:220', 'docs/001_ARCHITECTURE_GUIDE.md:333'],
+    referencedIn: ['src/core/fsm.ts:220', 'docs/ARCHITECTURE.md:333'],
     description: 'Mathematical validation engine',
     type: 'function'
   },
   'extractMetaPromptFromTodo': {
     file: 'src/core/fsm.ts',
     line: 398,
-    referencedIn: ['src/index.ts:5', 'docs/001_ARCHITECTURE_GUIDE.md:382'],
+    referencedIn: ['src/index.ts:5', 'docs/ARCHITECTURE.md:382'],
     description: 'Meta-prompt extraction for fractal orchestration',
     type: 'function'
   },
   'ROLE_CONFIG': {
     file: 'src/core/prompts.ts',
     line: 17,
-    referencedIn: ['docs/001_ARCHITECTURE_GUIDE.md:156'],
+    referencedIn: ['docs/ARCHITECTURE.md:156'],
     description: 'Role-specific thinking methodologies',
     type: 'constant'
   }
@@ -50,13 +50,13 @@ const REFERENCE_INDEX = {
 
 const DOCUMENTATION_REFERENCES = {
   'ARCHITECTURE_GUIDE': {
-    file: 'docs/001_ARCHITECTURE_GUIDE.md',
+    file: 'docs/ARCHITECTURE.md',
     referencedIn: ['README.md', 'docs/README.md'],
     description: 'Complete guide to deterministic agent control',
     codeReferences: ['src/core/fsm.ts:104', 'src/index.ts:73']
   },
   'ORCHESTRATION_LOOP': {
-    file: 'docs/002_ORCHESTRATION_LOOP.md',
+    file: 'docs/ORCHESTRATION.md',
     referencedIn: ['docs/README.md'],
     description: 'Chronological breakdown of 6-phase workflow',
     codeReferences: ['src/core/fsm.ts:132']

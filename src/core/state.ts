@@ -12,7 +12,7 @@ import {
   ComponentCognitiveMetrics 
 } from './types.js';
 
-const STATE_FILE = './manus_fsm_state.json';
+const STATE_FILE = './JARVIS_state.json';
 
 class StateManager {
   private sessions: Map<string, SessionState> = new Map();
