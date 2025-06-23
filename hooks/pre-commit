@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# Manus FSM Pre-commit Hook
+# Validates all references before allowing commits
+
+echo "🔍 Manus FSM: Validating references..."
+
+# Run reference validation
+npm run validate-references
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Reference validation failed!"
+  echo "🔧 Fix broken references before committing:"
+  echo "   - Check if referenced files exist"
+  echo "   - Verify line numbers are correct"
+  echo "   - Update documentation links"
+  echo ""
+  echo "💡 Use 'npm run update-references' to fix automatically"
+  echo "   or 'npm run validate-references' to see details"
+  exit 1
+fi
+
+echo "✅ All references validated successfully"
+
+# Check for common issues
+echo "🔍 Checking for common reference issues..."
+
+# Check for hardcoded line numbers in new files
+git diff --cached --name-only | while read file; do
+  if [ -f "$file" ]; then
+    # Check for patterns like "line 123" or ":123" that might be hardcoded
+    if git diff --cached "$file" | grep -E "line [0-9]+|:[0-9]+\)" >/dev/null 2>&1; then
+      echo "⚠️  Warning: Found potential hardcoded line numbers in $file"
+      echo "   Consider using the reference index instead"
+    fi
+  fi
+done
+
+# Check for broken imports in staged files
+echo "🔗 Checking imports in staged files..."
+git diff --cached --name-only | grep -E "\.(ts|js)$" | while read file; do
+  if [ -f "$file" ]; then
+    # Check for relative imports that might be broken
+    if grep -E "from ['\"]\.\.?/" "$file" >/dev/null 2>&1; then
+      echo "📁 Found relative imports in $file - ensure paths are correct"
+    fi
+  fi
+done
+
+echo "✅ Pre-commit validation complete"
+exit 0

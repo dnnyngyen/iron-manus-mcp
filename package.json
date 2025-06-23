@@ -8,21 +8,43 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:e2e": "jest --testPathPattern=e2e",
+    "test:performance": "jest --testPathPattern=performance",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "validate-references": "node scripts/validate-references.js",
+    "update-references": "ts-node scripts/update-references.ts",
+    "refs:validate": "npm run validate-references",
+    "refs:update": "npm run update-references",
+    "refs:move": "npm run update-references move",
+    "refs:rename": "npm run update-references rename",
+    "docs:validate": "npm run validate-references && echo '✅ Documentation references validated'",
+    "install-hooks": "cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit && echo '✅ Git hooks installed'"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "@types/node": "^20.0.0"
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@types/supertest": "^2.0.0",
+    "jest": "^29.5.0",
+    "supertest": "^6.3.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "keywords": [
     "mcp",
-    "fsm", 
+    "fsm",
     "agent",
     "orchestrator",
     "claude",
