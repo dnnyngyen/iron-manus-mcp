@@ -1,172 +1,173 @@
-# Iron Manus JARVIS - Native Task Agent System
+# Iron Manus MCP (& J.A.R.V.I.S.)
+**Experimental "Software 3.0" Implementation**
 
-## An Experimental Software 3.0 Implementation
+> Forked Sequential Thinking and turned it into a Thread of Thought (Thot) Meta-Prompting tool with Claude-code's built-in features.
 
-**My first project** exploring how Claude's native tools can be leveraged for autonomous development. The goal: demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
+## Overview
 
-## What Makes This Different
+"Iron Manus" was inspired by a recent interest I had in Chinese AI Superagents, with the name being recently inspired by Andrej Karpathy's "Iron Man" analogy.
 
-1. **Uses Claude's own tools** - No external APIs or complex orchestration
-2. **Natural language as code** - Prompts become executable programs  
-3. **Recursive agent spawning** - Agents can create specialized sub-agents
-4. **Minimal complexity** - Single MCP tool handles everything
+Instead of building complex orchestration systems, it repurposes Claude's native `Task()`, `TodoWrite`, and `TodoRead` tools for autonomous decomposition, delegation. and task management.
 
-Iron Manus JARVIS hijacks Claude's built-in `Task()` and `TodoWrite/TodoRead` tools to create autonomous task agents. **For developers who want AI autopilot**: Describe what you want, watch JARVIS break it down and spawn specialized agents that work autonomously.
+## Key Concepts
 
-## Software 3.0 Context
+### Native Tool Integration
+- **Task() spawning** - Creates specialized Claude instances as autonomous agents with context management, so conversations can get over 200K+ tokens. (More practical with Sonnet 4)
+- **TodoWrite/TodoRead** - Each Todo List item Claude generates gets broken down into a set of sub-ToDo lists for native task decomposition, state management, and progress tracking  
+- **Meta-prompt compilation** - Transforms simple syntax into specialized agent prompts
+- **Single MCP tool** - Entire system runs through one interface
 
-Building on Andrej Karpathy's vision where AI becomes augmentation suits for human intelligence:
+### The Meta-Prompt DSL
+```
+(ROLE: agent_type) (CONTEXT: domain) (PROMPT: instructions) (OUTPUT: deliverable)
+```
 
-- **Software 1.0**: Hand-written code (if/else, loops, functions)
-- **Software 2.0**: Neural networks learn patterns from data  
-- **Software 3.0**: Natural language as executable programs with AI augmentation
+This syntax automatically generates specialized prompts for Task() agents:
+```typescript
+// Simple input:
+"(ROLE: coder) (CONTEXT: authentication) (PROMPT: Implement JWT auth) (OUTPUT: production_code)"
 
-This project explores Software 3.0 by turning **prompts into programs** that compile into agent behavior through Claude's native tooling. Instead of traditional code orchestrating AI, natural language becomes the orchestration layer itself.
+// Becomes a full agent prompt with:
+// - Role-specific thinking methodologies
+// - Domain context and frameworks  
+// - Quality validation rules
+// - Output specifications
+```
 
-## The Core Innovation
+### 6-Phase Workflow
+```
+QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+```
 
-### Native Task Agents (Not External APIs)
-
-- **Uses Claude's Task() tool** to spawn actual Claude instances as specialized agents
-- **TodoWrite/TodoRead becomes task decomposition** - automatic breakdown and execution tracking
-- **Meta-prompt syntax parsing** - `(ROLE: coder) (CONTEXT: auth) (PROMPT: build JWT) (OUTPUT: code)`
-- **Sequential Thinking fork** - repurposed as a finite state machine for workflow control
-
-### How It Works
-
-1. **You describe a goal** - "Build a React dashboard with auth and real-time charts"
-2. **JARVIS auto-decomposes** - Uses TodoWrite to break into specialized tasks
-3. **Agents spawn via Task()** - Creates coder, analyzer, ui_architect agents automatically  
-4. **Autonomous execution** - Each agent works independently then reports back
-5. **Minimal intervention** - You mostly just watch it work
+Each phase uses native Claude tools for state management and progression:
+- **Planning** creates meta-prompt todos via TodoWrite
+- **Execution** spawns Task() agents for complex work
+- **Verification** ensures quality through systematic checks
 
 ## Example Usage
 
+**Input:**
 ```typescript
-// Just call JARVIS with your goal
 await mcp.callTool({
   name: 'JARVIS',
   args: {
-    session_id: 'my-session',
-    initial_objective: 'Build a dashboard with user auth and data visualization'
+    session_id: 'demo',
+    initial_objective: 'Create a React dashboard with authentication'
   }
 });
-
-// JARVIS automatically:
-// 1. Breaks down the goal using TodoWrite
-// 2. Spawns Task(ui_architect) for component design
-// 3. Spawns Task(coder) for auth implementation  
-// 4. Spawns Task(analyzer) for performance optimization
-// 5. Coordinates everything through the 6-phase FSM
 ```
 
-## Technical Implementation
+**Automatic breakdown:**
+1. System analyzes the request and detects optimal role (planner)
+2. Enhances goal with missing technical requirements
+3. Creates specialized todos including meta-prompts
+4. Spawns Task(ui_architect) and Task(coder) agents autonomously
+5. Agents work independently and report back
+6. Verifies completion against success criteria
 
-### 6-Phase Finite State Machine
+## Implementation Details
 
-- **QUERY** - Understand what you want
-- **ENHANCE** - Add missing details and requirements
-- **KNOWLEDGE** - Research if needed
-- **PLAN** - Break into tasks (creates meta-prompts for agents)
-- **EXECUTE** - Run tasks (spawns Task() agents or direct execution)
-- **VERIFY** - Check completion and quality
-
-### Natural Language Programming
-
-The system compiles natural language into executable agent behavior:
-
-```typescript
-// Traditional Software 1.0
-function processTask(task) {
-  if (task.type === 'complex') {
-    return spawnAgent(task);
-  }
-  return executeDirectly(task);
-}
-
-// Software 3.0 in Iron Manus
-const EXECUTE_PROMPT = `Think through your execution strategy:
-- If todo contains (ROLE:...) pattern, use Task() tool to spawn specialized agent
-- If todo is direct execution, use appropriate tools (Bash/Browser/etc.)
-- Single tool per iteration, then report back`;
+### Architecture
 ```
-
-### Meta-Prompt Agent Spawning
-
-When JARVIS creates a todo like:
-
-```text
-(ROLE: coder) (CONTEXT: authentication) (PROMPT: Implement JWT auth with refresh tokens) (OUTPUT: production_code)
-```
-
-It automatically spawns a Task() agent with a specialized prompt that includes:
-
-- Role-specific thinking methodologies
-- Context about the auth domain
-- Detailed implementation instructions
-- Quality standards and validation rules
-
-### Sequential Thinking Fork
-
-Credit to Sequential Thinking, but we use it differently:
-
-- **Not for reasoning chains** - Used as FSM controller
-- **Prompt injection engine** - Enforces workflow and injects specialized prompts
-- **State management** - Tracks session progress and agent coordination
-
-## Architecture
-
-```text
 iron-manus-mcp/
 ├── src/
-│   ├── index.ts          # MCP server with single JARVIS tool
+│   ├── index.ts          # MCP server entry point
 │   ├── core/
-│   │   ├── fsm.ts        # 6-phase state machine logic
-│   │   ├── prompts.ts    # Phase-specific prompt templates
-│   │   ├── state.ts      # Session and agent state management
+│   │   ├── fsm.ts        # 6-phase state machine
+│   │   ├── prompts.ts    # Role-specific prompt templates
+│   │   ├── state.ts      # Session management
 │   │   └── types.ts      # Core interfaces
 │   └── utils/
-└── docs/
-    ├── ARCHITECTURE.md   # Deep dive into the FSM design
-    ├── ORCHESTRATION.md  # Phase-by-phase workflow explanation
-    ├── PROMPTS.md        # How prompt injection works
-    └── visuals/          # Examples and diagrams
+└── docs/                 # Technical documentation
 ```
+
+### Role Specialization
+The system includes specialized roles with distinct thinking methodologies:
+- **Planner** - Strategic decomposition and dependency analysis
+- **Coder** - Implementation with testing and best practices
+- **Critic** - Security review and quality assessment
+- **Analyzer** - Data analysis and pattern recognition
+- **Researcher** - Information gathering and synthesis
+- **Synthesizer** - Integration and optimization
+
+### Recursive Capabilities
+Spawned agents can create their own sub-tasks and spawn additional agents, enabling:
+- Unlimited depth of specialization
+- Autonomous delegation of complex work
+- Self-organizing task hierarchies
+
+## Current Status
+
+### ✅ Implemented
+- 6-phase FSM orchestration
+- Meta-prompt DSL parsing and compilation
+- Role detection and specialization
+- Recursive agent spawning via Task()
+- Session state persistence
+- Quality verification with rollback
+
+### 🚧 In Development  
+- Enhanced AST-based meta-prompt validation
+- Advanced cognitive framework integration
+- Performance optimization and caching
+
+### 💭 Research Areas
+- Component-cognitive duality patterns
+- Cross-session knowledge persistence
+- Advanced constraint satisfaction
 
 ## Installation
 
-1. **Clone and build:**
+```bash
+git clone <repository-url>
+cd iron-manus-mcp
+npm install
+npm run build
+```
 
-   ```bash
-   git clone <repo-url>
-   cd iron-manus-mcp
-   npm install
-   npm run build
-   ```
+Add to your Claude Code MCP configuration:
+```json
+{
+  "mcpServers": {
+    "iron-manus-jarvis": {
+      "command": "node",
+      "args": ["./dist/index.js"]
+    }
+  }
+}
+```
 
-2. **Add to Claude Code:**
+## Technical Philosophy
 
-   ```bash
-   # Add to your MCP config
-   ```
+This project explores **Software 3.0** concepts where natural language becomes executable through AI augmentation. Rather than building external orchestration layers, it demonstrates that sophisticated agent behavior can emerge from elegant tool integration.
 
-## Why This Experiment Matters
+The approach prioritizes:
+- **Simplicity** over complexity
+- **Native integration** over external dependencies  
+- **Emergent behavior** over rigid control structures
+- **Experimentation** over premature optimization
 
-- **Genuinely novel approach** - Hijacking Claude's native tools for agent behavior
-- **Software 3.0 exploration** - Natural language becomes the programming layer
-- **Elegant simplicity** - Single MCP tool replaces complex agent frameworks
-- **Recursive capabilities** - Agents spawn sub-agents through meta-prompting
-- **Zero external dependencies** - Everything runs through Claude's existing capabilities
+## Limitations & Considerations
 
-## Credits & Inspiration
+- Experimental system - not production-ready
+- Depends on Claude's native tool availability
+- Performance limited by Claude's context windows
+- Quality depends on prompt engineering effectiveness
 
-- **Andrej Karpathy** - Software 3.0 vision and "Iron Man suits for AI" concept
-- **Sequential Thinking** - Forked their approach but repurposed as FSM controller
-- **Claude's native tools** - Task(), TodoWrite/TodoRead are the foundation
-- **Iron Man inspiration** - JARVIS as AI augmentation suit metaphor
+## Documentation
+
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Technical deep dive
+- **[GETTING_STARTED.md](./docs/GETTING_STARTED.md)** - Tutorial and examples
+- **[EXAMPLES.md](./docs/EXAMPLES.md)** - Real usage scenarios
+
+## Inspiration & Credits
+
+- **Andrej Karpathy** - Software 3.0 vision and AI augmentation concepts
+- **Sequential Thinking** - Workflow orchestration patterns (adapted for FSM control)
+- **Claude's native tooling** - Foundation capabilities that make this possible
 
 ---
 
-This is my first project exploring how Claude's native features can be leveraged for autonomous development. The goal is to demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
+**Note**: This is an experimental exploration of native tool integration for agent behavior. The goal is to demonstrate that sophisticated orchestration can emerge from simple, well-designed tool usage rather than complex external systems.
 
-Check [ARCHITECTURE.md](./docs/ARCHITECTURE.md) for the technical deep dive.
+For technical details and implementation guides, see the documentation in the `docs/` directory.
