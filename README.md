@@ -1,3 +1,4 @@
+![Iron Manus MCP](./iron-manus-mcp.png)
 # Iron Manus MCP (& J.A.R.V.I.S.)
 **Experimental "Software 3.0" Implementation**
 
