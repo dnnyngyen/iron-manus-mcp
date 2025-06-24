@@ -1,4 +1,4 @@
-# 🦾 Iron Manus MCP (Software 3.0)
+# 🦾 Iron Manus MCP (+ J.A.R.V.I.S. Orchestrator)
 **Experimental "Software 3.0" Implementation**
 
 > Forked Sequential Thinking and turned it into a Thread of Thought (ThoT) Meta-Prompting tool with Claude-code's built-in features.
