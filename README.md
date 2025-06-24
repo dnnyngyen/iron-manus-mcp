@@ -19,7 +19,7 @@ Instead of building complex orchestration systems, it repurposes Claude's native
 !!! **Single MCP One-Shot tool** - Entire system runs through one interface
   
 
-[![Watch the video](https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg)](https://www.youtube.com/watch?v=nImkimPQCjk)
+          [![Watch the video](https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg)](https://www.youtube.com/watch?v=nImkimPQCjk)
 
 
 <div style="width:400px; height:264px; overflow:hidden; border:1px solid #ccc;">
