@@ -18,6 +18,27 @@ Not affiliated with Manus AI. "Iron Manus" inspired by Andrej Karpathy's "Iron M
 
 !!! **Single MCP One-Shot tool** - Entire system runs through one interface (Currently working on supporting concurrency, some tasks may take a while)
 
+## Installation
+
+```bash
+git clone https://github.com/dnnyngyen/iron-manus-mcp
+cd iron-manus-mcp
+npm install
+npm run build
+```
+
+Add to your Claude Code MCP configuration:
+```json
+{
+  "mcpServers": {
+    "iron-manus-mcp": {
+      "command": "node",
+      "args": ["./dist/index.js"]
+    }
+  }
+}
+```
+
 ## Click to Watch Demo:
 
 <a href="https://www.youtube.com/watch?v=nImkimPQCjk" target="_blank">
@@ -111,28 +132,6 @@ Spawned agents can create their own sub-tasks and spawn additional agents, enabl
 - Unlimited depth of specialization
 - Autonomous delegation of complex work
 - Self-organizing task hierarchies
-
-
-## Installation
-
-```bash
-git clone https://github.com/dnnyngyen/iron-manus-mcp
-cd iron-manus-mcp
-npm install
-npm run build
-```
-
-Add to your Claude Code MCP configuration:
-```json
-{
-  "mcpServers": {
-    "iron-manus-mcp": {
-      "command": "node",
-      "args": ["./dist/index.js"]
-    }
-  }
-}
-```
 
 ## Technical Philosophy
 
