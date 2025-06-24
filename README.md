@@ -5,7 +5,7 @@
 
 ## Overview
 
-"Iron Manus" came from the Chinese AI Superagent + recent inspiration by Andrej Karpathy's "Iron Man" analogy for the future of Software 3.0.
+Not affiliated with Manus AI. "Iron Manus" inspired by Andrej Karpathy's "Iron Man" analogy for the future of Software 3.0.
 
 Instead of building complex orchestration systems, it repurposes Claude's native `Task()`, `TodoWrite`, and `TodoRead` tools for autonomous decomposition, delegation. and task management.
 
