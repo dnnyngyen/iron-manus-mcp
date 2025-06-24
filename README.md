@@ -1,5 +1,3 @@
-<img src="./iron-manus-mcp.png" alt="Iron Manus MCP" width="200" height="200"/>
-
 # Iron Manus MCP (& J.A.R.V.I.S.)
 **Experimental "Software 3.0" Implementation**
 
