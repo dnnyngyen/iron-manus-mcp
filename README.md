@@ -7,7 +7,7 @@
 
 Not affiliated with Manus AI. "Iron Manus" inspired by Andrej Karpathy's "Iron Man" analogy for the future of Software 3.0.
 
-Simple but surprisingly effective; mainly built around Claude's native `Task()`, `TodoWrite`, and `TodoRead` tools for autonomous decomposition, delegation. and task management.
+**NO API KEY NEEDED** Simple but surprisingly effective; mainly built around Claude's native `Task()`, `TodoWrite`, and `TodoRead` tools for autonomous decomposition, delegation. and task management.
 
 ## Key Concepts
 
