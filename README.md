@@ -5,7 +5,7 @@
 
 ## Overview
 
-"Iron Manus" was inspired by a recent interest I had in Chinese AI Superagents, with the name being recently inspired by Andrej Karpathy's "Iron Man" analogy.
+"Iron Manus" came from a recent interest I had in Chinese AI Superagents, with the name being recently inspired by Andrej Karpathy's "Iron Man" analogy.
 
 Instead of building complex orchestration systems, it repurposes Claude's native `Task()`, `TodoWrite`, and `TodoRead` tools for autonomous decomposition, delegation. and task management.
 
