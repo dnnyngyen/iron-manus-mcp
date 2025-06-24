@@ -18,17 +18,9 @@ Instead of building complex orchestration systems, it repurposes Claude's native
 
 + **Single MCP One-Shot tool** - Entire system runs through one interface
 
-```
-
-flowchart TD
-    A[Layer 1: Base Phase Prompts] -->|Workflow Programming| B[Layer 2: Role Thinking Methodologies]
-    B -->|Cognitive Algorithms| C[Layer 3: Dynamic Context Injection]
-    C -->|Runtime State| D[Layer 4: Meta-Prompt Generation]
-    D -->|Program Compilation| E[Layer 5: Tool Constraint Guidance]
-    E -->|API Interfaces| F[Layer 6: Recursive Meta-Prompting]
-    F -->|Agent Spawning| D
-    
-```
+<div style="width:600px; height:400px; overflow:hidden; border:1px solid #ccc;">
+  <img src="architecture.png" style="width:100%; height:100%; object-fit:cover;">
+</div>
 
 ### The Meta-Prompt DSL
 ```
@@ -56,6 +48,10 @@ Each phase uses native Claude tools for state management and progression:
 - **Planning** creates meta-prompt todos via TodoWrite
 - **Execution** spawns Task() agents for complex work
 - **Verification** ensures quality through systematic checks
+
+<div style="width:600px; height:400px; overflow:hidden; border:1px solid #ccc;">
+  <img src="runtime.png" style="width:100%; height:100%; object-fit:cover;">
+</div>
 
 ## Example Usage
 
@@ -140,13 +136,6 @@ The approach prioritizes:
 - **Native integration** over external dependencies  
 - **Emergent behavior** over rigid control structures
 - **Experimentation** over premature optimization
-
-## Limitations & Considerations
-
-- Working Proof-of-Concept
-- Depends on Claude's native tool availability
-- Performance limited by Claude's context windows
-- Quality depends on prompt engineering effectiveness
 
 ## Documentation
 
