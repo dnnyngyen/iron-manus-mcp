@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * MANUS FSM REFERENCE VALIDATION SCRIPT (JavaScript Version)
+ * IRON MANUS JARVIS REFERENCE VALIDATION SCRIPT (JavaScript Version)
  * 
  * Validates all code and documentation references to ensure:
  * - All referenced files exist
@@ -71,7 +71,7 @@ class ReferenceValidator {
   }
 
   async validate() {
-    console.log('🔍 Starting Manus FSM reference validation...\n');
+    console.log('🔍 Starting Iron Manus JARVIS reference validation...\n');
 
     this.validateCodeReferences();
     this.validateDocumentationReferences();
@@ -260,7 +260,7 @@ async function main() {
   const args = process.argv.slice(2);
   const basePath = args[0] || process.cwd();
   
-  console.log(`🚀 Manus FSM Reference Validator`);
+  console.log(`🚀 Iron Manus JARVIS Reference Validator`);
   console.log(`📂 Base path: ${basePath}\n`);
 
   const validator = new ReferenceValidator(basePath);

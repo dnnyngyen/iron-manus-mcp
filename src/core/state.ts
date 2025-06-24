@@ -12,7 +12,7 @@ import {
   ComponentCognitiveMetrics 
 } from './types.js';
 
-const STATE_FILE = './JARVIS_state.json';
+const STATE_FILE = './iron_manus_state.json';
 
 class StateManager {
   private sessions: Map<string, SessionState> = new Map();
@@ -134,7 +134,7 @@ class StateManager {
         encapsulation_patterns: [],
         cognitive_context: {
           reasoning_mode: 'hybrid_duality',
-          framework_selection: ['manus_fsm'],
+          framework_selection: ['iron_manus_fsm'],
           constraint_resolution: 'adaptive',
           performance_metrics: this.initializeComponentCognitiveMetrics(),
           duality_effectiveness: 0.8
@@ -265,8 +265,8 @@ class StateManager {
 
   // Load component-cognitive state from persistence
   private loadComponentCognitiveState(): void {
-    const dualityFile = './manus_component_cognitive_duality.json';
-    const constraintsFile = './manus_unified_constraints.json';
+    const dualityFile = './iron_manus_component_cognitive_duality.json';
+    const constraintsFile = './iron_manus_unified_constraints.json';
     
     if (existsSync(dualityFile)) {
       try {
@@ -293,10 +293,10 @@ class StateManager {
   private saveComponentCognitiveState(): void {
     try {
       const dualityData = Object.fromEntries(this.componentCognitiveDuality);
-      writeFileSync('./manus_component_cognitive_duality.json', JSON.stringify(dualityData, null, 2));
+      writeFileSync('./iron_manus_component_cognitive_duality.json', JSON.stringify(dualityData, null, 2));
       
       const constraintsData = Object.fromEntries(this.unifiedConstraints);
-      writeFileSync('./manus_unified_constraints.json', JSON.stringify(constraintsData, null, 2));
+      writeFileSync('./iron_manus_unified_constraints.json', JSON.stringify(constraintsData, null, 2));
     } catch (error) {
       console.error('Failed to save component-cognitive state:', error);
     }
@@ -334,7 +334,7 @@ class StateManager {
 
   private saveArchivedMetrics(archivedSessions: any[]): void {
     try {
-      const archiveFile = './manus_performance_archive.json';
+      const archiveFile = './iron_manus_performance_archive.json';
       let existingArchive: any[] = [];
       
       if (existsSync(archiveFile)) {
