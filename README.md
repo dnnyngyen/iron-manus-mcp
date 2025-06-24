@@ -20,7 +20,7 @@ Instead of building complex orchestration systems, it repurposes Claude's native
   
 
 <a href="https://www.youtube.com/watch?v=nImkimPQCjk" target="_blank">
-  <img src="https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg" alt="Watch the video" width="400"/>
+  <img src="https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg" alt="Watch the video" width="1000"/>
 </a>
 
 
