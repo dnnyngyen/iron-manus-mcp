@@ -11,7 +11,7 @@ Not affiliated with Manus AI. "Iron Manus" inspired by Andrej Karpathy's "Iron M
 
 ## Key Concepts
 
-### Native Tool Integration
+### Reworking Claude's Native Tool Integration
 - **Task() spawning** - Creates specialized Claude instances as autonomous agents with context management, so conversations can get over 200K+ tokens. (More practical with Sonnet 4)
 - **TodoWrite/TodoRead** - Each Todo List item Claude generates gets broken down into a set of sub-ToDo lists for native task decomposition, state management, and progress tracking  
 - **Meta-prompt compilation** - Transforms simple syntax into specialized agent prompts
