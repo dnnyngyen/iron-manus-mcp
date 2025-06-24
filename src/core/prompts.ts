@@ -11,7 +11,7 @@ import {
   EncapsulationPattern,
   CognitiveContext 
 } from './types.js';
-import { detectUIRole, generateUIRoleEnhancedPrompt, generateUIMetaPrompt } from '../agents/ui-agent-roles.js';
+// UI agent role functions will be implemented when needed
 
 // Role configuration from Manus's modular architecture
 export const ROLE_CONFIG: Record<Role, RoleConfig> = {
@@ -251,11 +251,8 @@ export function detectRole(objective: string): Role {
 
 // Generate enhanced prompts with role-specific cognitive enhancement + tool guidance
 export function generateRoleEnhancedPrompt(phase: Phase, role: Role, objective: string): string {
-  // Check if this is a UI role and use specialized UI prompt generation
-  const uiRole = detectUIRole(objective);
-  if (uiRole && (role === 'ui_architect' || role === 'ui_implementer' || role === 'ui_refiner')) {
-    return generateUIRoleEnhancedPrompt(phase, uiRole, objective);
-  }
+  // UI role support will be added in future enhancement
+  // For now, treat UI roles as standard roles with enhanced focus
   
   const config = ROLE_CONFIG[role];
   const basePrompt = BASE_PHASE_PROMPTS[phase];
@@ -401,11 +398,7 @@ Apply rigorous quality assessment with your specialized validation expertise.`,
 
 // Meta-prompt generation for Task() agent spawning with Think tool integration
 export function generateMetaPrompt(todoContent: string, role: Role, context: Record<string, any>): MetaPrompt {
-  // Check if this is a UI role and use specialized UI meta-prompt generation
-  const uiRole = detectUIRole(todoContent);
-  if (uiRole && (role === 'ui_architect' || role === 'ui_implementer' || role === 'ui_refiner')) {
-    return generateUIMetaPrompt(todoContent, uiRole, context);
-  }
+  // UI roles are handled the same as standard roles now
   
   const config = ROLE_CONFIG[role];
   

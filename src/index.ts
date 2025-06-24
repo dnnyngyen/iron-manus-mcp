@@ -5,7 +5,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprot
 import { processState, extractMetaPromptFromTodo } from './core/fsm.js';
 import { MessageJARVIS } from './core/types.js';
 import { stateManager } from './core/state.js';
-import { EnhancedManusOrchestratorSchema, ToolParameterValidator } from './utils/enhanced-tool-schemas.js';
+// Enhanced tool schemas will be implemented when needed
 
 const server = new Server(
   {
