@@ -20,6 +20,12 @@ Instead of building complex orchestration systems, it repurposes Claude's native
 
 + **Single MCP One-Shot tool** - Entire system runs through one interface
 
+
+
+[![Watch the demo](ironmanus_thumbnail.png)](ironmanus_prototype_demo.mp4)
+
+
+
 ### The Meta-Prompt DSL
 ```
 (ROLE: agent_type) (CONTEXT: domain) (PROMPT: instructions) (OUTPUT: deliverable)
