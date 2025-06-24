@@ -1,7 +1,7 @@
 # Iron Manus MCP (& J.A.R.V.I.S.)
 **Experimental "Software 3.0" Implementation**
 
-> Forked Sequential Thinking and turned it into a Thread of Thought (Thot) Meta-Prompting tool with Claude-code's built-in features.
+> Forked Sequential Thinking and turned it into a Thread of Thought (ThoT) Meta-Prompting tool with Claude-code's built-in features.
 
 ## Overview
 
