@@ -17,7 +17,8 @@ Instead of building complex orchestration systems, it repurposes Claude's native
 - **Meta-prompt compilation** - Transforms simple syntax into specialized agent prompts
 
 !!! **Single MCP One-Shot tool** - Entire system runs through one interface
-  
+
+## Click to Watch Demo:
 
 <a href="https://www.youtube.com/watch?v=nImkimPQCjk" target="_blank">
   <img src="https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg" alt="Watch the video" width="800"/>
