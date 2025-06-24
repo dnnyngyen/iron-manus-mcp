@@ -18,11 +18,17 @@ Instead of building complex orchestration systems, it repurposes Claude's native
 
 + **Single MCP One-Shot tool** - Entire system runs through one interface
 
+```
 
-
-[![Watch the demo](ironmanus_thumbnail.png)](ironmanus_prototype_demo.mp4)
-
-
+flowchart TD
+    A[Layer 1: Base Phase Prompts] -->|Workflow Programming| B[Layer 2: Role Thinking Methodologies]
+    B -->|Cognitive Algorithms| C[Layer 3: Dynamic Context Injection]
+    C -->|Runtime State| D[Layer 4: Meta-Prompt Generation]
+    D -->|Program Compilation| E[Layer 5: Tool Constraint Guidance]
+    E -->|API Interfaces| F[Layer 6: Recursive Meta-Prompting]
+    F -->|Agent Spawning| D
+    
+```
 
 ### The Meta-Prompt DSL
 ```
