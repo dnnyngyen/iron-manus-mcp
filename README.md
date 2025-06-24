@@ -119,7 +119,7 @@ Spawned agents can create their own sub-tasks and spawn additional agents, enabl
 ## Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/dnnyngyen/iron-manus-mcp
 cd iron-manus-mcp
 npm install
 npm run build
@@ -129,7 +129,7 @@ Add to your Claude Code MCP configuration:
 ```json
 {
   "mcpServers": {
-    "iron-manus-jarvis": {
+    "iron-manus-mcp": {
       "command": "node",
       "args": ["./dist/index.js"]
     }
