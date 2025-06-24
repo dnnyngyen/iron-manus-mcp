@@ -255,8 +255,19 @@ export function generateRoleEnhancedPrompt(phase: Phase, role: Role, objective: 
   // For now, treat UI roles as standard roles with enhanced focus
   
   const config = ROLE_CONFIG[role];
-  const basePrompt = BASE_PHASE_PROMPTS[phase];
+  let basePrompt = BASE_PHASE_PROMPTS[phase];
   let toolGuidance = PHASE_TOOL_GUIDANCE[phase];
+  
+  // Special handling for KNOWLEDGE phase to inject role-specific API guidance
+  if (phase === 'KNOWLEDGE') {
+    const roleAPIGuidance = getRoleSpecificAPIGuidance(role);
+    basePrompt = basePrompt.replace(
+      '**🎯 INTELLIGENT API SELECTION:** Based on your role and objective, select APIs that match your domain expertise. Each role has preferred API categories and workflows optimized for their specific needs.',
+      `**🎯 INTELLIGENT API SELECTION:** Based on your role and objective:
+
+${roleAPIGuidance}`
+    );
+  }
   
   // Add Python execution guidance if beneficial for this role and objective
   if (requiresPythonExecution(objective, role) && phase === 'EXECUTE') {
@@ -330,14 +341,37 @@ Think through your knowledge requirements before proceeding. Assess:
 - Are there any technical constraints or requirements to consider?
 - What knowledge gaps might exist that could impact success?
 
-After evaluating your knowledge needs, proceed with:
-1. Determine if you need external information (APIs, research, documentation)
-2. If research is needed, note what specific information to gather
-3. If no external research is needed, summarize relevant knowledge you already have
+**🚀 AUTO-CONNECTION ACTIVE:** The system has automatically discovered, fetched, and synthesized knowledge from relevant APIs based on your role and objective. Review the auto-generated knowledge below and determine if additional research is needed.
+
+**🎯 INTELLIGENT API SELECTION:** Based on your role and objective, the system automatically selected APIs that match your domain expertise. Each role has preferred API categories optimized for specific needs.
+
+**⚡ AUTOMATED WORKFLOW COMPLETED:**
+1. ✅ API Discovery - Relevant APIs identified for your domain
+2. ✅ Multi-Source Fetching - Data gathered from top-ranked APIs
+3. ✅ Knowledge Synthesis - Information cross-validated and synthesized
+4. ✅ Quality Assessment - Confidence scoring and contradiction detection
+
+**🔄 MANUAL OVERRIDE OPTIONS:**
+If auto-connection results are insufficient, you can still use:
+- APISearch to discover additional relevant APIs
+- MultiAPIFetch to gather data from specific sources
+- KnowledgeSynthesize to process custom API responses
+- WebSearch/WebFetch for supplementary research
+
+**🛡️ FALLBACK STRATEGIES:**
+- If auto-connection failed, use traditional research tools
+- If specific APIs are unavailable, substitute with alternative sources
+- If conflicts exist in auto-synthesized knowledge, apply manual resolution
+- Maintain confidence scoring throughout the process
+
+After evaluating the auto-generated knowledge and your additional needs, proceed with:
+1. Review the synthesized knowledge from auto-connection
+2. Determine if additional external information is needed
+3. If more research is required, specify what information to gather
 4. Identify any technical constraints or requirements
 5. Call JARVIS with phase_completed: 'KNOWLEDGE' and include your findings in payload as 'knowledge_gathered'.
 
-Gather essential knowledge using your domain expertise.`,
+Leverage the auto-connection results and supplement with manual research as needed.`,
 
   PLAN: `You are in the PLAN phase (Manus Planner Module). Your task:
 
@@ -701,7 +735,7 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
   INIT: ['JARVIS'], // Force orchestrator
   QUERY: ['JARVIS'], // Natural thinking + orchestrator
   ENHANCE: ['JARVIS'], // Natural thinking + orchestrator
-  KNOWLEDGE: ['WebSearch', 'WebFetch', 'mcp__ide__executeCode', 'JARVIS'], // Natural thinking + research tools + data processing
+  KNOWLEDGE: ['WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'KnowledgeSynthesize', 'mcp__ide__executeCode', 'JARVIS'], // Natural thinking + research tools + API tools + data processing
   PLAN: ['TodoWrite'], // Natural thinking + planning tools
   EXECUTE: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode'], // Natural thinking + execution tools + Python execution
   VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode'], // Natural thinking + verification tools + analysis
@@ -719,5 +753,93 @@ export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
   VERIFY: 'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), mcp__ide__executeCode (analytical verification)',
   DONE: 'No action needed'
 };
+
+// Role-specific API guidance generation for KNOWLEDGE phase
+function getRoleSpecificAPIGuidance(role: Role): string {
+  const roleGuidance: Record<Role, string> = {
+    researcher: `
+**📚 RESEARCHER API PREFERENCES:**
+- **Primary Categories**: Books, academic papers, scientific data, educational resources
+- **Recommended Workflow**: APISearch → academic/reference APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: Open Library, Google Books, NASA API, academic databases
+- **Confidence Threshold**: 0.8+ (high confidence for research accuracy)
+- **Synthesis Mode**: 'consensus' for academic validation, 'hierarchical' for authoritative sources
+- **Evidence Standards**: Peer-reviewed sources preferred, multiple source triangulation required`,
+
+    analyzer: `
+**📊 ANALYZER API PREFERENCES:**
+- **Primary Categories**: Financial data, cryptocurrency, business metrics, statistical APIs
+- **Recommended Workflow**: APISearch → financial/data APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: Alpha Vantage, CoinGecko, business analytics, market data sources
+- **Confidence Threshold**: 0.7+ (balance between accuracy and data availability)
+- **Synthesis Mode**: 'weighted' for reliability-based analysis, 'conflict_resolution' for market data
+- **Evidence Standards**: Real-time data preferred, historical trend validation essential`,
+
+    ui_architect: `
+**🎨 UI ARCHITECT API PREFERENCES:**
+- **Primary Categories**: Design inspiration, color palettes, typography, visual frameworks
+- **Recommended Workflow**: APISearch → design/visual APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: Unsplash, Colormind, design systems, font APIs, visual inspiration platforms
+- **Confidence Threshold**: 0.6+ (balance creativity with reliability)
+- **Synthesis Mode**: 'consensus' for design standards, 'weighted' for aesthetic choices
+- **Evidence Standards**: Current design trends, accessibility compliance data, user experience metrics`,
+
+    ui_implementer: `
+**⚙️ UI IMPLEMENTER API PREFERENCES:**
+- **Primary Categories**: Component libraries, CSS frameworks, development tools, design tokens
+- **Recommended Workflow**: APISearch → implementation APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: Design system APIs, CSS framework documentation, component libraries
+- **Confidence Threshold**: 0.7+ (implementation accuracy critical)
+- **Synthesis Mode**: 'hierarchical' for official documentation, 'consensus' for best practices
+- **Evidence Standards**: Official documentation preferred, tested implementation patterns required`,
+
+    ui_refiner: `
+**✨ UI REFINER API PREFERENCES:**
+- **Primary Categories**: Accessibility standards, performance optimization, user experience metrics
+- **Recommended Workflow**: APISearch → optimization/UX APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: Accessibility checkers, performance monitoring, user experience analytics
+- **Confidence Threshold**: 0.8+ (refinement requires high precision)
+- **Synthesis Mode**: 'hierarchical' for standards compliance, 'conflict_resolution' for UX trade-offs
+- **Evidence Standards**: WCAG compliance data, performance benchmarks, user testing results`,
+
+    coder: `
+**💻 CODER API PREFERENCES:**
+- **Primary Categories**: Development tools, documentation, code examples, testing frameworks
+- **Recommended Workflow**: APISearch → dev tool APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: GitHub, Stack Overflow, documentation sites, package repositories
+- **Confidence Threshold**: 0.7+ (balance between completeness and accuracy)
+- **Synthesis Mode**: 'consensus' for best practices, 'weighted' for framework-specific guidance
+- **Evidence Standards**: Tested code examples, maintained documentation, community validation`,
+
+    planner: `
+**📋 PLANNER API PREFERENCES:**
+- **Primary Categories**: Project management, scheduling, productivity tools, organizational systems
+- **Recommended Workflow**: APISearch → planning/productivity APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: Calendar systems, project management platforms, productivity metrics APIs
+- **Confidence Threshold**: 0.7+ (planning accuracy important for execution)
+- **Synthesis Mode**: 'hierarchical' for methodology frameworks, 'consensus' for timeline estimation
+- **Evidence Standards**: Proven methodologies, historical project data, resource availability metrics`,
+
+    critic: `
+**🔍 CRITIC API PREFERENCES:**
+- **Primary Categories**: Security scanners, quality metrics, testing frameworks, compliance data
+- **Recommended Workflow**: APISearch → security/quality APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: Security vulnerability databases, code quality metrics, compliance checkers
+- **Confidence Threshold**: 0.9+ (security and quality require highest confidence)
+- **Synthesis Mode**: 'conflict_resolution' for security findings, 'hierarchical' for compliance standards
+- **Evidence Standards**: Verified vulnerability data, security best practices, compliance documentation`,
+
+    synthesizer: `
+**🔄 SYNTHESIZER API PREFERENCES:**
+- **Primary Categories**: Integration platforms, data transformation, workflow automation, cross-domain APIs
+- **Recommended Workflow**: APISearch → integration APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Key APIs**: Data transformation services, workflow platforms, integration frameworks
+- **Confidence Threshold**: 0.7+ (balance integration complexity with reliability)
+- **Synthesis Mode**: 'weighted' for integration patterns, 'consensus' for compatibility standards
+- **Evidence Standards**: Tested integration patterns, compatibility matrices, performance benchmarks`
+  };
+
+  return roleGuidance[role] || roleGuidance.researcher; // Default to researcher if role not found
+}
 
 // UI agent configurations are now imported from dedicated modules

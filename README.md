@@ -2,7 +2,7 @@
 
 ## An Experimental Software 3.0 Implementation
 
-**My first project** exploring how Claude's native tools can be leveraged for autonomous development. The goal: demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
+**An experimental project** exploring how Claude's native tools can be leveraged for autonomous development. The goal: demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
 
 ## What Makes This Different
 
@@ -167,6 +167,6 @@ iron-manus-mcp/
 
 ---
 
-This is my first project exploring how Claude's native features can be leveraged for autonomous development. The goal is to demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
+This experimental project explores how Claude's native features can be leveraged for autonomous development. The goal is to demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
 
 Check [ARCHITECTURE.md](./docs/ARCHITECTURE.md) for the technical deep dive.

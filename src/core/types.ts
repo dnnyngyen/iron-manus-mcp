@@ -289,6 +289,17 @@ export interface VerificationResult {
   };
 }
 
+// API usage metrics for tracking API discovery and utilization
+export interface APIUsageMetrics {
+  apis_discovered: number;
+  apis_queried: number;
+  synthesis_confidence: number;
+  processing_time: number;
+  discovery_success_rate?: number;
+  api_response_time?: number;
+  knowledge_synthesis_quality?: number;
+}
+
 // ============================================================================
 // COMPONENT-COGNITIVE DUALITY MAPPING
 // Unified constraint hierarchy bridging V0's Component→Project→Ecosystem 
