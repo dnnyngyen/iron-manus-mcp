@@ -20,7 +20,7 @@ Instead of building complex orchestration systems, it repurposes Claude's native
   
 
 <a href="https://www.youtube.com/watch?v=nImkimPQCjk" target="_blank">
-  <img src="https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg" alt="Watch the video" width="1000"/>
+  <img src="https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg" alt="Watch the video" width="800"/>
 </a>
 
 
@@ -55,7 +55,7 @@ Each phase uses native Claude tools for state management and progression:
 - **Execution** spawns Task() agents for complex work
 - **Verification** ensures quality through systematic checks
 
-<div style="width:400px; height:264px; overflow:hidden; border:1px solid #ccc;">
+<div style="width:200px; height:132px; overflow:hidden; border:1px solid #ccc;">
   <img src="runtime.png" style="width:100%; height:100%; object-fit:cover;">
 </div>
 
