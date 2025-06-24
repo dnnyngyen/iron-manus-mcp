@@ -16,9 +16,13 @@ Instead of building complex orchestration systems, it repurposes Claude's native
 - **TodoWrite/TodoRead** - Each Todo List item Claude generates gets broken down into a set of sub-ToDo lists for native task decomposition, state management, and progress tracking  
 - **Meta-prompt compilation** - Transforms simple syntax into specialized agent prompts
 
-+ **Single MCP One-Shot tool** - Entire system runs through one interface
+!!! **Single MCP One-Shot tool** - Entire system runs through one interface
+  
 
-<div style="width:600px; height:400px; overflow:hidden; border:1px solid #ccc;">
+[![Watch the video](https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg)](https://www.youtube.com/watch?v=nImkimPQCjk)
+
+
+<div style="width:400px; height:264px; overflow:hidden; border:1px solid #ccc;">
   <img src="architecture.png" style="width:100%; height:100%; object-fit:cover;">
 </div>
 
@@ -49,7 +53,7 @@ Each phase uses native Claude tools for state management and progression:
 - **Execution** spawns Task() agents for complex work
 - **Verification** ensures quality through systematic checks
 
-<div style="width:600px; height:400px; overflow:hidden; border:1px solid #ccc;">
+<div style="width:400px; height:264px; overflow:hidden; border:1px solid #ccc;">
   <img src="runtime.png" style="width:100%; height:100%; object-fit:cover;">
 </div>
 
