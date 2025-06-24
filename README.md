@@ -5,7 +5,7 @@
 
 ## Overview
 
-"Iron Manus" came from an interest I've had in Chinese AI Superagents, with the name being recently inspired by Andrej Karpathy's "Iron Man" analogy.
+"Iron Manus" came from an interest I've had in Chinese AI Superagents, with the name being recently inspired by Andrej Karpathy's "Iron Man" analogy for the future of Software 3.0.
 
 Instead of building complex orchestration systems, it repurposes Claude's native `Task()`, `TodoWrite`, and `TodoRead` tools for autonomous decomposition, delegation. and task management.
 
@@ -15,7 +15,8 @@ Instead of building complex orchestration systems, it repurposes Claude's native
 - **Task() spawning** - Creates specialized Claude instances as autonomous agents with context management, so conversations can get over 200K+ tokens. (More practical with Sonnet 4)
 - **TodoWrite/TodoRead** - Each Todo List item Claude generates gets broken down into a set of sub-ToDo lists for native task decomposition, state management, and progress tracking  
 - **Meta-prompt compilation** - Transforms simple syntax into specialized agent prompts
-- **Single MCP tool** - Entire system runs through one interface
+
++ **Single MCP One-Shot tool** - Entire system runs through one interface
 
 ### The Meta-Prompt DSL
 ```
@@ -149,7 +150,7 @@ The approach prioritizes:
 
 ## Limitations & Considerations
 
-- Experimental system - not production-ready
+- Working Proof-of-Concept
 - Depends on Claude's native tool availability
 - Performance limited by Claude's context windows
 - Quality depends on prompt engineering effectiveness
