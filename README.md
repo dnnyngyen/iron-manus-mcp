@@ -16,7 +16,7 @@ Not affiliated with Manus AI. "Iron Manus" inspired by Andrej Karpathy's "Iron M
 - **TodoWrite/TodoRead** - Each Todo List item Claude generates gets broken down into a set of sub-ToDo lists for native task decomposition, state management, and progress tracking  
 - **Meta-prompt compilation** - Transforms simple syntax into specialized agent prompts
 
-!!! **Single MCP One-Shot tool** - Entire system runs through one interface
+!!! **Single MCP One-Shot tool** - Entire system runs through one interface (Currently working on supporting concurrency, some tasks may take a while)
 
 ## Click to Watch Demo:
 
