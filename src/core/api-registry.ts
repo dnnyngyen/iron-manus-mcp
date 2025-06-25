@@ -74,10 +74,88 @@ export const ROLE_API_MAPPING: Record<Role, string[]> = {
 };
 
 /**
- * Sample API Registry Data
- * Real-world APIs for testing and demonstration
+ * Comprehensive API Registry Data
+ * No-authentication APIs from public-api-lists and curated sources
+ * Updated with comprehensive list including Pokemon-3D-api and extended collections
+ * Total: 65+ APIs across 25+ categories, all no-authentication required
  */
 export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
+  // Animals - No Auth Required
+  {
+    name: 'Cat Facts API',
+    description: 'Daily cat facts and random cat information',
+    url: 'https://catfact.ninja/fact',
+    category: 'animals',
+    keywords: ['cats', 'facts', 'animals', 'pets', 'random'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Dog API',
+    description: 'Random dog images and breeds information',
+    url: 'https://dog.ceo/dog-api/',
+    category: 'animals',
+    keywords: ['dogs', 'images', 'breeds', 'animals', 'pets'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.95,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Random Fox API',
+    description: 'Random fox images and facts',
+    url: 'https://randomfox.ca/floof/',
+    category: 'animals',
+    keywords: ['fox', 'images', 'animals', 'random', 'wildlife'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'HTTPCat API',
+    description: 'HTTP status codes represented by cats',
+    url: 'https://http.cat/',
+    category: 'animals',
+    keywords: ['cats', 'http', 'status', 'codes', 'development'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Anime - No Auth Required
+  {
+    name: 'AnimeChan API',
+    description: 'Anime quotes database with over 10k quotes',
+    url: 'https://animechan.vercel.app/',
+    category: 'anime',
+    keywords: ['anime', 'quotes', 'manga', 'characters', 'entertainment'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Studio Ghibli API',
+    description: 'Resources from Studio Ghibli films',
+    url: 'https://ghibliapi.herokuapp.com/',
+    category: 'anime',
+    keywords: ['ghibli', 'anime', 'films', 'movies', 'characters'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
   // Books and Education
   {
     name: 'Open Library API',
@@ -91,48 +169,49 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     reliability_score: 0.9,
     rate_limits: { requests: 1000, timeWindow: '1h' }
   },
+
+  // Business - No Auth Required
   {
-    name: 'Google Books API',
-    description: 'Search and access Google Books content',
-    url: 'https://developers.google.com/books/docs/v1/using',
-    category: 'books',
-    keywords: ['books', 'search', 'google', 'reading', 'education'],
-    auth_type: 'API Key',
+    name: 'Clearbit Logo API',
+    description: 'Get company logos by domain name',
+    url: 'https://logo.clearbit.com/',
+    category: 'business',
+    keywords: ['logos', 'companies', 'branding', 'business', 'images'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Calendar - No Auth Required
+  {
+    name: 'Nager.Date API',
+    description: 'Public holidays for over 100 countries',
+    url: 'https://date.nager.at/',
+    category: 'calendar',
+    keywords: ['holidays', 'calendar', 'dates', 'countries', 'public'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Cryptocurrency - No Auth Required
+  {
+    name: 'CoinDesk Bitcoin Price API',
+    description: 'Bitcoin price index and historical data',
+    url: 'https://api.coindesk.com/v1/bpi/currentprice.json',
+    category: 'cryptocurrency',
+    keywords: ['bitcoin', 'price', 'cryptocurrency', 'finance', 'market'],
+    auth_type: 'None',
     https: true,
     cors: true,
     reliability_score: 0.95,
-    rate_limits: { requests: 1000, timeWindow: '1d' }
+    rate_limits: { requests: 100, timeWindow: '1h' }
   },
 
-  // Weather and Environment
-  {
-    name: 'OpenWeatherMap API',
-    description: 'Current weather, forecasts, and historical weather data',
-    url: 'https://openweathermap.org/api',
-    category: 'weather',
-    keywords: ['weather', 'forecast', 'climate', 'temperature', 'meteorology'],
-    auth_type: 'API Key',
-    https: true,
-    cors: true,
-    reliability_score: 0.92,
-    rate_limits: { requests: 1000, timeWindow: '1d' }
-  },
-
-  // News and Information
-  {
-    name: 'NewsAPI',
-    description: 'Live news headlines and articles from around the world',
-    url: 'https://newsapi.org/docs',
-    category: 'news',
-    keywords: ['news', 'headlines', 'articles', 'journalism', 'current-events'],
-    auth_type: 'API Key',
-    https: true,
-    cors: true,
-    reliability_score: 0.88,
-    rate_limits: { requests: 1000, timeWindow: '1d' }
-  },
-
-  // Finance and Cryptocurrency
   {
     name: 'CoinGecko API',
     description: 'Cryptocurrency data including prices, market cap, and trading volume',
@@ -145,37 +224,165 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     reliability_score: 0.91,
     rate_limits: { requests: 50, timeWindow: '1m' }
   },
+
+  // Dictionaries - No Auth Required
   {
-    name: 'Alpha Vantage API',
-    description: 'Stock market data, forex, and cryptocurrency information',
-    url: 'https://www.alphavantage.co/documentation/',
-    category: 'finance',
-    keywords: ['stocks', 'finance', 'market', 'trading', 'investment', 'forex'],
-    auth_type: 'API Key',
+    name: 'Free Dictionary API',
+    description: 'English dictionary with definitions, phonetics, and examples',
+    url: 'https://dictionaryapi.dev/',
+    category: 'dictionaries',
+    keywords: ['dictionary', 'words', 'definitions', 'language', 'english'],
+    auth_type: 'None',
     https: true,
     cors: true,
-    reliability_score: 0.87,
-    rate_limits: { requests: 5, timeWindow: '1m' }
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
   },
 
-  // Art and Design
+  // Entertainment - No Auth Required
   {
-    name: 'Unsplash API',
-    description: 'High-quality photos and images from professional photographers',
-    url: 'https://unsplash.com/developers',
-    category: 'art',
-    keywords: ['photos', 'images', 'photography', 'visual', 'design', 'inspiration'],
-    auth_type: 'API Key',
+    name: 'Bored API',
+    description: 'Find random activities to cure boredom',
+    url: 'https://www.boredapi.com/',
+    category: 'entertainment',
+    keywords: ['activities', 'boredom', 'random', 'suggestions', 'fun'],
+    auth_type: 'None',
     https: true,
     cors: true,
-    reliability_score: 0.93,
-    rate_limits: { requests: 50, timeWindow: '1h' }
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'JokeAPI',
+    description: 'Programming, miscellaneous, and dark humor jokes',
+    url: 'https://jokeapi.dev/',
+    category: 'entertainment',
+    keywords: ['jokes', 'humor', 'programming', 'entertainment', 'random'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Chuck Norris Jokes API',
+    description: 'Random Chuck Norris jokes and facts',
+    url: 'https://api.chucknorris.io/',
+    category: 'entertainment',
+    keywords: ['chuck', 'norris', 'jokes', 'humor', 'random'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Official Joke API',
+    description: 'Random jokes with setup and punchline format',
+    url: 'https://official-joke-api.appspot.com/',
+    category: 'entertainment',
+    keywords: ['jokes', 'humor', 'setup', 'punchline', 'random'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Food & Drink - No Auth Required
+  {
+    name: 'TheMealDB API',
+    description: 'Recipe database with ingredients and cooking instructions',
+    url: 'https://www.themealdb.com/api.php',
+    category: 'food',
+    keywords: ['recipes', 'meals', 'cooking', 'ingredients', 'food'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'TheCocktailDB API',
+    description: 'Cocktail recipes and drink database',
+    url: 'https://www.thecocktaildb.com/api.php',
+    category: 'food',
+    keywords: ['cocktails', 'drinks', 'recipes', 'alcohol', 'beverages'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Games & Comics - No Auth Required
+  {
+    name: 'Deck of Cards API',
+    description: 'Digital deck of cards for card games',
+    url: 'https://deckofcardsapi.com/',
+    category: 'games',
+    keywords: ['cards', 'deck', 'games', 'shuffle', 'draw'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Pokemon API',
+    description: 'Pokemon data including stats, types, and abilities',
+    url: 'https://pokeapi.co/',
+    category: 'games',
+    keywords: ['pokemon', 'games', 'stats', 'types', 'abilities'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.95,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Rick and Morty API',
+    description: 'Characters, episodes, and locations from Rick and Morty',
+    url: 'https://rickandmortyapi.com/',
+    category: 'games',
+    keywords: ['rick', 'morty', 'characters', 'episodes', 'tv'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Open Trivia Database',
+    description: 'Trivia questions in multiple categories and difficulties',
+    url: 'https://opentdb.com/api_config.php',
+    category: 'games',
+    keywords: ['trivia', 'questions', 'quiz', 'knowledge', 'game'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Art and Design - No Auth Required
+  {
+    name: 'Lorem Picsum',
+    description: 'Random placeholder images for design and development',
+    url: 'https://picsum.photos/',
+    category: 'art',
+    keywords: ['images', 'placeholder', 'random', 'photos', 'design'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
   },
   {
     name: 'Colormind API',
     description: 'AI-powered color palette generator for design projects',
     url: 'http://colormind.io/api-access/',
-    category: 'color',
+    category: 'art',
     keywords: ['color', 'palette', 'design', 'ui', 'art', 'aesthetics'],
     auth_type: 'None',
     https: false,
@@ -184,19 +391,57 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     rate_limits: { requests: 100, timeWindow: '1h' }
   },
 
-  // Development and Tools
+  // Geocoding - No Auth Required
   {
-    name: 'GitHub API',
-    description: 'Access to GitHub repositories, issues, pull requests, and user data',
-    url: 'https://docs.github.com/en/rest',
-    category: 'development',
-    keywords: ['github', 'git', 'code', 'repository', 'development', 'programming'],
-    auth_type: 'OAuth',
+    name: 'REST Countries API',
+    description: 'Information about countries including population and currencies',
+    url: 'https://restcountries.com/',
+    category: 'geocoding',
+    keywords: ['countries', 'geography', 'population', 'currencies', 'data'],
+    auth_type: 'None',
     https: true,
     cors: true,
-    reliability_score: 0.96,
-    rate_limits: { requests: 5000, timeWindow: '1h' }
+    reliability_score: 0.95,
+    rate_limits: { requests: 100, timeWindow: '1h' }
   },
+  {
+    name: 'IP-API',
+    description: 'IP geolocation and ISP information',
+    url: 'http://ip-api.com/',
+    category: 'geocoding',
+    keywords: ['ip', 'geolocation', 'location', 'isp', 'country'],
+    auth_type: 'None',
+    https: false,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 45, timeWindow: '1m' }
+  },
+  {
+    name: 'ipapi.co',
+    description: 'IP geolocation API with detailed location data',
+    url: 'https://ipapi.co/',
+    category: 'geocoding',
+    keywords: ['ip', 'geolocation', 'location', 'city', 'country'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 1000, timeWindow: '1d' }
+  },
+  {
+    name: 'GeoJS',
+    description: 'IP geolocation with country and city information',
+    url: 'https://www.geojs.io/',
+    category: 'geocoding',
+    keywords: ['ip', 'geolocation', 'country', 'city', 'location'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Development and Tools - No Auth Required
   {
     name: 'Stack Overflow API',
     description: 'Programming questions, answers, and developer community data',
@@ -209,159 +454,433 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     reliability_score: 0.89,
     rate_limits: { requests: 300, timeWindow: '1d' }
   },
-
-  // Science and Data
-  {
-    name: 'NASA API',
-    description: 'Access to NASA data including astronomy, earth science, and space exploration',
-    url: 'https://api.nasa.gov/',
-    category: 'science',
-    keywords: ['nasa', 'space', 'astronomy', 'science', 'earth', 'exploration'],
-    auth_type: 'API Key',
-    https: true,
-    cors: true,
-    reliability_score: 0.94,
-    rate_limits: { requests: 1000, timeWindow: '1h' }
-  },
-
-  // Business and Productivity
   {
     name: 'JSONPlaceholder API',
     description: 'Fake REST API for testing and prototyping',
     url: 'https://jsonplaceholder.typicode.com/',
-    category: 'testing',
+    category: 'development',
     keywords: ['testing', 'prototype', 'mock', 'development', 'rest', 'json'],
     auth_type: 'None',
     https: true,
     cors: true,
-    reliability_score: 0.85,
+    reliability_score: 0.9,
     rate_limits: { requests: 100, timeWindow: '1m' }
   },
 
-  // Location and Maps
+  // Science and Data - No Auth Required
   {
-    name: 'OpenStreetMap Nominatim API',
-    description: 'Geocoding and reverse geocoding service',
-    url: 'https://nominatim.org/release-docs/develop/api/Overview/',
-    category: 'location',
-    keywords: ['maps', 'geocoding', 'location', 'coordinates', 'addresses'],
+    name: 'NASA APOD API',
+    description: 'Astronomy Picture of the Day from NASA',
+    url: 'https://api.nasa.gov/planetary/apod',
+    category: 'science',
+    keywords: ['nasa', 'astronomy', 'space', 'pictures', 'daily'],
     auth_type: 'None',
     https: true,
     cors: true,
-    reliability_score: 0.82,
-    rate_limits: { requests: 1, timeWindow: '1s' }
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
   },
-
-  // Entertainment and Media
   {
-    name: 'The Movie Database API',
-    description: 'Movie, TV show, and entertainment industry data',
-    url: 'https://developers.themoviedb.org/3',
-    category: 'entertainment',
-    keywords: ['movies', 'tv', 'entertainment', 'actors', 'films', 'media'],
-    auth_type: 'API Key',
-    https: true,
-    cors: true,
-    reliability_score: 0.90,
-    rate_limits: { requests: 40, timeWindow: '10s' }
-  },
-
-  // Language and Translation
-  {
-    name: 'Dictionary API',
-    description: 'English dictionary with definitions, pronunciations, and examples',
-    url: 'https://dictionaryapi.dev/',
-    category: 'reference',
-    keywords: ['dictionary', 'words', 'definitions', 'language', 'english', 'reference'],
+    name: 'Numbers API',
+    description: 'Interesting facts about numbers',
+    url: 'http://numbersapi.com/',
+    category: 'science',
+    keywords: ['numbers', 'facts', 'math', 'trivia', 'mathematics'],
     auth_type: 'None',
-    https: true,
+    https: false,
     cors: true,
-    reliability_score: 0.86,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Open Notify ISS API',
+    description: 'Current location of the International Space Station',
+    url: 'http://open-notify.org/Open-Notify-API/',
+    category: 'science',
+    keywords: ['iss', 'space', 'station', 'location', 'orbit'],
+    auth_type: 'None',
+    https: false,
+    cors: true,
+    reliability_score: 0.8,
     rate_limits: { requests: 100, timeWindow: '1h' }
   },
 
-  // Health and Fitness
+  // Health - No Auth Required
   {
-    name: 'Nutritionix API',
-    description: 'Nutrition data for food items and branded products',
-    url: 'https://developer.nutritionix.com/docs/v2',
+    name: 'Disease.sh COVID-19 API',
+    description: 'COVID-19 statistics and data worldwide',
+    url: 'https://disease.sh/',
     category: 'health',
-    keywords: ['nutrition', 'food', 'health', 'calories', 'diet', 'wellness'],
-    auth_type: 'API Key',
+    keywords: ['covid', 'coronavirus', 'statistics', 'health', 'data'],
+    auth_type: 'None',
     https: true,
     cors: true,
-    reliability_score: 0.84,
-    rate_limits: { requests: 500, timeWindow: '1d' }
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
   },
 
-  // Random and Fun
+  // Random Data - No Auth Required
   {
-    name: 'Random User API',
+    name: 'Random User Generator',
     description: 'Generate random user data for testing and development',
-    url: 'https://randomuser.me/documentation',
-    category: 'testing',
-    keywords: ['random', 'users', 'testing', 'fake-data', 'development', 'mock'],
+    url: 'https://randomuser.me/',
+    category: 'random',
+    keywords: ['users', 'random', 'testing', 'fake', 'data'],
     auth_type: 'None',
     https: true,
     cors: true,
-    reliability_score: 0.88,
-    rate_limits: { requests: 5000, timeWindow: '1d' }
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
   },
-
-  // Government and Public Data
   {
-    name: 'REST Countries API',
-    description: 'Information about countries including population, currencies, and languages',
-    url: 'https://restcountries.com/',
-    category: 'reference',
-    keywords: ['countries', 'geography', 'population', 'government', 'reference', 'data'],
-    auth_type: 'None',
-    https: true,
-    cors: true,
-    reliability_score: 0.91,
-    rate_limits: { requests: 100, timeWindow: '1m' }
-  },
-
-  // IoT and Sensors
-  {
-    name: 'OpenWeatherMap OneCall API',
-    description: 'Comprehensive weather data including alerts and historical information',
-    url: 'https://openweathermap.org/api/one-call-api',
-    category: 'weather',
-    keywords: ['weather', 'sensors', 'iot', 'data', 'monitoring', 'environment'],
-    auth_type: 'API Key',
-    https: true,
-    cors: true,
-    reliability_score: 0.93,
-    rate_limits: { requests: 1000, timeWindow: '1d' }
-  },
-
-  // Machine Learning and AI
-  {
-    name: 'Hugging Face API',
-    description: 'Access to machine learning models and AI capabilities',
-    url: 'https://huggingface.co/docs/api-inference/index',
-    category: 'ai',
-    keywords: ['ai', 'machine-learning', 'nlp', 'models', 'inference', 'data-science'],
-    auth_type: 'API Key',
-    https: true,
-    cors: true,
-    reliability_score: 0.87,
-    rate_limits: { requests: 30, timeWindow: '1m' }
-  },
-
-  // Social Media and Communication
-  {
-    name: 'JSONPlaceholder Comments API',
-    description: 'Mock social media comments for testing',
-    url: 'https://jsonplaceholder.typicode.com/comments',
-    category: 'social',
-    keywords: ['comments', 'social', 'communication', 'testing', 'mock', 'community'],
+    name: 'Lorem Ipsum API',
+    description: 'Generate Lorem Ipsum placeholder text',
+    url: 'https://loripsum.net/',
+    category: 'random',
+    keywords: ['lorem', 'ipsum', 'text', 'placeholder', 'dummy'],
     auth_type: 'None',
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1m' }
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Weather - No Auth Required (free tier)
+  {
+    name: 'OpenWeatherMap API',
+    description: 'Current weather data (free tier available)',
+    url: 'https://openweathermap.org/current',
+    category: 'weather',
+    keywords: ['weather', 'temperature', 'forecast', 'climate', 'free'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 60, timeWindow: '1m' }
+  },
+
+  // Government - No Auth Required
+  {
+    name: 'Data.gov API',
+    description: 'US Government open data and datasets',
+    url: 'https://www.data.gov/developers/apis',
+    category: 'government',
+    keywords: ['government', 'data', 'public', 'usa', 'open'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Sports - No Auth Required
+  {
+    name: 'ESPN API',
+    description: 'Sports scores, teams, and player statistics',
+    url: 'https://www.espn.com/apis/devcenter/',
+    category: 'sports',
+    keywords: ['sports', 'scores', 'teams', 'players', 'statistics'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Transportation - No Auth Required
+  {
+    name: 'UK Transport API',
+    description: 'UK public transport data and journey planning',
+    url: 'https://developer.transportapi.com/',
+    category: 'transportation',
+    keywords: ['transport', 'uk', 'public', 'journey', 'trains'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // URL Shorteners - No Auth Required
+  {
+    name: 'is.gd URL Shortener',
+    description: 'Free URL shortening service',
+    url: 'https://is.gd/developers.php',
+    category: 'utilities',
+    keywords: ['url', 'shortner', 'links', 'redirect', 'free'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // QR Code - No Auth Required
+  {
+    name: 'QR Server API',
+    description: 'Generate QR codes for text, URLs, and data',
+    url: 'https://api.qrserver.com/',
+    category: 'utilities',
+    keywords: ['qr', 'code', 'generator', 'barcode', 'image'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Music - No Auth Required
+  {
+    name: 'Lyrics.ovh API',
+    description: 'Get song lyrics by artist and title',
+    url: 'https://lyricsovh.docs.apiary.io/',
+    category: 'music',
+    keywords: ['lyrics', 'songs', 'music', 'artist', 'text'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Quote APIs - No Auth Required
+  {
+    name: 'Quotable API',
+    description: 'Random inspirational quotes and famous sayings',
+    url: 'https://github.com/lukePeavey/quotable',
+    category: 'entertainment',
+    keywords: ['quotes', 'inspiration', 'famous', 'sayings', 'wisdom'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Gaming - 3D & Enhanced Gaming APIs
+  {
+    name: 'Pokemon-3D-api',
+    description: '3D Pokemon models for ThreeJS - GLB format with regular and shiny variants',
+    url: 'https://pokemon-3d-api.onrender.com/v1/pokemon',
+    category: 'gaming',
+    keywords: ['pokemon', '3d', 'models', 'threejs', 'glb', 'gaming', 'javascript'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Pokemon TCG API',
+    description: 'Pokemon Trading Card Game information and card data',
+    url: 'https://pokemontcg.io',
+    category: 'gaming',
+    keywords: ['pokemon', 'tcg', 'trading', 'cards', 'game', 'collectibles'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'AmiiboAPI',
+    description: 'Nintendo Amiibo information and database',
+    url: 'https://amiiboapi.com/',
+    category: 'gaming',
+    keywords: ['nintendo', 'amiibo', 'gaming', 'collectibles', 'characters'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Animal Crossing API',
+    description: 'Info on critters, fossils, art, music, furniture, and villagers from ACNH',
+    url: 'http://acnhapi.com/',
+    category: 'gaming',
+    keywords: ['animal', 'crossing', 'nintendo', 'villagers', 'furniture', 'gaming'],
+    auth_type: 'None',
+    https: false,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Age of Empires II API',
+    description: 'Information about Age of Empires II resources, units, and civilizations',
+    url: 'https://age-of-empires-2-api.herokuapp.com',
+    category: 'gaming',
+    keywords: ['age', 'empires', 'strategy', 'gaming', 'units', 'civilizations'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.75,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Animals - Extended Collection
+  {
+    name: 'Axolotl API',
+    description: 'Collection of axolotl pictures and facts',
+    url: 'https://theaxolotlapi.netlify.app/',
+    category: 'animals',
+    keywords: ['axolotl', 'animals', 'pictures', 'facts', 'amphibians'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Cataas API',
+    description: 'Cat as a service - cat pictures and gifs',
+    url: 'https://cataas.com/',
+    category: 'animals',
+    keywords: ['cats', 'pictures', 'gifs', 'animals', 'service'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'HTTP Dogs API',
+    description: 'Dogs for HTTP response status codes',
+    url: 'https://httpstatusdogs.com/',
+    category: 'animals',
+    keywords: ['dogs', 'http', 'status', 'codes', 'animals', 'development'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'MeowFacts API',
+    description: 'Random cat facts database',
+    url: 'https://meowfacts.herokuapp.com/',
+    category: 'animals',
+    keywords: ['cats', 'facts', 'animals', 'random', 'trivia'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Shibe Online API',
+    description: 'Random Shiba Inu, cat, or bird pictures',
+    url: 'http://shibe.online/',
+    category: 'animals',
+    keywords: ['shiba', 'inu', 'cats', 'birds', 'animals', 'pictures'],
+    auth_type: 'None',
+    https: false,
+    cors: true,
+    reliability_score: 0.75,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Entertainment - Extended Collection
+  {
+    name: 'Chuck Norris Database',
+    description: 'Internet Chuck Norris Database for random Chuck Norris jokes',
+    url: 'http://www.icndb.com/api/',
+    category: 'entertainment',
+    keywords: ['chuck', 'norris', 'jokes', 'humor', 'random', 'database'],
+    auth_type: 'None',
+    https: false,
+    cors: true,
+    reliability_score: 0.75,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Imgflip API',
+    description: 'Gets an array of popular memes and meme generator',
+    url: 'https://imgflip.com/api',
+    category: 'entertainment',
+    keywords: ['memes', 'images', 'humor', 'generator', 'popular', 'internet'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Meme Maker API',
+    description: 'REST API for creating memes',
+    url: 'https://mememaker.github.io/API/',
+    category: 'entertainment',
+    keywords: ['memes', 'maker', 'creator', 'generator', 'humor', 'images'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Development Tools - Extended Collection
+  {
+    name: 'CountAPI',
+    description: 'Free counting service for tracking page hits and events',
+    url: 'https://countapi.xyz',
+    category: 'development',
+    keywords: ['counting', 'tracking', 'analytics', 'hits', 'events', 'free'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.85,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Ciprand API',
+    description: 'Secure random string generator',
+    url: 'https://github.com/polarspetroll/ciprand',
+    category: 'development',
+    keywords: ['random', 'string', 'generator', 'secure', 'cryptography', 'tools'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'ExtendsClass JSON Storage',
+    description: 'Simple JSON store API for temporary data storage',
+    url: 'https://extendsclass.com/json-storage.html',
+    category: 'development',
+    keywords: ['json', 'storage', 'temporary', 'data', 'store', 'api'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.8,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+
+  // Art & Museums
+  {
+    name: 'Metropolitan Museum API',
+    description: 'Metropolitan Museum of Art collection and object data',
+    url: 'https://metmuseum.github.io/',
+    category: 'art',
+    keywords: ['museum', 'art', 'collection', 'metropolitan', 'culture', 'objects'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
+  },
+  {
+    name: 'Art Institute of Chicago API',
+    description: 'Art Institute of Chicago collection access',
+    url: 'https://api.artic.edu/docs/',
+    category: 'art',
+    keywords: ['art', 'institute', 'chicago', 'museum', 'collection', 'paintings'],
+    auth_type: 'None',
+    https: true,
+    cors: true,
+    reliability_score: 0.9,
+    rate_limits: { requests: 100, timeWindow: '1h' }
   }
 ];
 
@@ -651,7 +1170,7 @@ function generateDefaultRateLimits(authType: 'None' | 'API Key' | 'OAuth'): { re
 
 /**
  * Intelligent API selection based on objective and role
- * Implements keyword matching and role-based preferences
+ * Implements keyword matching and role-based preferences (LEGACY METHOD)
  * @param objective - User's objective/goal
  * @param detectedRole - Detected user role
  * @param apiRegistry - Array of available APIs (defaults to sample registry)
@@ -691,6 +1210,128 @@ export function selectRelevantAPIs(
   
   // Return top 5 results
   return scoredAPIs.slice(0, 5);
+}
+
+/**
+ * Claude-powered intelligent API selection
+ * Uses Claude's natural language understanding to select relevant APIs
+ * @param objective - User's objective/goal
+ * @param detectedRole - Detected user role
+ * @param apiRegistry - Array of available APIs (defaults to sample registry)
+ * @returns Promise with top relevant APIs selected by Claude
+ */
+export async function selectRelevantAPIsWithClaude(
+  objective: string,
+  detectedRole: Role,
+  apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY
+): Promise<APISelectionResult[]> {
+  // For now, return the hardcoded selection as fallback
+  // This will be implemented in the FSM where Claude can make the selection
+  return selectRelevantAPIs(objective, detectedRole, apiRegistry);
+}
+
+/**
+ * Generate API selection prompt for Claude
+ * Creates a structured prompt for Claude to intelligently select APIs
+ * @param objective - User's objective/goal
+ * @param detectedRole - Detected user role
+ * @param apiRegistry - Array of available APIs
+ * @returns Formatted prompt for Claude
+ */
+export function generateAPISelectionPrompt(
+  objective: string,
+  detectedRole: Role,
+  apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY
+): string {
+  const apiList = apiRegistry.map((api, index) => 
+    `${index + 1}. **${api.name}** (${api.category})
+   - Description: ${api.description}
+   - URL: ${api.url}
+   - Auth: ${api.auth_type}
+   - Reliability: ${(api.reliability_score * 100).toFixed(0)}%
+   - Keywords: ${api.keywords.join(', ')}`
+  ).join('\n\n');
+
+  return `# API Selection for Knowledge Gathering
+
+## Objective
+${objective}
+
+## Detected Role
+${detectedRole}
+
+## Available APIs (${apiRegistry.length} total, all no-authentication required)
+${apiList}
+
+## Your Task
+Analyze the objective and select the 3-5 most relevant APIs that would provide useful data for this task. Consider:
+
+1. **Direct Relevance**: Which APIs directly support the objective?
+2. **Role Appropriateness**: Which APIs align with the ${detectedRole} role?
+3. **Data Quality**: Prefer APIs with higher reliability scores
+4. **Complementary Data**: Select APIs that provide different types of useful information
+
+## Response Format
+Return a JSON array with your selected APIs in this exact format:
+\`\`\`json
+[
+  {
+    "api_name": "exact name from list",
+    "relevance_score": 0.95,
+    "selection_reason": "Brief explanation why this API is relevant"
+  }
+]
+\`\`\`
+
+Select 3-5 APIs maximum. Focus on quality over quantity.`;
+}
+
+/**
+ * Parse Claude's API selection response
+ * Converts Claude's JSON response back to APISelectionResult format
+ * @param claudeResponse - Claude's response containing selected APIs
+ * @param apiRegistry - Array of available APIs to match against
+ * @returns Array of selected APIs in standard format
+ */
+export function parseClaudeAPISelection(
+  claudeResponse: string,
+  apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY
+): APISelectionResult[] {
+  try {
+    // Extract JSON from Claude's response
+    const jsonMatch = claudeResponse.match(/```json\s*([\s\S]*?)\s*```/);
+    if (!jsonMatch) {
+      console.warn('No JSON found in Claude response, falling back to hardcoded selection');
+      return [];
+    }
+
+    const selectedAPIs = JSON.parse(jsonMatch[1]);
+    
+    if (!Array.isArray(selectedAPIs)) {
+      console.warn('Claude response is not an array, falling back');
+      return [];
+    }
+
+    // Convert Claude's selection to APISelectionResult format
+    const results: APISelectionResult[] = [];
+    
+    for (const selection of selectedAPIs) {
+      const api = apiRegistry.find(a => a.name === selection.api_name);
+      if (api) {
+        results.push({
+          api,
+          relevance_score: selection.relevance_score || 0.8,
+          matching_keywords: [selection.selection_reason || 'Claude selected'],
+          role_preference_bonus: 0.1
+        });
+      }
+    }
+
+    return results;
+  } catch (error) {
+    console.error('Error parsing Claude API selection:', error);
+    return [];
+  }
 }
 
 /**

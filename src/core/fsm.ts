@@ -13,14 +13,19 @@ import {
 } from './types.js';
 import { 
   generateRoleEnhancedPrompt, 
-  detectRole, 
+  detectRole,
+  generateRoleSelectionPrompt,
+  parseClaudeRoleSelection,
   PHASE_ALLOWED_TOOLS
 } from './prompts.js';
 import { stateManager } from './state.js';
 import { 
   selectRelevantAPIs, 
+  generateAPISelectionPrompt,
+  parseClaudeAPISelection,
   APISelectionResult,
-  rateLimiter
+  rateLimiter,
+  SAMPLE_API_REGISTRY
 } from './api-registry.js';
 import axios, { AxiosError } from 'axios';
 // Cognitive module imports - disabled pending integration
@@ -89,7 +94,6 @@ const reasoningRulesEngine = {
 const cognitiveFrameworkManager = {
   injectCognitiveFramework: (role: Role, phase: Phase, prompt: string, context: any) => ({
     enhancedReasoning: prompt,
-    cognitiveMultiplier: 1.0,
     injectedFrameworks: [],
     appliedPatterns: []
   })
@@ -387,17 +391,25 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
   const sessionId = input.session_id;
   const session = stateManager.getSessionState(sessionId);
   
-  // Handle initial objective setup with enhanced role detection
+  // Handle initial objective setup with Claude-powered role detection
   if (input.initial_objective) {
     session.initial_objective = input.initial_objective;
-    session.detected_role = detectEnhancedRole(input.initial_objective); // Enhanced AST-based role detection
+    
+    // Generate role selection prompt for Claude instead of hardcoded detection
+    const roleSelectionPrompt = generateRoleSelectionPrompt(input.initial_objective);
+    
+    // Set temporary role as fallback, but request Claude selection
+    session.detected_role = detectEnhancedRole(input.initial_objective); // Fallback for now
     session.current_phase = 'INIT';
     session.reasoning_effectiveness = 0.8; // Initial effectiveness score
-    // Initialize payload with execution state
+    
+    // Initialize payload with execution state and role selection request
     session.payload = {
       current_task_index: 0,
       current_todos: [],
-      phase_transition_count: 0
+      phase_transition_count: 0,
+      role_selection_prompt: roleSelectionPrompt,
+      awaiting_role_selection: true
     };
     stateManager.updateSessionState(sessionId, session);
   }
@@ -413,6 +425,27 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
       
     case 'QUERY':
       if (input.phase_completed === 'QUERY') {
+        // Check if Claude provided role selection response
+        if (session.payload.awaiting_role_selection && input.payload?.claude_response) {
+          try {
+            // Parse Claude's role selection
+            const claudeSelectedRole = parseClaudeRoleSelection(
+              input.payload.claude_response,
+              session.initial_objective || ''
+            );
+            
+            // Update session with Claude's intelligent role selection
+            session.detected_role = claudeSelectedRole;
+            session.payload.awaiting_role_selection = false;
+            
+            console.log(`✅ Claude selected role: ${claudeSelectedRole}`);
+          } catch (error) {
+            console.error('Error processing Claude role selection:', error);
+            // Fall back to hardcoded role detection
+            session.payload.awaiting_role_selection = false;
+          }
+        }
+        
         // Store interpreted goal and move to enhancement
         if (input.payload?.interpreted_goal) {
           session.payload.interpreted_goal = input.payload.interpreted_goal;
@@ -433,15 +466,69 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
       
     case 'KNOWLEDGE':
       if (input.phase_completed === 'KNOWLEDGE') {
+        // Check if Claude provided API selection response
+        if (session.payload.awaiting_api_selection && input.payload?.claude_response) {
+          try {
+            // Parse Claude's API selection
+            const claudeSelectedAPIs = parseClaudeAPISelection(
+              input.payload.claude_response, 
+              SAMPLE_API_REGISTRY
+            );
+            
+            if (claudeSelectedAPIs.length > 0) {
+              // Use Claude's intelligent selection for auto-connection
+              session.payload.api_discovery_results = claudeSelectedAPIs;
+              session.payload.awaiting_api_selection = false;
+              
+              // Proceed with auto-connection using Claude's selected APIs
+              if (AUTO_CONNECTION_CONFIG.enabled) {
+                const topAPIs = claudeSelectedAPIs.slice(0, 3).map(r => r.api.url);
+                const fetchResults = await autoFetchAPIs(
+                  topAPIs, 
+                  AUTO_CONNECTION_CONFIG.max_concurrent, 
+                  AUTO_CONNECTION_CONFIG.timeout_ms
+                );
+                
+                const objective = session.payload.enhanced_goal || session.initial_objective || '';
+                const synthesisResult = await autoSynthesize(
+                  fetchResults, 
+                  objective, 
+                  AUTO_CONNECTION_CONFIG.confidence_threshold
+                );
+                
+                session.payload.synthesized_knowledge = synthesisResult.synthesizedContent;
+                session.payload.api_fetch_responses = fetchResults;
+              }
+            }
+          } catch (error) {
+            console.error('Error processing Claude API selection:', error);
+            // Fall back to hardcoded selection
+            session.payload.awaiting_api_selection = false;
+          }
+        }
+        
         // Store gathered knowledge and move to planning
         if (input.payload?.knowledge_gathered) {
           session.payload.knowledge_gathered = input.payload.knowledge_gathered;
         }
         
-        // NEW: API discovery and selection workflow
-        if (session.payload.enhanced_goal && session.detected_role) {
+        // NEW: Claude-powered API discovery and selection workflow
+        if (session.payload.enhanced_goal && session.detected_role && !session.payload.awaiting_api_selection) {
           try {
             const startTime = Date.now();
+            
+            // Generate API selection prompt for Claude
+            const apiSelectionPrompt = generateAPISelectionPrompt(
+              session.payload.enhanced_goal,
+              session.detected_role,
+              SAMPLE_API_REGISTRY
+            );
+            
+            // Store the prompt in session for Claude to process
+            session.payload.api_selection_prompt = apiSelectionPrompt;
+            session.payload.awaiting_api_selection = true;
+            
+            // Fallback to hardcoded selection for now (will be replaced by Claude's response)
             const relevantAPIs = selectRelevantAPIs(
               session.payload.enhanced_goal, 
               session.detected_role
@@ -720,13 +807,7 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
   //   }
   // }
 
-  // Add cognitive enhancement metrics
-  if (cognitiveEnhancement.cognitiveMultiplier > 1.0) {
-    augmentedPrompt += `\n\n**🧠 COGNITIVE ENHANCEMENT ACTIVE:**\n`;
-    augmentedPrompt += `- Reasoning Effectiveness: ${(cognitiveEnhancement.cognitiveMultiplier * 100).toFixed(0)}%\n`;
-    augmentedPrompt += `- Applied Frameworks: ${cognitiveEnhancement.injectedFrameworks.join(', ')}\n`;
-    augmentedPrompt += `- Pattern Enhancements: ${cognitiveEnhancement.appliedPatterns.join(', ') || 'None'}\n`;
-  }
+  // Cognitive enhancement is handled through role-specific thinking methodologies in prompts
   
   if (nextPhase === 'ENHANCE' && session.payload.interpreted_goal) {
     augmentedPrompt += `\n\n**📋 CONTEXT:** ${session.payload.interpreted_goal}`;

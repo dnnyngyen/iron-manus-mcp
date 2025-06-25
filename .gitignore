@@ -58,6 +58,16 @@ coverage/
 .env.test.local
 .env.production.local
 
+# API Keys and secrets
+*.key
+*.pem
+secrets.json
+openai-key.txt
+
+# Generated embeddings (large files)
+data/embeddings-*.json
+data/precomputed-embeddings.json
+
 # Package manager lock files (keep package-lock.json, ignore others)
 yarn.lock
 pnpm-lock.yaml

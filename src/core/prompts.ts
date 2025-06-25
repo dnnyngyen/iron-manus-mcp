@@ -27,7 +27,6 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Sequence tasks based on dependencies and estimate realistic timeframes',
       'Consider all stakeholders and their constraints'
     ],
-    reasoningMultiplier: 2.7,
     authorityLevel: 'STRATEGIZE_AND_COORDINATE'
   },
   coder: {
@@ -42,7 +41,6 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Consider error handling, input validation, and graceful degradation',
       'Analyze performance implications and optimization opportunities'
     ],
-    reasoningMultiplier: 2.5,
     authorityLevel: 'IMPLEMENT_AND_VALIDATE'
   },
   critic: {
@@ -57,7 +55,6 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Consider edge cases, boundary conditions, and unexpected inputs',
       'Evaluate maintainability, performance, and reliability trade-offs'
     ],
-    reasoningMultiplier: 3.0,
     authorityLevel: 'EVALUATE_AND_REFINE'
   },
   researcher: {
@@ -72,7 +69,6 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Identify knowledge gaps and research limitations',
       'Assess research methodology quality and potential biases'
     ],
-    reasoningMultiplier: 2.8,
     authorityLevel: 'INVESTIGATE_AND_SYNTHESIZE'
   },
   analyzer: {
@@ -87,7 +83,6 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Consider statistical significance and avoid false conclusions',
       'Question assumptions and consider alternative explanations'
     ],
-    reasoningMultiplier: 3.2,
     authorityLevel: 'ANALYZE_AND_REPORT'
   },
   synthesizer: {
@@ -102,7 +97,6 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Find efficient solutions that optimize multiple constraints',
       'Ensure coherent, maintainable, and scalable results'
     ],
-    reasoningMultiplier: 2.9,
     authorityLevel: 'INTEGRATE_AND_OPTIMIZE'
   },
   // V0-Style UI Agent Roles - Convert UIRoleConfig to RoleConfig for compatibility
@@ -118,7 +112,6 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Plan for scalability, maintainability, and future growth',
       'Ensure accessibility standards and diverse user abilities'
     ],
-    reasoningMultiplier: 3.1,
     authorityLevel: 'DESIGN_AND_ARCHITECT'
   },
   ui_implementer: {
@@ -133,7 +126,6 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Optimize for performance: bundle size, rendering, memory usage',
       'Write maintainable, readable, and well-documented code'
     ],
-    reasoningMultiplier: 2.8,
     authorityLevel: 'IMPLEMENT_AND_RENDER'
   },
   ui_refiner: {
@@ -148,12 +140,148 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Make incremental, measurable improvements with clear goals',
       'Ensure compliance with accessibility and web standards'
     ],
-    reasoningMultiplier: 2.5,
     authorityLevel: 'REFINE_AND_POLISH'
   }
 };
 
-// Enhanced role detection including UI roles (replicates Manus's module selection)
+/**
+ * Generate role selection prompt for Claude
+ * Creates a structured prompt for Claude to intelligently select roles
+ * @param objective - User's objective/goal
+ * @returns Formatted prompt for Claude
+ */
+export function generateRoleSelectionPrompt(objective: string): string {
+  const availableRoles = [
+    {
+      name: 'planner',
+      description: 'Strategic planning, architecture design, system planning, project management',
+      best_for: 'Breaking down complex goals, creating strategies, designing system architecture'
+    },
+    {
+      name: 'coder', 
+      description: 'Implementation, programming, development, building applications',
+      best_for: 'Writing code, implementing features, building applications, technical execution'
+    },
+    {
+      name: 'critic',
+      description: 'Quality assessment, security review, code review, validation',
+      best_for: 'Security analysis, code review, quality assurance, validation tasks'
+    },
+    {
+      name: 'researcher',
+      description: 'Information gathering, knowledge synthesis, documentation research',
+      best_for: 'Research tasks, information gathering, documentation, knowledge work'
+    },
+    {
+      name: 'analyzer',
+      description: 'Data analysis, metrics analysis, performance analysis, insights',
+      best_for: 'Data analysis, performance metrics, statistical analysis, insights generation'
+    },
+    {
+      name: 'synthesizer',
+      description: 'Integration, optimization, combining systems, workflow coordination',
+      best_for: 'Integration tasks, optimization, combining multiple systems, workflow design'
+    },
+    {
+      name: 'ui_architect',
+      description: 'UI architecture, design systems, component architecture, interface design',
+      best_for: 'UI/UX architecture, design systems, component planning, interface design'
+    },
+    {
+      name: 'ui_implementer',
+      description: 'UI implementation, component building, frontend development',
+ 
+      best_for: 'Frontend development, UI component implementation, interface building'
+    },
+    {
+      name: 'ui_refiner',
+      description: 'UI refinement, styling, aesthetics, polish, optimization',
+      best_for: 'UI polish, styling refinement, aesthetic improvements, UX optimization'
+    }
+  ];
+
+  const roleList = availableRoles.map((role, index) => 
+    `${index + 1}. **${role.name}**
+   - Description: ${role.description}
+   - Best for: ${role.best_for}`
+  ).join('\n\n');
+
+  return `# Role Selection for Task Execution
+
+## Objective
+${objective}
+
+## Available Roles (9 total)
+${roleList}
+
+## Your Task
+Analyze the objective and select the SINGLE most appropriate role for this task. Consider:
+
+1. **Primary Focus**: What is the main type of work required?
+2. **Task Complexity**: Which role has the best fit for this complexity level?
+3. **Specialized Focus**: UI roles have specialized thinking methodologies for interface design
+4. **Domain Expertise**: Which role's expertise best matches the objective?
+
+## Advanced Options
+You can also:
+- **Suggest a new role** if none of the existing roles are optimal
+- **Explain why** multiple roles might be needed for complex objectives
+- **Recommend role sequencing** if the task requires multiple phases
+
+## Response Format
+Return a JSON object with your role selection:
+\`\`\`json
+{
+  "selected_role": "role_name",
+  "confidence": 0.95,
+  "reasoning": "Brief explanation why this role is optimal",
+  "alternative_suggestion": "optional: suggest new role or multi-role approach if needed"
+}
+\`\`\`
+
+Select the BEST SINGLE role for the primary objective. Be decisive and intelligent.`;
+}
+
+/**
+ * Parse Claude's role selection response
+ * @param claudeResponse - Claude's response containing selected role
+ * @returns Selected role or fallback to hardcoded detection
+ */
+export function parseClaudeRoleSelection(claudeResponse: string, objective: string): Role {
+  try {
+    // Extract JSON from Claude's response
+    const jsonMatch = claudeResponse.match(/```json\s*([\s\S]*?)\s*```/);
+    if (!jsonMatch) {
+      console.warn('No JSON found in Claude role response, falling back to hardcoded detection');
+      return detectRole(objective);
+    }
+
+    const selection = JSON.parse(jsonMatch[1]);
+    
+    if (!selection.selected_role) {
+      console.warn('No selected_role in Claude response, falling back');
+      return detectRole(objective);
+    }
+
+    // Validate the selected role
+    const validRoles: Role[] = [
+      'planner', 'coder', 'critic', 'researcher', 'analyzer', 'synthesizer',
+      'ui_architect', 'ui_implementer', 'ui_refiner'
+    ];
+
+    if (validRoles.includes(selection.selected_role as Role)) {
+      return selection.selected_role as Role;
+    } else {
+      console.warn(`Invalid role selected: ${selection.selected_role}, falling back`);
+      return detectRole(objective);
+    }
+  } catch (error) {
+    console.error('Error parsing Claude role selection:', error);
+    return detectRole(objective);
+  }
+}
+
+// Enhanced role detection including UI roles (LEGACY METHOD - replicates Manus's module selection)
 export function detectRole(objective: string): Role {
   const lowerObjective = objective.toLowerCase();
   
@@ -303,16 +431,33 @@ Think through your analysis approach before proceeding. Consider:
 - What are the key requirements and constraints?
 - Are there any ambiguities that need clarification?
 - What type of task is this (research, coding, deployment, etc.)?
-- What primary role would be most effective (planner/coder/critic/researcher/analyzer/synthesizer)?
 
-After analyzing the situation, proceed with:
+**🧠 CLAUDE-POWERED ROLE SELECTION:**
+{{#if awaiting_role_selection}}
+The system needs your intelligent analysis to select the most appropriate role for this task. Your understanding of context and nuance is far superior to keyword matching. Here's the task:
+
+{{role_selection_prompt}}
+
+**Your Task:**
+1. Analyze the objective and select the optimal role
+2. Consider task complexity, domain expertise, and thinking methodologies
+3. Respond with the exact JSON format specified above
+4. After role selection, continue with goal interpretation
+
+{{else}}
+
+**✅ ROLE SELECTED:** {{detected_role}}
+The system has determined your optimal role based on the objective analysis.
+
+{{/if}}
+
+After role considerations, proceed with:
 1. Parse the user's goal and identify key requirements
 2. Clarify any ambiguous aspects 
 3. Identify what type of task this is (research, coding, deployment, etc.)
-4. Detect the primary role needed (planner/coder/critic/researcher/analyzer/synthesizer)
-5. Call JARVIS with phase_completed: 'QUERY' and include your interpretation in the payload as 'interpreted_goal'.
+4. Call JARVIS with phase_completed: 'QUERY' and include your interpretation in the payload as 'interpreted_goal'.
 
-Focus on understanding the core objective with role-specific expertise.`,
+Focus on understanding the core objective with your specialized role expertise.`,
 
   ENHANCE: `You are in the ENHANCE phase (Manus: "Select Tools"). Your task:
 
@@ -341,6 +486,23 @@ Think through your knowledge requirements before proceeding. Assess:
 - Are there any technical constraints or requirements to consider?
 - What knowledge gaps might exist that could impact success?
 
+**🧠 CLAUDE-POWERED API SELECTION:**
+{{#if awaiting_api_selection}}
+The system needs your intelligent analysis to select the most relevant APIs. Your natural language understanding is far superior to keyword matching. Here's the task:
+
+{{api_selection_prompt}}
+
+**Your Task:**
+1. Analyze the provided APIs using your intelligence 
+2. Select the 3-5 most relevant ones for the objective
+3. Consider role appropriateness, data quality, and complementary information
+4. Respond with the exact JSON format specified above
+5. After your selection, the system will automatically fetch and synthesize data
+
+Focus on intelligent relevance over simple keyword matching.
+
+{{else}}
+
 **🚀 AUTO-CONNECTION ACTIVE:** The system has automatically discovered, fetched, and synthesized knowledge from relevant APIs based on your role and objective. Review the auto-generated knowledge below and determine if additional research is needed.
 
 **🎯 INTELLIGENT API SELECTION:** Based on your role and objective, the system automatically selected APIs that match your domain expertise. Each role has preferred API categories optimized for specific needs.
@@ -350,6 +512,7 @@ Think through your knowledge requirements before proceeding. Assess:
 2. ✅ Multi-Source Fetching - Data gathered from top-ranked APIs
 3. ✅ Knowledge Synthesis - Information cross-validated and synthesized
 4. ✅ Quality Assessment - Confidence scoring and contradiction detection
+{{/if}}
 
 **🔄 MANUAL OVERRIDE OPTIONS:**
 If auto-connection results are insufficient, you can still use:
@@ -407,7 +570,20 @@ After analyzing the execution approach, proceed with:
 4. **Single tool per iteration** (Manus requirement) - call one tool, then return to orchestrator
 5. After each significant action, call JARVIS with phase_completed: 'EXECUTE' and include execution results.
 
-**FRACTAL EXECUTION:** Spawn Task() agents for complex work, execute directly for simple tasks.`,
+## Task() Tool Usage:
+When you see a todo formatted as "(ROLE: agent_type) (CONTEXT: domain) (PROMPT: instructions) (OUTPUT: deliverable)", convert it to:
+
+Task() with parameters:
+- description: Use the structured format: "(ROLE: agent_type) (CONTEXT: domain) (PROMPT: brief_task_description) (OUTPUT: deliverable)"
+- prompt: Enhanced version of the brief todo with detailed context, specific implementation guidance, role-specific methodologies, and instructions for the task agent to create its own todo decomposition that branches from the main task
+
+The Task() tool creates an independent Claude instance that:
+- Starts with fresh context
+- Has access to the same tools you do
+- Works autonomously on the specific task
+- Reports back when complete
+
+Use Task() for complex work requiring specialized expertise. Use direct tools for simple operations.`,
 
   VERIFY: `You are in the VERIFY phase (Quality Assessment). Your task:
 
@@ -445,7 +621,6 @@ export function generateMetaPrompt(todoContent: string, role: Role, context: Rec
       domain_info: context.domain || 'general',
       complexity_level: config.complexityLevel,
       frameworks: config.suggestedFrameworks,
-      reasoning_multiplier: config.reasoningMultiplier,
       cognitive_frameworks: config.cognitiveFrameworks || config.suggestedFrameworks,
       ...context
     },
@@ -455,7 +630,7 @@ ${thinkGuidance}
 
 **🎯 EXECUTION APPROACH:**
 1. Think through your approach using the ${(config.cognitiveFrameworks || config.suggestedFrameworks).join(' and ')} frameworks
-2. Apply ${role} expertise with ${config.reasoningMultiplier}x cognitive enhancement
+2. Apply ${role} expertise with systematic thinking methodologies
 3. Follow ${config.validationRules.join(', ')} validation rules
 4. Use TodoWrite to create your own sub-task breakdown if needed
 5. Think through implementation strategy and potential challenges
@@ -463,7 +638,7 @@ ${thinkGuidance}
 7. Think critically about work quality against ${config.authorityLevel} standards before completion
 8. Report completion with detailed deliverables
 
-**🧠 COGNITIVE ENHANCEMENT:** Your reasoning effectiveness is enhanced ${config.reasoningMultiplier}x through systematic thinking and role-specific frameworks.")`
+**🧠 COGNITIVE ENHANCEMENT:** Your reasoning effectiveness is enhanced through systematic thinking and role-specific frameworks.")`
     ,
     output_requirements: `(OUTPUT: ${config.defaultOutput})`
   };
@@ -507,7 +682,6 @@ export function generateComponentCognitiveDualityPrompt(
       domain_info: context.domain || 'component_cognitive_hybrid',
       complexity_level: config.complexityLevel,
       frameworks: [...config.suggestedFrameworks, 'V0_Component_Generation', 'Unified_Constraint_System'],
-      reasoning_multiplier: config.reasoningMultiplier,
       cognitive_frameworks: config.cognitiveFrameworks || config.suggestedFrameworks,
       reasoning_mode: cognitiveContext.reasoning_mode,
       duality_effectiveness: cognitiveContext.duality_effectiveness,
@@ -526,7 +700,7 @@ ${encapsulationGuidance}
 
 **🎯 COMPONENT-COGNITIVE EXECUTION APPROACH:**
 1. Think through your approach using unified ${(config.cognitiveFrameworks || config.suggestedFrameworks).join(' and ')} + V0 Component Generation frameworks
-2. Apply ${role} expertise with ${config.reasoningMultiplier}x cognitive enhancement + ${cognitiveContext.duality_effectiveness}x duality synergy
+2. Apply ${role} expertise with systematic thinking methodologies and duality integration
 3. Follow ${config.validationRules.join(', ')} validation rules + unified constraint validation
 4. Use TodoWrite to create your own sub-task breakdown if needed (Level 2 Task Agent decomposition)
 5. Think through implementation strategy considering both cognitive orchestration and component generation patterns
@@ -535,7 +709,7 @@ ${encapsulationGuidance}
 8. Think critically about work quality against ${config.authorityLevel} + Component-Cognitive Duality standards
 9. Report completion with detailed deliverables including constraint satisfaction metrics
 
-**🧠 COMPONENT-COGNITIVE ENHANCEMENT:** Your reasoning effectiveness is enhanced ${config.reasoningMultiplier}x (cognitive) × ${cognitiveContext.duality_effectiveness}x (duality synergy) through systematic thinking, role-specific frameworks, and unified constraint-driven component generation.")`
+**🧠 COMPONENT-COGNITIVE ENHANCEMENT:** Your reasoning effectiveness is enhanced through systematic thinking, role-specific frameworks, and unified constraint-driven component generation.")`
     ,
     output_requirements: `(OUTPUT: ${config.defaultOutput} + Component-Cognitive Duality Metrics)`
   };
@@ -549,7 +723,7 @@ function generateComponentCognitiveDualityGuidance(
   constraints: UnifiedConstraint[]
 ): string {
   const modeSpecificGuidance: Record<CognitiveContext['reasoning_mode'], string> = {
-    component_generation: `**🧠 COMPONENT GENERATION REASONING (${config.reasoningMultiplier}x enhancement):** Think systematically about V0-style component creation:
+    component_generation: `**🧠 COMPONENT GENERATION REASONING:** Think systematically about V0-style component creation:
 - Component hierarchy and composition patterns (atomic → composite → ecosystem)
 - Framework-specific constraints (React/Vue/Svelte patterns)
 - Accessibility compliance and WAI-ARIA integration
@@ -557,13 +731,13 @@ function generateComponentCognitiveDualityGuidance(
 - Props interface design and component API definition
 - Performance optimization and bundle size considerations`,
 
-    cognitive_orchestration: `**🧠 COGNITIVE ORCHESTRATION REASONING (${config.reasoningMultiplier}x enhancement):** Think strategically about Manus FSM orchestration:`,
+    cognitive_orchestration: `**🧠 COGNITIVE ORCHESTRATION REASONING:** Think strategically about Manus FSM orchestration:`,
     
-    unified: `**🧠 UNIFIED REASONING (${config.reasoningMultiplier}x enhancement):** Think holistically combining both approaches:`,
+    unified: `**🧠 UNIFIED REASONING:** Think holistically combining both approaches:`,
     
-    component_focused: `**🧠 COMPONENT-FOCUSED REASONING (${config.reasoningMultiplier}x enhancement):** Focus on component generation:`,
+    component_focused: `**🧠 COMPONENT-FOCUSED REASONING:** Focus on component generation:`,
     
-    cognitive_focused: `**🧠 COGNITIVE-FOCUSED REASONING (${config.reasoningMultiplier}x enhancement):** Focus on cognitive orchestration:
+    cognitive_focused: `**🧠 COGNITIVE-FOCUSED REASONING:** Focus on cognitive orchestration:
 - Phase transition logic and state management
 - Task decomposition and fractal orchestration
 - Role-based cognitive enhancement application
@@ -571,7 +745,7 @@ function generateComponentCognitiveDualityGuidance(
 - Session state persistence and performance tracking
 - Constraint validation and compliance enforcement`,
 
-    hybrid_duality: `**🧠 HYBRID DUALITY REASONING (${config.reasoningMultiplier}x enhancement):** Think holistically about unified component-cognitive patterns:
+    hybrid_duality: `**🧠 HYBRID DUALITY REASONING:** Think holistically about unified component-cognitive patterns:
 - Bidirectional mapping between V0 Component↔Manus Task hierarchies
 - Unified constraint propagation across component/project/ecosystem scopes
 - Encapsulation pattern integration with cognitive orchestration
@@ -663,14 +837,14 @@ function requiresPythonExecution(objective: string, role: Role): boolean {
 // Generate role-specific Think tool guidance for cognitive enhancement
 function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): string {
   const roleSpecificThinking: Record<Role, string> = {
-    planner: `**🧠 STRATEGIC THINKING REQUIRED (${config.reasoningMultiplier}x enhancement):** Think strategically about:
+    planner: `**🧠 STRATEGIC THINKING REQUIRED:** Think strategically about:
 - System architecture and component relationships
 - Strategic decomposition using Hierarchical Decomposition framework
 - Dependencies, timelines, and resource allocation
 - Risk assessment and mitigation strategies
 - Success criteria and validation checkpoints`,
 
-    coder: `**🧠 IMPLEMENTATION REASONING REQUIRED (${config.reasoningMultiplier}x enhancement):** Think through the implementation approach:
+    coder: `**🧠 IMPLEMENTATION REASONING REQUIRED:** Think through the implementation approach:
 - Modular architecture design patterns and component boundaries
 - Test-driven development approach and testing strategy
 - Error handling, edge cases, and robustness considerations
@@ -678,21 +852,21 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Integration points and API design decisions
 - **Python Execution**: For complex algorithms, calculations, or code generation, use mcp__ide__executeCode to write and test Python scripts`,
 
-    critic: `**🧠 CRITICAL ASSESSMENT REQUIRED (${config.reasoningMultiplier}x enhancement):** Think critically about quality and security:
+    critic: `**🧠 CRITICAL ASSESSMENT REQUIRED:** Think critically about quality and security:
 - Security vulnerabilities and attack vectors using Security-First Assessment
 - Code quality, performance bottlenecks, and optimization opportunities
 - Compliance with standards, regulations, and best practices
 - Multi-layer validation across functional, security, and performance dimensions
 - Risk severity assessment and remediation prioritization`,
 
-    researcher: `**🧠 RESEARCH ANALYSIS REQUIRED (${config.reasoningMultiplier}x enhancement):** Think systematically about the research approach:
+    researcher: `**🧠 RESEARCH ANALYSIS REQUIRED:** Think systematically about the research approach:
 - Parallel research validation strategies and source credibility assessment
 - Information synthesis patterns and data correlation analysis
 - Research scope boundaries and information completeness criteria
 - Source triangulation and verification methodologies
 - Knowledge gaps identification and research direction prioritization`,
 
-    analyzer: `**🧠 ANALYTICAL REASONING REQUIRED (${config.reasoningMultiplier}x enhancement):** Think analytically about the data and patterns:
+    analyzer: `**🧠 ANALYTICAL REASONING REQUIRED:** Think analytically about the data and patterns:
 - Multi-dimensional analysis matrix construction and variable relationships
 - Statistical pattern recognition and data correlation significance
 - Data validation methodologies and quality assurance protocols
@@ -700,26 +874,26 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Statistical significance assessment and confidence interval analysis
 - **Python Analysis**: Use mcp__ide__executeCode for statistical analysis, data processing, performance metrics calculation, and visualization`,
 
-    synthesizer: `**🧠 INTEGRATION REASONING REQUIRED (${config.reasoningMultiplier}x enhancement):** Think holistically about integration and optimization:
+    synthesizer: `**🧠 INTEGRATION REASONING REQUIRED:** Think holistically about integration and optimization:
 - Component integration strategies and system interoperability
 - Optimization framework selection and performance metric definition
 - Integration testing approaches and quality synthesis validation
 - System-level emergence patterns and holistic performance assessment
 - Trade-off analysis between conflicting requirements and constraints`,
 
-    ui_architect: `**🧠 UI ARCHITECTURE REASONING REQUIRED (${config.reasoningMultiplier}x enhancement):** Think systematically about UI design architecture:
+    ui_architect: `**🧠 UI ARCHITECTURE REASONING REQUIRED:** Think systematically about UI design architecture:
 - Component hierarchy and design system structure
 - User experience flow and interaction patterns
 - Accessibility and inclusive design principles
 - Design token systems and theming architecture`,
 
-    ui_implementer: `**🧠 UI IMPLEMENTATION REASONING REQUIRED (${config.reasoningMultiplier}x enhancement):** Think through UI implementation:
+    ui_implementer: `**🧠 UI IMPLEMENTATION REASONING REQUIRED:** Think through UI implementation:
 - Component implementation patterns and best practices
 - Responsive design and cross-device compatibility
 - Performance optimization for UI rendering
 - Integration with design systems and style guides`,
 
-    ui_refiner: `**🧠 UI REFINEMENT REASONING REQUIRED (${config.reasoningMultiplier}x enhancement):** Think critically about UI refinement:
+    ui_refiner: `**🧠 UI REFINEMENT REASONING REQUIRED:** Think critically about UI refinement:
 - Visual polish and aesthetic improvements
 - User interaction feedback and micro-interactions
 - Cross-browser compatibility and testing

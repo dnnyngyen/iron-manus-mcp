@@ -1,0 +1,78 @@
+/**
+ * JARVIS FSM Controller Tool
+ * Extracted from index.ts to provide modular tool architecture
+ */
+
+import { BaseTool, ToolSchema, ToolResult } from './base-tool.js';
+import { processState } from '../core/fsm.js';
+import { MessageJARVIS } from '../core/types.js';
+
+export interface JARVISArgs {
+  session_id: string;
+  phase_completed?: 'QUERY' | 'ENHANCE' | 'KNOWLEDGE' | 'PLAN' | 'EXECUTE' | 'VERIFY';
+  initial_objective?: string;
+  payload?: Record<string, any>;
+}
+
+/**
+ * JARVIS Finite State Machine Controller Tool
+ * Implements the 6-step agent loop with fractal orchestration
+ */
+export class JARVISTool extends BaseTool {
+  readonly name = 'JARVIS';
+  readonly description = '🚀 **JARVIS Finite State Machine Controller** - Accurate replication of Manus\'s PyArmor-protected architecture. Implements the 6-step agent loop (Analyze Events → Select Tools → Wait for Execution → Iterate → Submit Results → Enter Standby) with 3 modules (Planner/Knowledge/Datasource) plus fractal orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, performance tracking, and single-tool-per-iteration enforcement. Hijacks Sequential Thinking for deterministic agent control.';
+  
+  readonly inputSchema: ToolSchema = {
+    type: 'object',
+    properties: {
+      session_id: {
+        type: 'string',
+        description: 'Unique session identifier'
+      },
+      phase_completed: {
+        type: 'string',
+        enum: ['QUERY', 'ENHANCE', 'KNOWLEDGE', 'PLAN', 'EXECUTE', 'VERIFY'],
+        description: 'Phase that Claude just completed (omit for initial call)'
+      },
+      initial_objective: {
+        type: 'string',
+        description: 'User\'s goal (only on first call)'
+      },
+      payload: {
+        type: 'object',
+        description: 'Phase-specific data from Claude',
+        additionalProperties: true
+      }
+    },
+    required: ['session_id']
+  };
+
+  /**
+   * Handle JARVIS FSM execution
+   * Routes to the core FSM processState function
+   */
+  async handle(args: JARVISArgs): Promise<ToolResult> {
+    try {
+      this.validateArgs(args);
+
+      // Construct FSM input message
+      const input: MessageJARVIS = {
+        session_id: args.session_id,
+        ...(args.phase_completed && { phase_completed: args.phase_completed }),
+        ...(args.initial_objective && { initial_objective: args.initial_objective }),
+        ...(args.payload && { payload: args.payload })
+      };
+
+      // Process through FSM
+      const result = await processState(input);
+
+      // Format response
+      const responseText = JSON.stringify(result, null, 2);
+      return this.createResponse(responseText);
+
+    } catch (error) {
+      console.error('JARVIS FSM Error:', error);
+      return this.createErrorResponse(error instanceof Error ? error : String(error));
+    }
+  }
+}

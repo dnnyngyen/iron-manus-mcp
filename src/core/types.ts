@@ -18,9 +18,9 @@ export type Role =
   | 'researcher'  // Maps to Manus Knowledge Module  
   | 'analyzer'    // Data analysis and insights
   | 'synthesizer' // Integration and optimization
-  | 'ui_architect'   // V0-Style UI architecture and systematic design (3.1x multiplier)
-  | 'ui_implementer' // V0-Style UI implementation with concurrent execution (2.8x multiplier)
-  | 'ui_refiner';    // V0-Style UI refinement with Apple-Notion aesthetics (2.5x multiplier)
+  | 'ui_architect'   // V0-Style UI architecture and systematic design
+  | 'ui_implementer' // V0-Style UI implementation with concurrent execution
+  | 'ui_refiner';    // V0-Style UI refinement with polished aesthetics
 
 // Complexity levels for validation and processing
 export enum ComplexityLevel {
@@ -146,7 +146,6 @@ export interface RoleConfig {
   suggestedFrameworks: string[];
   validationRules: string[];
   thinkingMethodology: string[]; // Explicit thinking steps for quality reasoning
-  reasoningMultiplier: number; // Psychological anchor (not mathematical)
   authorityLevel: string;
   cognitiveFrameworks?: string[]; // Optional cognitive frameworks for enhanced reasoning
 }
@@ -178,7 +177,7 @@ export interface EcosystemSessionMapping {
 
 // Performance metrics for duality operations
 export interface DualityPerformanceMetrics {
-  cognitiveEffectiveness: number;              // 2.3x-3.2x multiplier
+  cognitiveEffectiveness: number;              // Thinking methodology effectiveness
   componentGenerationSpeed?: number;           // Components/minute (UI mode)
   phaseTransitionEfficiency: number;           // Successful transitions/total
   systemCoherence: number;                     // Cross-mode consistency (0-1)
@@ -360,7 +359,7 @@ export interface ComponentCognitiveMetrics {
     reusability_index: number;                // Component reuse potential
   };
   cognitive_orchestration: {
-    reasoning_effectiveness: number;           // Manus reasoning multiplier
+    reasoning_effectiveness: number;           // Manus reasoning effectiveness
     phase_transition_efficiency: number;      // Phase completion speed
     task_completion_rate: number;             // Task success percentage
     fractal_orchestration_depth: number;      // Nested Task() agent levels

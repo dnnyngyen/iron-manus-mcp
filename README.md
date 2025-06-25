@@ -1,24 +1,32 @@
-# 🦾 Iron Manus MCP (+ J.A.R.V.I.S. Meta-Prompter)
-**Experimental "Software 3.0" Implementation**
+# Iron Manus MCP
 
-> Forked Sequential Thinking and turned it into a Thread of Thought (ThoT) Meta-Prompting tool with Claude-code's built-in features.
+**Model Context Protocol Server with Finite State Machine Architecture**
+
+A modular MCP server implementing a 6-phase finite state machine for task orchestration, API integration, and knowledge synthesis.
 
 ## Overview
 
-**An experimental project** exploring how Claude's native tools can be leveraged for autonomous development. The goal: demonstrate that sophisticated agent behavior doesn't require complex external systems - Claude's own tools are sufficient for Software 3.0 experimentation.
+Iron Manus MCP provides a structured approach to task execution through a finite state machine that manages role-based cognitive enhancement, automated API discovery, and knowledge synthesis. The system implements fractal orchestration capabilities for complex task decomposition.
 
-Not affiliated with Manus AI. "Iron Manus" inspired by Andrej Karpathy's "Iron Man" analogy for the future of Software 3.0.
+Not affiliated with Manus AI. "Iron Manus" inspired by Andrej Karpathy's "Iron Man" analogy for software development automation.
 
-**NO API KEY NEEDED** Simple but surprisingly effective; mainly built around Claude's native `Task()`, `TodoWrite`, and `TodoRead` tools for autonomous decomposition, delegation. and task management.
+The system operates without external API keys, utilizing Claude's native tool capabilities for task management and execution.
 
-## Key Concepts
+## Architecture
 
-### Reworking Claude's Native Tool Integration
-- **Task() spawning** - Creates specialized Claude instances as autonomous agents with context management, so conversations can get over 200K+ tokens. (More practical with Sonnet 4)
-- **TodoWrite/TodoRead** - Each Todo List item Claude generates gets broken down into a set of sub-ToDo lists for native task decomposition, state management, and progress tracking  
-- **Meta-prompt compilation** - Transforms simple syntax into specialized agent prompts
+### Core Components
 
-!!! **Single MCP One-Shot tool** - Entire system runs through one interface (Currently working on supporting concurrency, some tasks may take a while)
+- **JARVIS FSM Controller** - Implements 6-phase state machine: INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+- **MultiAPIFetch** - Parallel HTTP requests with timeout management and JSON truncation
+- **APISearch** - Intelligent API discovery with role-based filtering from 65+ endpoint registry
+- **KnowledgeSynthesize** - Cross-validation engine with conflict resolution and confidence scoring
+
+### Key Features
+
+- **Modular Tool System** - Each tool operates independently with consistent interfaces
+- **Role-Based Processing** - 9 specialized roles (planner, coder, critic, researcher, analyzer, synthesizer, ui_architect, ui_implementer, ui_refiner)
+- **Fractal Orchestration** - Task decomposition through meta-prompt generation and Task() agent spawning
+- **Auto-Connection** - Automated API discovery, fetching, and knowledge synthesis
 
 ## Installation
 
@@ -30,6 +38,7 @@ npm run build
 ```
 
 Add to your Claude Code MCP configuration:
+
 ```json
 {
   "mcpServers": {
@@ -41,40 +50,43 @@ Add to your Claude Code MCP configuration:
 }
 ```
 
-## Click to Watch Demo:
+## Click to Watch Demo
 
 <a href="https://www.youtube.com/watch?v=nImkimPQCjk" target="_blank">
   <img src="https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg" alt="Watch the video" width="800"/>
 </a>
-
 
 <div style="width:400px; height:264px; overflow:hidden; border:1px solid #ccc;">
   <img src="architecture.png" style="width:100%; height:100%; object-fit:cover;">
 </div>
 
 ### The Meta-Prompt DSL
+
 ```
 (ROLE: agent_type) (CONTEXT: domain) (PROMPT: instructions) (OUTPUT: deliverable)
 ```
 
 This syntax automatically generates specialized prompts for Task() agents:
+
 ```typescript
 // Simple input:
 "(ROLE: coder) (CONTEXT: authentication) (PROMPT: Implement JWT auth) (OUTPUT: production_code)"
 
 // Becomes a full agent prompt with:
 // - Role-specific thinking methodologies
-// - Domain context and frameworks  
+// - Domain context and frameworks
 // - Quality validation rules
 // - Output specifications
 ```
 
 ### 6-Phase Workflow
+
 ```
 QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
 ```
 
 Each phase uses native Claude tools for state management and progression:
+
 - **Planning** creates meta-prompt todos via TodoWrite
 - **Execution** spawns Task() agents for complex work
 - **Verification** ensures quality through systematic checks
@@ -86,6 +98,7 @@ Each phase uses native Claude tools for state management and progression:
 ## Example Usage
 
 **Input:**
+
 ```typescript
 await mcp.callTool({
   name: 'JARVIS',
@@ -97,6 +110,7 @@ await mcp.callTool({
 ```
 
 **Automatic breakdown:**
+
 1. System analyzes the request and detects optimal role (planner)
 2. Enhances goal with missing technical requirements
 3. Creates specialized todos including meta-prompts
@@ -107,6 +121,7 @@ await mcp.callTool({
 ## Implementation Details
 
 ### Architecture
+
 ```
 iron-manus-mcp/
 ├── src/
@@ -121,7 +136,9 @@ iron-manus-mcp/
 ```
 
 ### Role Specialization
+
 The system includes specialized roles with distinct thinking methodologies:
+
 - **Planner** - Strategic decomposition and dependency analysis
 - **Coder** - Implementation with testing and best practices
 - **Critic** - Security review and quality assessment
@@ -130,7 +147,9 @@ The system includes specialized roles with distinct thinking methodologies:
 - **Synthesizer** - Integration and optimization
 
 ### Recursive Capabilities
+
 Spawned agents can create their own sub-tasks and spawn additional agents, enabling:
+
 - Unlimited depth of specialization
 - Autonomous delegation of complex work
 - Self-organizing task hierarchies
@@ -140,8 +159,9 @@ Spawned agents can create their own sub-tasks and spawn additional agents, enabl
 This project explores **Software 3.0** concepts where natural language becomes executable through AI augmentation. Rather than building external orchestration layers, it demonstrates that sophisticated agent behavior can emerge from elegant tool integration.
 
 The approach prioritizes:
+
 - **Simplicity** over complexity
-- **Native integration** over external dependencies  
+- **Native integration** over external dependencies
 - **Emergent behavior** over rigid control structures
 - **Experimentation** over premature optimization
 
