@@ -8,6 +8,7 @@ import { JARVISTool } from './jarvis-tool.js';
 import { MultiAPIFetchTool } from './multi-api-fetch.js';
 import { APISearchTool } from './api-search.js';
 import { KnowledgeSynthesisTool } from './knowledge-synthesis.js';
+import { APIValidatorTool } from './api-validator.js';
 
 /**
  * Tool Registry Class
@@ -28,6 +29,7 @@ export class ToolRegistry {
     this.registerTool(new MultiAPIFetchTool());
     this.registerTool(new APISearchTool());
     this.registerTool(new KnowledgeSynthesisTool());
+    this.registerTool(new APIValidatorTool());
   }
 
   /**

@@ -13,4 +13,5 @@ export {
   type APIResponse,
   type SynthesisResult 
 } from './knowledge-synthesis.js';
+export { APIValidatorTool, type APIValidatorArgs, type ValidationResult } from './api-validator.js';
 export { ToolRegistry, toolRegistry } from './tool-registry.js';

@@ -5,7 +5,7 @@
 
 import { BaseTool, ToolSchema, ToolResult } from './base-tool.js';
 import axios, { AxiosError } from 'axios';
-import { rateLimiter } from '../core/api-registry.js';
+import { rateLimiter, SAMPLE_API_REGISTRY } from '../core/api-registry.js';
 
 export interface MultiAPIFetchArgs {
   api_endpoints: string[];
@@ -162,20 +162,32 @@ export class MultiAPIFetchTool extends BaseTool {
             throw new Error('Rate limit exceeded for this API');
           }
           
-          // Make the request with exponential backoff retry
+          // Try to find API in registry for smart retry
+          const registryAPI = SAMPLE_API_REGISTRY.find(api => 
+            api.url === endpoint || endpoint.includes(new URL(api.url).hostname)
+          );
+          
+          // Make the request with exponential backoff retry and smart alternatives
           let lastError: Error | null = null;
           const maxRetries = 2;
+          let attemptedUrls = [endpoint];
           
-          for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-              if (attempt > 0) {
-                // Exponential backoff: 500ms, 1000ms
-                const delay = 500 * Math.pow(2, attempt - 1);
-                await new Promise(resolve => setTimeout(resolve, delay));
-              }
-              
-              const response = await axiosInstance.get(endpoint);
-              const duration = Date.now() - startTime;
+          // If primary endpoint fails and we have alternatives, try them
+          if (registryAPI?.endpoint_patterns) {
+            attemptedUrls = [endpoint, ...registryAPI.endpoint_patterns.filter(p => p !== endpoint)];
+          }
+          
+          for (const currentUrl of attemptedUrls) {
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+              try {
+                if (attempt > 0) {
+                  // Exponential backoff: 500ms, 1000ms
+                  const delay = 500 * Math.pow(2, attempt - 1);
+                  await new Promise(resolve => setTimeout(resolve, delay));
+                }
+                
+                const response = await axiosInstance.get(currentUrl);
+                const duration = Date.now() - startTime;
               
               // Sanitize response data
               let sanitizedData = response.data;
@@ -187,7 +199,7 @@ export class MultiAPIFetchTool extends BaseTool {
               }
               
               return {
-                endpoint,
+                endpoint: currentUrl !== endpoint ? `${endpoint} → ${currentUrl}` : endpoint,
                 index,
                 success: true,
                 status: response.status,
@@ -198,16 +210,18 @@ export class MultiAPIFetchTool extends BaseTool {
                 data: sanitizedData,
                 size: JSON.stringify(response.data).length,
                 duration,
-                error: null
+                error: null,
+                corrected: currentUrl !== endpoint
               };
-            } catch (error) {
-              lastError = error as Error;
-              if (attempt === maxRetries) {
-                throw lastError;
+              } catch (error) {
+                lastError = error as Error;
+                // Don't break here, continue to next attempt
               }
             }
+            // If all attempts for this URL failed, try next URL
           }
           
+          // If all URLs failed, throw the last error
           throw lastError;
           
         } catch (error) {

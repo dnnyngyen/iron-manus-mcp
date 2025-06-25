@@ -21,6 +21,9 @@ export interface APIEndpoint {
     requests: number;
     timeWindow: string;
   };
+  endpoint_patterns?: string[]; // Alternative endpoints to try
+  documentation_url?: string; // Link to API documentation
+  health_check_endpoint?: string; // Endpoint to verify API is working
 }
 
 /**
@@ -51,24 +54,24 @@ interface RateLimiterState {
 export const ROLE_API_MAPPING: Record<Role, string[]> = {
   // Research and knowledge-focused roles
   researcher: ['books', 'calendar', 'science', 'education', 'news', 'reference', 'academic'],
-  
+
   // Analysis and data-focused roles
   analyzer: ['data', 'finance', 'cryptocurrency', 'business', 'statistics', 'market', 'analytics'],
-  
+
   // Design and creative roles
   ui_architect: ['art', 'design', 'color', 'inspiration', 'fonts', 'graphics', 'visual'],
   ui_implementer: ['design', 'color', 'fonts', 'css', 'components', 'frameworks'],
   ui_refiner: ['design', 'color', 'accessibility', 'optimization', 'user-experience'],
-  
+
   // Development-focused roles
   coder: ['development', 'documentation', 'tools', 'programming', 'testing', 'deployment'],
-  
+
   // Planning and strategic roles
   planner: ['project', 'management', 'calendar', 'productivity', 'scheduling', 'organization'],
-  
-  // Quality and validation roles  
+
+  // Quality and validation roles
   critic: ['testing', 'validation', 'security', 'quality', 'monitoring', 'analysis'],
-  
+
   // Integration and optimization roles
   synthesizer: ['integration', 'optimization', 'data', 'transformation', 'workflow', 'automation']
 };
@@ -76,7 +79,6 @@ export const ROLE_API_MAPPING: Record<Role, string[]> = {
 /**
  * Comprehensive API Registry Data
  * No-authentication APIs from public-api-lists and curated sources
- * Updated with comprehensive list including Pokemon-3D-api and extended collections
  * Total: 65+ APIs across 25+ categories, all no-authentication required
  */
 export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
@@ -668,7 +670,13 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
+    endpoint_patterns: [
+      'https://pokemon-3d-api.onrender.com/v1/pokemon',
+      'https://pokemon-3d-api.onrender.com/pokemon',
+      'https://pokemon-3d-api.onrender.com/api/v1/pokemon'
+    ],
+    documentation_url: 'https://documenter.getpostman.com/view/29725199/2sAYX8KMU8'
   },
   {
     name: 'Pokemon TCG API',
@@ -914,7 +922,7 @@ export class RateLimiter {
     // Refill tokens based on time passed
     const timeElapsed = now - state.lastRefill;
     const tokensToAdd = Math.floor(timeElapsed / timeWindowMs) * maxRequests;
-    
+
     if (tokensToAdd > 0) {
       state.tokens = Math.min(maxRequests, state.tokens + tokensToAdd);
       state.lastRefill = now;
@@ -971,31 +979,31 @@ export const rateLimiter = new RateLimiter();
  */
 export function parseMarkdownAPITable(markdownContent: string): APIEndpoint[] {
   const apis: APIEndpoint[] = [];
-  
+
   try {
     // Split content into lines
     const lines = markdownContent.split('\n');
     let inTable = false;
     let headerParsed = false;
-    
+
     for (const line of lines) {
       const trimmedLine = line.trim();
-      
+
       // Skip empty lines
       if (!trimmedLine) continue;
-      
+
       // Detect table start (header with pipes)
       if (trimmedLine.includes('|') && trimmedLine.includes('API')) {
         inTable = true;
         continue;
       }
-      
+
       // Skip table separator line
       if (inTable && trimmedLine.match(/^\|[\s\-\|]+\|$/)) {
         headerParsed = true;
         continue;
       }
-      
+
       // Parse table rows
       if (inTable && headerParsed && trimmedLine.startsWith('|')) {
         const api = parseMarkdownTableRow(trimmedLine);
@@ -1003,7 +1011,7 @@ export function parseMarkdownAPITable(markdownContent: string): APIEndpoint[] {
           apis.push(api);
         }
       }
-      
+
       // End of table detection
       if (inTable && !trimmedLine.includes('|')) {
         inTable = false;
@@ -1013,7 +1021,7 @@ export function parseMarkdownAPITable(markdownContent: string): APIEndpoint[] {
   } catch (error) {
     console.error('Error parsing markdown API table:', error);
   }
-  
+
   return apis;
 }
 
@@ -1026,24 +1034,24 @@ function parseMarkdownTableRow(row: string): APIEndpoint | null {
   try {
     // Split by pipe and clean up
     const columns = row.split('|').map(col => col.trim()).filter(col => col);
-    
+
     if (columns.length < 4) {
       return null;
     }
-    
+
     // Extract basic information (adapt based on actual markdown format)
     const [name, description, url, category, auth = 'None', https = 'Yes', cors = 'Yes'] = columns;
-    
+
     // Extract keywords from name and description
     const keywords = extractKeywordsFromText(`${name} ${description}`);
-    
+
     // Parse auth type
     const authType = parseAuthType(auth);
-    
+
     // Parse boolean values
     const httpsEnabled = parseBoolean(https);
     const corsEnabled = parseBoolean(cors);
-    
+
     // Generate reliability score based on various factors
     const reliabilityScore = calculateReliabilityScore({
       hasHttps: httpsEnabled,
@@ -1051,7 +1059,7 @@ function parseMarkdownTableRow(row: string): APIEndpoint | null {
       authType,
       urlValidity: isValidUrl(url)
     });
-    
+
     return {
       name: name.replace(/\[([^\]]+)\]\([^)]+\)/, '$1'), // Remove markdown links
       description: description.substring(0, 200), // Limit description length
@@ -1077,7 +1085,7 @@ function parseMarkdownTableRow(row: string): APIEndpoint | null {
  */
 function extractKeywordsFromText(text: string): string[] {
   const commonWords = new Set(['api', 'the', 'and', 'or', 'but', 'for', 'with', 'to', 'of', 'in', 'on', 'at', 'by']);
-  
+
   return text.toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
@@ -1143,12 +1151,12 @@ function calculateReliabilityScore(factors: {
   urlValidity: boolean;
 }): number {
   let score = 0.5; // Base score
-  
+
   if (factors.hasHttps) score += 0.2;
   if (factors.hasCors) score += 0.1;
   if (factors.authType !== 'None') score += 0.1;
   if (factors.urlValidity) score += 0.1;
-  
+
   return Math.min(1.0, Math.max(0.0, score));
 }
 
@@ -1183,10 +1191,10 @@ export function selectRelevantAPIs(
 ): APISelectionResult[] {
   // Extract keywords from objective
   const objectiveKeywords = extractKeywordsFromText(objective);
-  
+
   // Get role preferences
   const rolePreferences = ROLE_API_MAPPING[detectedRole] || [];
-  
+
   // Score each API
   const scoredAPIs = apiRegistry.map(api => {
     const score = calculateAPIRelevanceScore(api, objectiveKeywords, rolePreferences);
@@ -1197,7 +1205,7 @@ export function selectRelevantAPIs(
       role_preference_bonus: score.roleBonus
     };
   });
-  
+
   // Sort by relevance score (descending) and reliability
   scoredAPIs.sort((a, b) => {
     const scoreDiff = b.relevance_score - a.relevance_score;
@@ -1207,7 +1215,7 @@ export function selectRelevantAPIs(
     }
     return scoreDiff;
   });
-  
+
   // Return top 5 results
   return scoredAPIs.slice(0, 5);
 }
@@ -1243,7 +1251,7 @@ export function generateAPISelectionPrompt(
   detectedRole: Role,
   apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY
 ): string {
-  const apiList = apiRegistry.map((api, index) => 
+  const apiList = apiRegistry.map((api, index) =>
     `${index + 1}. **${api.name}** (${api.category})
    - Description: ${api.description}
    - URL: ${api.url}
@@ -1306,7 +1314,7 @@ export function parseClaudeAPISelection(
     }
 
     const selectedAPIs = JSON.parse(jsonMatch[1]);
-    
+
     if (!Array.isArray(selectedAPIs)) {
       console.warn('Claude response is not an array, falling back');
       return [];
@@ -1314,7 +1322,7 @@ export function parseClaudeAPISelection(
 
     // Convert Claude's selection to APISelectionResult format
     const results: APISelectionResult[] = [];
-    
+
     for (const selection of selectedAPIs) {
       const api = apiRegistry.find(a => a.name === selection.api_name);
       if (api) {
@@ -1348,7 +1356,7 @@ function calculateAPIRelevanceScore(
 ): { total: number; matchingKeywords: string[]; roleBonus: number } {
   let score = 0;
   const matchingKeywords: string[] = [];
-  
+
   // Keyword matching score (0-0.6)
   const allApiKeywords = [...api.keywords, api.name.toLowerCase(), api.category];
   for (const objKeyword of objectiveKeywords) {
@@ -1360,21 +1368,21 @@ function calculateAPIRelevanceScore(
       }
     }
   }
-  
+
   // Role preference bonus (0-0.3)
   const roleBonus = rolePreferences.includes(api.category) ? 0.3 : 0;
   score += roleBonus;
-  
+
   // Reliability factor (0-0.1)
   score += api.reliability_score * 0.1;
-  
+
   // Auth accessibility bonus (simpler auth = higher score)
   if (api.auth_type === 'None') score += 0.05;
-  
+
   // HTTPS and CORS bonus
   if (api.https) score += 0.025;
   if (api.cors) score += 0.025;
-  
+
   return {
     total: Math.min(1.0, score),
     matchingKeywords: Array.from(new Set(matchingKeywords)), // Remove duplicates
@@ -1389,7 +1397,7 @@ function calculateAPIRelevanceScore(
  * @returns Found API endpoint or null
  */
 export function getAPIByName(name: string, apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY): APIEndpoint | null {
-  return apiRegistry.find(api => 
+  return apiRegistry.find(api =>
     api.name.toLowerCase() === name.toLowerCase()
   ) || null;
 }
@@ -1401,7 +1409,7 @@ export function getAPIByName(name: string, apiRegistry: APIEndpoint[] = SAMPLE_A
  * @returns Array of APIs in the specified category
  */
 export function getAPIsByCategory(category: string, apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY): APIEndpoint[] {
-  return apiRegistry.filter(api => 
+  return apiRegistry.filter(api =>
     api.category.toLowerCase() === category.toLowerCase()
   );
 }
@@ -1439,10 +1447,10 @@ export function canUseAPI(apiName: string, apiRegistry: APIEndpoint[] = SAMPLE_A
   if (!api || !api.rate_limits) {
     return true; // No rate limits defined
   }
-  
+
   // Parse time window to milliseconds
   const timeWindowMs = parseTimeWindow(api.rate_limits.timeWindow);
-  
+
   return rateLimiter.canMakeRequest(apiName, api.rate_limits.requests, timeWindowMs);
 }
 
@@ -1454,10 +1462,10 @@ export function canUseAPI(apiName: string, apiRegistry: APIEndpoint[] = SAMPLE_A
 function parseTimeWindow(timeWindow: string): number {
   const match = timeWindow.match(/^(\d+)([smhd])$/);
   if (!match) return 60000; // Default to 1 minute
-  
+
   const [, amount, unit] = match;
   const num = parseInt(amount, 10);
-  
+
   switch (unit) {
     case 's': return num * 1000;
     case 'm': return num * 60 * 1000;
@@ -1488,30 +1496,30 @@ export function getAPIRegistryStats(apiRegistry: APIEndpoint[] = SAMPLE_API_REGI
     httpsPercentage: 0,
     corsPercentage: 0
   };
-  
+
   let totalReliability = 0;
   let httpsCount = 0;
   let corsCount = 0;
-  
+
   for (const api of apiRegistry) {
     // Category count
     stats.byCategory[api.category] = (stats.byCategory[api.category] || 0) + 1;
-    
+
     // Auth type count
     stats.byAuthType[api.auth_type] = (stats.byAuthType[api.auth_type] || 0) + 1;
-    
+
     // Aggregate reliability
     totalReliability += api.reliability_score;
-    
+
     // HTTPS and CORS counts
     if (api.https) httpsCount++;
     if (api.cors) corsCount++;
   }
-  
+
   stats.avgReliability = stats.total > 0 ? totalReliability / stats.total : 0;
   stats.httpsPercentage = stats.total > 0 ? (httpsCount / stats.total) * 100 : 0;
   stats.corsPercentage = stats.total > 0 ? (corsCount / stats.total) * 100 : 0;
-  
+
   return stats;
 }
 

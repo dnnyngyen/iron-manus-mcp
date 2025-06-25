@@ -4,8 +4,8 @@ Iron Manus JARVIS Orchestration Loop: Complete Chronological Breakdown
 
   Natural Language: User asks for analysis of the Iron Manus codebase architecture
   MCP Server: Receives initial call with session_id and initial_objective
-  Code Execution (src/index.ts:73-74):
-  const output = processState(input);
+  Code Execution (src/index.ts:31):
+  const result = await toolRegistry.executeTool(name, args);
 
   FSM Logic (src/core/fsm.ts:109-121):
   if (input.initial_objective) {

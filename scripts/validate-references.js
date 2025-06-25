@@ -21,7 +21,7 @@ const REFERENCE_INDEX = {
   'processState': {
     file: 'src/core/fsm.ts',
     line: 104,
-    referencedIn: ['src/index.ts:74', 'docs/ARCHITECTURE.md:149'],
+    referencedIn: ['docs/ARCHITECTURE.md:149'],
     description: 'Main FSM processing function',
     type: 'function'
   },
@@ -53,7 +53,7 @@ const DOCUMENTATION_REFERENCES = {
     file: 'docs/ARCHITECTURE.md',
     referencedIn: ['README.md', 'docs/README.md'],
     description: 'Complete guide to deterministic agent control',
-    codeReferences: ['src/core/fsm.ts:104', 'src/index.ts:73']
+    codeReferences: ['src/core/fsm.ts:104']
   },
   'ORCHESTRATION_LOOP': {
     file: 'docs/ORCHESTRATION.md',
