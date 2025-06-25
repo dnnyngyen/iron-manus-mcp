@@ -8,7 +8,7 @@ import { processState } from '../core/fsm.js';
 import { MessageJARVIS } from '../core/types.js';
 
 export interface JARVISArgs {
-  session_id: string;
+  session_id?: string;
   phase_completed?: 'QUERY' | 'ENHANCE' | 'KNOWLEDGE' | 'PLAN' | 'EXECUTE' | 'VERIFY';
   initial_objective?: string;
   payload?: Record<string, any>;
@@ -27,7 +27,7 @@ export class JARVISTool extends BaseTool {
     properties: {
       session_id: {
         type: 'string',
-        description: 'Unique session identifier'
+        description: 'Unique session identifier (auto-generated if not provided)'
       },
       phase_completed: {
         type: 'string',
@@ -44,7 +44,7 @@ export class JARVISTool extends BaseTool {
         additionalProperties: true
       }
     },
-    required: ['session_id']
+    required: []
   };
 
   /**
@@ -53,6 +53,11 @@ export class JARVISTool extends BaseTool {
    */
   async handle(args: JARVISArgs): Promise<ToolResult> {
     try {
+      // Auto-generate session_id if not provided (for convenience)
+      if (!args.session_id) {
+        args.session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+
       this.validateArgs(args);
 
       // Construct FSM input message
