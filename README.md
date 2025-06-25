@@ -1,4 +1,4 @@
-# Iron Manus MCP
+# 🦾Iron Manus MCP (+ J.A.R.V.I.S. Orchestrator)
 
 **Model Context Protocol Server with Finite State Machine Architecture**
 
