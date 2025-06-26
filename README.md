@@ -1,4 +1,4 @@
-# 🦾Iron Manus MCP (+ J.A.R.V.I.S. Orchestrator)
+# 🦾Iron Manus MCP (Claude-Code Native Infinity Gauntlet)
 
 **Model Context Protocol Server with Finite State Machine Architecture**
 
