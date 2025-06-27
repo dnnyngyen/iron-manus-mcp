@@ -18,6 +18,7 @@ manus_*.json
 # Archive and temporary files
 gitignore.archive/
 temp-files/
+archive1/
 *.tmp
 *.temp
 
