@@ -6,9 +6,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-MCP-purple.svg)]()
 
-**Model Context Protocol Server with Meta Thread-of-Thought Orchestration**
+**Model Context Protocol Server with Meta Thread-of-Thought (THoT) Orchestration**
 
-A modular MCP server implementing Meta Thread-of-Thought architecture that applies Thread-of-Thought context segmentation patterns to FSM orchestration, enabling Claude to orchestrate its own cognitive workflows through structured phases and hierarchical task delegation.
+A modular MCP server implementing Meta ThoT architecture that applies Thread-of-Thought context segmentation patterns to FSM orchestration, enabling Claude to orchestrate its own cognitive workflows through structured phases and hierarchical task delegation.
 
 ## What It Does
 
