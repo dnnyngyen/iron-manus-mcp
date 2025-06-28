@@ -14,21 +14,38 @@ A modular MCP server implementing Thread-of-Thought cognitive architecture that 
 
 Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (multi-path exploration), Iron Manus implements **Thread-of-Thought Meta-Orchestration** - where Claude uses structured cognitive phases to manage complex workflows, spawn specialized reasoning processes, and coordinate hierarchical task execution.
 
-### Paradigm Evolution: From Reasoning to Meta-Orchestration
+### Paradigm Evolution: From Context Processing to Self-Orchestration
 
-**Chain-of-Thought (Traditional):**
-- **Purpose:** Single-task problem solving
-- **Pattern:** Linear reasoning steps (Problem → Step 1 → Step 2 → Answer)
-- **Focus:** Better reasoning quality through intermediate steps
-- **Scope:** Individual cognitive tasks
+**Chain-of-Thought (CoT) - Traditional Reasoning:**
+- **Purpose:** Step-by-step logical reasoning for complex problems
+- **Pattern:** Linear decomposition (Problem → Step 1 → Step 2 → Answer)
+- **Strengths:** Excellent for structured reasoning, mathematical problems, logical deduction
+- **Limitations:** Struggles with chaotic contexts, mixed information sources
+- **Scope:** Single-task problem solving
 
-**Thread-of-Thought Meta-Orchestration (Iron Manus):**
-- **Purpose:** Multi-task workflow management
-- **Pattern:** Dynamic cognitive phase switching (QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY)
-- **Focus:** Systematic project orchestration through meta-cognitive control
-- **Scope:** Complex project coordination and hierarchical task delegation
+**Thread-of-Thought (THoT) - Context Segmentation:**
+- **Purpose:** Managing chaotic, complex contexts with mixed information
+- **Pattern:** Context segmentation and progressive analysis  
+- **Strengths:** Handles unstructured data, multi-source information, complex contexts
+- **Limitations:** Verbose responses, increased computational cost, context dependency
+- **Scope:** Information processing and synthesis
 
-**The Key Insight:** We've adapted thinking methodologies (how to reason) into meta-orchestration frameworks (how to manage reasoning processes). Instead of using structured thinking for problem-solving, we use it for process management - Claude thinks about how to think about complex projects.
+**Iron Manus Meta-Orchestration - Self-Orchestrating Hybrid:**
+- **Purpose:** Adaptive cognitive process management for complex projects
+- **Pattern:** Dynamic phase switching with context-aware methodology selection
+- **Innovation:** **Self-orchestration within single runtime** - Claude orchestrates its own reasoning using native tools
+- **Hybrid Approach:** CoT for structured reasoning phases + THoT patterns for complex context management
+- **Unique Capability:** **Only possible with Claude Code's native meta-cognitive tools** (TodoWrite/TodoRead/Task) - no external infrastructure needed
+
+**The Revolutionary Insight:** 
+
+Traditional approaches adapt CoT or THoT for reasoning tasks. Iron Manus adapts BOTH paradigms for **meta-orchestration** - using CoT's structured progression for workflow phases while employing THoT's context segmentation for complex project management.
+
+**Why This Works Uniquely with Claude:**
+- **Self-contained orchestration:** No external agents or infrastructure required
+- **Native tool integration:** Leverages Claude's existing TodoWrite/Task() capabilities  
+- **Runtime recursion:** Spawned agents operate within the same Claude instance
+- **Adaptive methodology:** Switches between CoT and THoT patterns based on context complexity
 
 **What makes this unique:** This MCP server provides tools that enable Claude to orchestrate its own meta-cognitive processes, creating a self-managing cognitive architecture that adapts reasoning strategies based on task complexity and domain requirements.
 
