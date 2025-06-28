@@ -14,7 +14,7 @@ A modular MCP server implementing Thread-of-Thought cognitive architecture that 
 
 Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (multi-path exploration), Iron Manus implements **Thread-of-Thought Meta-Orchestration** - where Claude uses structured cognitive phases to manage complex workflows, spawn specialized reasoning processes, and coordinate hierarchical task execution.
 
-### Paradigm Evolution: From Context Processing to Self-Orchestration
+### Approach Comparison: Context Processing vs Self-Orchestration
 
 **Chain-of-Thought (CoT) - Traditional Reasoning:**
 - **Purpose:** Step-by-step logical reasoning for complex problems
@@ -37,7 +37,7 @@ Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (
 - **Hybrid Approach:** **Claude Code's native Chain-of-Thought** for structured reasoning phases + THoT patterns for complex context management
 - **Unique Capability:** **Only possible with Claude Code's native meta-cognitive tools** (TodoWrite/TodoRead/Task) - no external infrastructure needed
 
-**The Revolutionary Insight:** 
+**The Key Insight:** 
 
 Traditional approaches adapt CoT or THoT for reasoning tasks. Iron Manus adapts BOTH paradigms for **meta-orchestration** - using **Claude Code's native Chain-of-Thought** for structured workflow progression while employing THoT's context segmentation patterns for complex project management.
 
@@ -374,7 +374,7 @@ This project explores **Software 3.0** concepts where natural language becomes e
 - **Structured guidance enhances thinking** without constraining natural reasoning
 - **Thread-of-Thought emerges** from systematic cognitive phase management
 
-**The Revolutionary Approach:**
+**The Approach:**
 
 Traditional AI orchestration builds control systems OUTSIDE the LLM. Iron Manus works WITH Claude's existing meta-cognitive tools, providing structured cognitive frameworks that guide HOW Claude thinks about complex projects while preserving complete autonomy in reasoning.
 
