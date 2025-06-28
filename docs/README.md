@@ -1,15 +1,16 @@
-# Iron Manus JARVIS Documentation
+# Iron Manus MCP Documentation
 
-## Native Tool Agent System Documentation
+## Meta Thread-of-Thought Orchestration Documentation
 
-This documentation covers **Iron Manus JARVIS** - a system that hijacks Claude's native tools (`Task()`, `TodoWrite/TodoRead`) to create autonomous task agents. Instead of complex external frameworks, it uses Claude's built-in capabilities for sophisticated agent orchestration.
+This documentation covers **Iron Manus MCP** - a system implementing Meta Thread-of-Thought orchestration that uses Claude's native tools (`Task()`, `TodoWrite/TodoRead`) for autonomous project management. Instead of complex external frameworks, it leverages Claude Code's built-in capabilities for sophisticated context segmentation and agent orchestration.
 
 ### System Overview
 
-- **Core Innovation**: Native tool augmenting for agent behavior
-- **JARVIS (MCP)**: 6-phase FSM orchestrating Claude's native tool usage
-- **Agent Spawning**: Meta-prompt DSL creates specialized Task() agents
-- **Workflow**: Autonomous task decomposition and execution
+- **Core Innovation**: Meta Thread-of-Thought orchestration using context segmentation patterns
+- **FSM Controller**: 6-phase workflow (QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY)
+- **Context Segmentation**: Solves Claude Code's context window limitations through phase isolation
+- **Agent Spawning**: Meta-prompt DSL creates specialized Task() agents with dedicated contexts
+- **Workflow**: Autonomous project management with recursive agent delegation
 
 ## 📚 Documentation Structure
 

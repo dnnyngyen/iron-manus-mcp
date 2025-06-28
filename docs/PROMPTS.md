@@ -1,5 +1,5 @@
-# Iron Manus JARVIS Prompt Architecture Guide
-## Software 3.0: Natural Language as Code in Practice
+# Iron Manus MCP Prompt Architecture Guide
+## Software 3.0: Natural Language as Code in Meta Thread-of-Thought Orchestration
 
 ### Table of Contents
 1. [Executive Summary](#executive-summary)
@@ -15,11 +15,11 @@
 
 ## Executive Summary
 
-**What**: Iron Manus JARVIS implements **Software 3.0** - where natural language becomes executable code through prompt engineering architectures. It follows the Iron Man vision of AI as an augmentation suit for human intelligence.
+**What**: Iron Manus MCP implements **Software 3.0** through Meta Thread-of-Thought orchestration - where natural language becomes executable code for cognitive workflow management. Context segmentation patterns become the programming interface for AI self-orchestration.
 
-**Software 3.0 Innovation**: Instead of writing traditional code, we write **prompt programs** that compile into LLM behavior. Natural language prompts become the primary programming language, with traditional code serving as infrastructure.
+**Software 3.0 Innovation**: Instead of writing traditional orchestration code, we write **prompt programs** that compile into context-segmented workflow behavior. Natural language prompts become the primary programming language for cognitive process management.
 
-**Architecture**: A 6-layer prompt stack that transforms natural language into deterministic agent behavior through cascading prompt engineering, context injection, and recursive meta-prompting.
+**Architecture**: A 6-layer prompt stack that transforms natural language into Meta Thread-of-Thought orchestration through cascading prompt engineering, context injection, and recursive agent spawning.
 
 ---
 
@@ -30,9 +30,9 @@
 - **Software 2.0**: Neural networks learn patterns from data
 - **Software 3.0**: Natural language prompts as executable programs
 
-### Iron Manus JARVIS as Software 3.0
+### Iron Manus MCP as Software 3.0
 
-In Iron Manus JARVIS, **prompts are the primary programming language**:
+In Iron Manus MCP's Meta Thread-of-Thought orchestration, **prompts are the primary programming language** for cognitive workflow management:
 
 ```typescript
 // Software 2.0: Traditional code

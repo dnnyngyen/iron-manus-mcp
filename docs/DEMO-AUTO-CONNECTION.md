@@ -1,8 +1,10 @@
-# Iron Manus Auto-Connection System Implementation
+# Iron Manus MCP Auto-Connection System Implementation
 
 ## Overview
 
-The Iron Manus FSM has been updated to include automatic API connection capabilities during the KNOWLEDGE phase. This enhancement allows the system to automatically fetch and synthesize information from relevant APIs without requiring manual tool calls.
+**Note:** This document demonstrates the auto-connection feature from the Iron Manus MCP system's KNOWLEDGE phase capabilities.
+
+The Iron Manus Meta Thread-of-Thought orchestration includes automatic API connection capabilities during the KNOWLEDGE phase. This enhancement allows the system to automatically fetch and synthesize information from relevant APIs without requiring manual tool calls, supporting the context segmentation approach.
 
 ## How Auto-Connection Works
 

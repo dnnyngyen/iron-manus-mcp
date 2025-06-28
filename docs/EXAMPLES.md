@@ -1,7 +1,9 @@
-# Iron Manus JARVIS Examples
+# Iron Manus MCP Examples
 ## Real-World Usage Scenarios
 
-This document provides concrete examples of using Iron Manus JARVIS for various types of projects, showing the actual workflow and agent spawning patterns.
+This document provides concrete examples of using Iron Manus MCP's Meta Thread-of-Thought orchestration for various types of projects, showing the actual 6-phase workflow and agent spawning patterns.
+
+**Key Innovation:** Each example demonstrates how context segmentation solves Claude Code's biggest limitation - instead of overwhelming a single context with entire project complexity, Iron Manus breaks work into focused phases and spawns specialized agents with clean, dedicated contexts.
 
 ---
 
@@ -14,7 +16,7 @@ This document provides concrete examples of using Iron Manus JARVIS for various 
 Build a React dashboard with user authentication, data visualization, and real-time updates
 ```
 
-**JARVIS Workflow:**
+**Meta Thread-of-Thought Workflow:**
 ```
 QUERY → "React dashboard with auth, charts, and real-time features"
 ENHANCE → "Add JWT tokens, responsive design, WebSocket connections, chart library integration"
@@ -42,7 +44,7 @@ VERIFY → Validates 95% completion with working auth and charts
 Create a REST API for a blog platform with PostgreSQL and proper error handling
 ```
 
-**JARVIS Workflow:**
+**Meta Thread-of-Thought Workflow:**
 ```
 PLAN → Creates breakdown:
   - Set up Node.js project structure with TypeScript

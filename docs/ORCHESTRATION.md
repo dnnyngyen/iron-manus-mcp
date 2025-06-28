@@ -1,4 +1,6 @@
-Iron Manus JARVIS Orchestration Loop: Complete Chronological Breakdown
+# Iron Manus MCP Meta Thread-of-Thought Orchestration: Complete Chronological Breakdown
+
+**Note:** This document shows the detailed phase-by-phase breakdown of how Meta Thread-of-Thought orchestration works in practice, demonstrating context segmentation and agent spawning patterns.
 
   Initial Invocation
 
