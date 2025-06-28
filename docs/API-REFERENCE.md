@@ -10,14 +10,14 @@ Iron Manus MCP exposes a modular tool system through the Model Context Protocol.
 
 ### JARVIS FSM Controller
 
-The primary orchestration tool that implements the 8-phase finite state machine.
+The primary orchestration tool that implements the 6-phase finite state machine.
 
 #### Tool Definition
 
 ```typescript
 {
   name: "JARVIS",
-  description: "🚀 **JARVIS Finite State Machine Controller** - Implements the 8-step agent loop with fractal orchestration",
+  description: "🚀 **JARVIS Finite State Machine Controller** - Implements the 6-phase agent loop with fractal orchestration",
   inputSchema: {
     type: "object",
     properties: {
@@ -261,10 +261,10 @@ Validates API endpoints and suggests corrections for failed requests.
 
 ### Phase Transitions
 
-The JARVIS FSM Controller manages state transitions through 8 phases:
+The JARVIS FSM Controller manages state transitions through 6 phases:
 
 ```
-INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 ```
 
 #### Phase Descriptions

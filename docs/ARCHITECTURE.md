@@ -217,7 +217,7 @@ The result: Claude feels autonomous while operating within **carefully engineere
 
 ## The 6-Phase Workflow Structure
 
-### Phase Flow: INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+### Phase Flow: QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 
 #### **Phase 1: QUERY** - "Analyze Events"
 **Purpose**: Role detection and objective clarification
@@ -661,7 +661,7 @@ export function updateReasoningEffectiveness(sessionId: string, success: boolean
 
 ### Phase Sequence
 ```
-INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 ```
 
 ### Tool Constraints by Phase

@@ -92,7 +92,7 @@ Analyze my codebase for performance bottlenecks and suggest optimizations
 
 ### Phase Sequence
 ```
-INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 ```
 
 ### What Each Phase Does

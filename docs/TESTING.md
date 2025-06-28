@@ -89,7 +89,7 @@ export default {
 
 ### FSM Testing
 
-Tests for the 8-phase finite state machine:
+Tests for the 6-phase finite state machine:
 
 ```typescript
 // Test phase transitions
