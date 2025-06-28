@@ -11,29 +11,33 @@
 
 ## Installation & Setup
 
-### 1. Install the MCP Server
+### 1. Clone and Build the MCP Server
 ```bash
-git clone <repo-url>
+git clone https://github.com/dnnyngyen/iron-manus-mcp
 cd iron-manus-mcp
 npm install
 npm run build
 ```
 
-### 2. Add to Claude Code Configuration
-Add Iron Manus JARVIS to your MCP settings:
-```json
-{
-  "mcpServers": {
-    "iron-manus": {
-      "command": "node",
-      "args": ["path/to/iron-manus-mcp/dist/index.js"]
-    }
-  }
-}
+### 2. Register with Claude Code
+From the project directory, register the MCP server:
+```bash
+claude mcp add iron-manus-mcp node dist/index.js
 ```
 
-### 3. Restart Claude Code
-The JARVIS tool should now be available in your tool list.
+### 3. Verify Installation
+Check that the server is registered:
+```bash
+/mcp
+```
+You should see "iron-manus-mcp" listed with status "Running".
+
+### 4. Test JARVIS Tool
+Try using the JARVIS FSM controller:
+```
+Test the JARVIS FSM controller functionality
+```
+You should see the tool respond with phase progression (QUERY -> ENHANCE -> KNOWLEDGE -> PLAN -> EXECUTE -> VERIFY).
 
 ---
 
@@ -223,6 +227,16 @@ INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DON
 ---
 
 ## Troubleshooting
+
+### If MCP Server Registration Fails
+- Ensure you are in the correct project directory when running `claude mcp add`
+- Check that `dist/index.js` exists after running `npm run build`
+- Verify Node.js is installed and accessible from command line
+
+### If Bash Commands Don't Work in Claude Code
+- Try using absolute paths: `npm install --prefix /full/path/to/iron-manus-mcp`
+- Use a regular terminal to run build commands, then register with Claude Code
+- Alternative: Download pre-built version if available
 
 ### If Tasks Don't Complete
 - Check verification output for specific failure reasons

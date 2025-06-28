@@ -1,4 +1,4 @@
-# 🦾Iron Manus MCP (Claude-Code Native Infinity Gauntlet)
+# Iron Manus MCP (Claude-Code Native Infinity Gauntlet)
 
 **Model Context Protocol Server with Finite State Machine Architecture**
 
@@ -28,8 +28,16 @@ The system operates without external API keys, utilizing Claude's native tool ca
 - **Fractal Orchestration** - Task decomposition through meta-prompt generation and Task() agent spawning
 - **Auto-Connection** - Automated API discovery, fetching, and knowledge synthesis
 
-## Installation
+## Quick Start Guide
 
+### Prerequisites
+- Node.js 18+ installed
+- Claude Code CLI tool
+- Git (for cloning)
+
+### Method 1: Standard Setup (Recommended)
+
+**Step 1: Clone and Build**
 ```bash
 git clone https://github.com/dnnyngyen/iron-manus-mcp
 cd iron-manus-mcp
@@ -37,28 +45,99 @@ npm install
 npm run build
 ```
 
-Add to your Claude Code MCP configuration:
-
-```json
-{
-  "mcpServers": {
-    "iron-manus-mcp": {
-      "command": "node",
-      "args": ["./dist/index.js"]
-    }
-  }
-}
+**Step 2: Register MCP Server**
+```bash
+claude mcp add iron-manus-mcp node dist/index.js
 ```
 
-## Click to Watch Demo
+**Step 3: Verify Setup**
+```bash
+/mcp
+```
+Expected output: Shows "iron-manus-mcp" server listed
 
-<a href="https://www.youtube.com/watch?v=nImkimPQCjk" target="_blank">
-  <img src="https://img.youtube.com/vi/nImkimPQCjk/hqdefault.jpg" alt="Watch the video" width="800"/>
-</a>
+**Step 4: Test Functionality**
+In Claude Code, run:
+```
+Test the JARVIS FSM controller functionality
+```
+Expected: JARVIS responds with phase progression
 
-<div style="width:400px; height:264px; overflow:hidden; border:1px solid #ccc;">
-  <img src="architecture.png" style="width:100%; height:100%; object-fit:cover;">
-</div>
+### Method 2: Alternative Setup (If Bash Issues)
+
+**Step 1: External Terminal Setup**
+```bash
+# In regular terminal (outside Claude Code):
+git clone https://github.com/dnnyngyen/iron-manus-mcp
+cd iron-manus-mcp
+npm install
+npm run build
+```
+
+**Step 2: Register from Claude Code**
+```bash
+# In Claude Code, use absolute path:
+claude mcp add iron-manus-mcp node /full/path/to/iron-manus-mcp/dist/index.js
+```
+
+**Step 3: Verify**
+```bash
+/mcp
+```
+
+### Method 3: Bash-Restricted Environment
+
+**If cd commands fail in Claude Code:**
+```bash
+# Use prefix flag:
+npm install --prefix /path/to/iron-manus-mcp
+npm run build --prefix /path/to/iron-manus-mcp
+
+# Then register:
+claude mcp add iron-manus-mcp node /path/to/iron-manus-mcp/dist/index.js
+```
+
+### Verification Commands
+
+**Check MCP Registration:**
+```bash
+/mcp
+```
+
+**Test Core Tool:**
+```
+Use the JARVIS tool to test basic functionality
+```
+
+**Available Tools After Setup:**
+- mcp__iron-manus-mcp__JARVIS (Main FSM controller)
+- mcp__iron-manus-mcp__APISearch (API discovery)
+- mcp__iron-manus-mcp__MultiAPIFetch (Parallel requests)
+- mcp__iron-manus-mcp__KnowledgeSynthesize (Data validation)
+- mcp__iron-manus-mcp__APIValidator (Response validation)
+
+### Troubleshooting Setup Issues
+
+**Common Problems:**
+1. "No MCP servers configured" - Run registration command from correct directory
+2. Bash commands fail - Use Method 2 or 3 above
+3. Build errors - Check Node.js version (18+ required)
+4. Permission errors - Ensure write access to project directory
+
+**Quick Diagnostics:**
+```bash
+node --version          # Check Node.js (should be 18+)
+ls dist/index.js        # Verify build completed
+node dist/index.js      # Test server (should start, Ctrl+C to exit)
+```
+
+**For detailed troubleshooting:** See [TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)
+
+## Architecture Overview
+
+![Architecture Diagram](architecture.png)
+
+**Watch Demo:** [YouTube Video](https://www.youtube.com/watch?v=nImkimPQCjk)
 
 ### The Meta-Prompt DSL
 
@@ -91,9 +170,7 @@ Each phase uses native Claude tools for state management and progression:
 - **Execution** spawns Task() agents for complex work
 - **Verification** ensures quality through systematic checks
 
-<div style="width:200px; height:132px; overflow:hidden; border:1px solid #ccc;">
-  <img src="runtime.png" style="width:100%; height:100%; object-fit:cover;">
-</div>
+![Runtime Flow](runtime.png)
 
 ## Example Usage
 
@@ -177,6 +254,7 @@ The approach prioritizes:
 - **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Technical deep dive
 - **[GETTING_STARTED.md](./docs/GETTING_STARTED.md)** - Tutorial and examples
 - **[EXAMPLES.md](./docs/EXAMPLES.md)** - Real usage scenarios
+- **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** - Setup and environment issues
 
 ## Inspiration & Credits
 
