@@ -26,6 +26,11 @@ Unlike traditional approaches that use these patterns for reasoning tasks, Iron 
 
 **Key Innovation:** Self-contained orchestration where spawned agents operate within the same Claude instance using TodoWrite/TodoRead/Task() tools, requiring no external infrastructure.
 
+**Context Segmentation Solution:** Addresses Claude Code's biggest weakness (context limitations) through:
+- **FSM phase segmentation:** Each phase operates with focused context scope
+- **Task() agent isolation:** Spawned agents get their own dedicated context windows
+- **Progressive context management:** Information flows between phases without overwhelming any single context
+
 *For detailed paradigm comparison, see [COGNITIVE_PARADIGMS.md](./docs/COGNITIVE_PARADIGMS.md)*
 
 **What makes this unique:** This MCP server provides tools that enable Claude to orchestrate its own meta-cognitive processes, creating a self-managing cognitive architecture that adapts reasoning strategies based on task complexity and domain requirements.

@@ -38,6 +38,7 @@ Traditional approaches adapt CoT or THoT for reasoning tasks. Iron Manus adapts 
 - **Native tool integration:** Leverages Claude Code's existing TodoWrite/Task() capabilities  
 - **Runtime recursion:** Spawned agents operate within the same Claude instance
 - **Adaptive methodology:** Switches between Claude Code's native CoT and THoT patterns based on context complexity
+- **Context segmentation solution:** Addresses Claude Code's biggest weakness through FSM phase isolation and Task() agent context windows
 
 ## Academic Sources
 
@@ -53,4 +54,26 @@ This represents exploration of a new approach where:
 - **Cognitive scaffolding enhances rather than controls** natural reasoning
 - **Adaptive methodology selection** emerges from context complexity assessment
 
-The result is self-managing cognitive architecture that preserves Claude's autonomy while providing systematic structure for complex project management.
+## Context Segmentation: Solving Claude Code's Biggest Challenge
+
+**The Problem:** Claude Code has inherent context window limitations that can overwhelm complex projects.
+
+**The Solution:** Iron Manus uses Thread-of-Thought context segmentation patterns at two critical levels:
+
+### FSM Phase Segmentation
+Each phase operates with focused context scope:
+- **QUERY:** Context limited to objective analysis
+- **ENHANCE:** Context includes previous goal + enhancement focus
+- **KNOWLEDGE:** Context segmented by research domain
+- **PLAN:** Context focused on task decomposition
+- **EXECUTE:** Context isolated per individual task
+- **VERIFY:** Context limited to completion assessment
+
+### Task() Agent Context Isolation
+Spawned agents receive dedicated, clean context windows:
+- **Fresh context per agent:** Each Task() agent starts with focused, relevant information only
+- **Role-specific context:** Agents receive context tailored to their specialized role
+- **Hierarchical context management:** Sub-agents can spawn with even more focused contexts
+- **Progressive information flow:** Key insights bubble up without context pollution
+
+**Result:** Complex projects that would normally exceed context limits become manageable through systematic context segmentation, making Iron Manus particularly effective for large-scale orchestration tasks.
