@@ -14,7 +14,13 @@ A modular MCP server implementing an 8-phase finite state machine for task orche
 
 Iron Manus MCP provides a structured approach to task execution through a finite state machine that manages role-based cognitive enhancement, automated API discovery, and knowledge synthesis. The system implements fractal orchestration capabilities for complex task decomposition.
 
-Not affiliated with Manus AI. "Iron Manus" inspired by Andrej Karpathy's "Iron Man" analogy for software development automation.
+## Attribution & Disclaimers
+
+**Not affiliated with Manus AI.** "Iron Manus" inspired by Andrej Karpathy's "Iron Man" analogy for software development automation.
+
+**Built upon:**
+- **Core MCP Architecture**: Forked from [MCP Sequential Thinking Server](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking)
+- **API Registry**: Curated from [Public APIs](https://github.com/public-apis/public-apis) project
 
 The system operates without external API keys, utilizing Claude's native tool capabilities for task management and execution.
 
@@ -265,8 +271,16 @@ The approach prioritizes:
 ## Inspiration & Credits
 
 - **Andrej Karpathy** - Software 3.0 vision and AI augmentation concepts
-- **Sequential Thinking** - Workflow orchestration patterns (adapted for FSM control)
+- **MCP Sequential Thinking Server** - Base architecture and orchestration patterns
+- **Public APIs Project** - Community-curated API registry
 - **Claude's native tooling** - Foundation capabilities that make this possible
+
+## License & Attribution
+
+This project builds upon open-source foundations:
+- Core MCP server patterns from [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers)
+- API registry sourced from [public-apis/public-apis](https://github.com/public-apis/public-apis)
+- Enhanced with FSM architecture and role-based cognitive enhancement
 
 ---
 
