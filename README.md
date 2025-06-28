@@ -1,4 +1,4 @@
-# Iron Manus MCP (Claude-Code Native Infinity Gauntlet)
+# 🦾Iron Manus MCP (J.A.R.V.I.S.)
 
 [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/dnnyngyen/iron-manus-mcp/releases)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
