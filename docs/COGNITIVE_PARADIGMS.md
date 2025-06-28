@@ -28,9 +28,21 @@ This document provides detailed comparison of different cognitive approaches and
 **Hybrid Approach:** Claude Code's native Chain-of-Thought for structured reasoning phases + THoT patterns for complex context management  
 **Unique Capability:** Only possible with Claude Code's native meta-cognitive tools (TodoWrite/TodoRead/Task) - no external infrastructure needed  
 
+## The Architectural Pattern
+
+**Following Academic Precedent:**
+
+**Meta Chain-of-Thought ([arXiv:2501.04682](https://arxiv.org/abs/2501.04682))**  
+└── **Base Form:** Chain-of-Thought ([arXiv:2201.11903](https://arxiv.org/abs/2201.11903)) - step-by-step reasoning  
+└── **Meta Extension:** Meta-reasoning about reasoning processes  
+
+**Iron Manus Meta Thread-of-Thought Orchestration**  
+└── **Base Form:** Thread-of-Thought ([arXiv:2311.08734](https://arxiv.org/abs/2311.08734)) - context segmentation for reasoning  
+└── **Meta Extension:** Context segmentation patterns applied to FSM orchestration workflow management  
+
 ## The Key Insight
 
-Traditional approaches adapt CoT or THoT for reasoning tasks. Iron Manus adapts BOTH paradigms for **meta-orchestration** - using Claude Code's native Chain-of-Thought for structured workflow progression while employing THoT's context segmentation patterns for complex project management.
+Traditional Thread-of-Thought segments contexts for **reasoning tasks**. Iron Manus applies THoT context segmentation patterns to **orchestration tasks** - using context isolation for workflow management rather than problem-solving, creating a Meta Thread-of-Thought architecture.
 
 ## Why This Works Uniquely with Claude Code
 

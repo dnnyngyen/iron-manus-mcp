@@ -6,23 +6,25 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-MCP-purple.svg)]()
 
-**Model Context Protocol Server with Thread-of-Thought Meta-Orchestration**
+**Model Context Protocol Server with Meta Thread-of-Thought Orchestration**
 
-A modular MCP server implementing Thread-of-Thought cognitive architecture that enables Claude to orchestrate its own reasoning processes through a 6-phase finite state machine, API integration, knowledge synthesis, and hierarchical task delegation.
+A modular MCP server implementing Meta Thread-of-Thought architecture that applies Thread-of-Thought context segmentation patterns to FSM orchestration, enabling Claude to orchestrate its own cognitive workflows through structured phases and hierarchical task delegation.
 
 ## Overview
 
-Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (multi-path exploration), Iron Manus implements **Thread-of-Thought Meta-Orchestration** - where Claude uses structured cognitive phases to manage complex workflows, spawn specialized reasoning processes, and coordinate hierarchical task execution.
+Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (multi-path exploration), Iron Manus implements **Meta Thread-of-Thought Orchestration** - where Claude uses Thread-of-Thought patterns for FSM-driven workflow management rather than reasoning tasks.
 
 ### Approach
 
-Iron Manus implements **Thread-of-Thought Meta-Orchestration** by combining:
+**Architectural Pattern:** Following the Meta Chain-of-Thought model ([arXiv:2501.04682](https://arxiv.org/abs/2501.04682)) which builds meta-reasoning upon Chain-of-Thought ([arXiv:2201.11903](https://arxiv.org/abs/2201.11903)), Iron Manus creates **Meta Thread-of-Thought Orchestration** by building meta-orchestration upon Thread-of-Thought ([arXiv:2311.08734](https://arxiv.org/abs/2311.08734)).
 
-- **Claude Code's native Chain-of-Thought** for structured workflow phases
-- **Thread-of-Thought patterns** for complex context management  
-- **Self-orchestration within single runtime** using native meta-cognitive tools
+**Implementation:**
+- **Base Form:** Thread-of-Thought context segmentation patterns (THoT)
+- **Meta Extension:** FSM orchestration using THoT patterns for workflow management
+- **Hybrid Integration:** Claude Code's native Chain-of-Thought for structured reasoning within each phase
+- **Self-Orchestration:** Native meta-cognitive tools (TodoWrite/TodoRead/Task) enable runtime recursion
 
-Unlike traditional approaches that use these patterns for reasoning tasks, Iron Manus adapts them for **meta-orchestration** - Claude orchestrates its own reasoning processes through structured cognitive phases while maintaining complete autonomy.
+**Key Distinction:** Traditional THoT segments contexts for reasoning; Meta THoT segments contexts for **orchestration** - using context isolation patterns to manage cognitive workflows rather than solve reasoning problems.
 
 **Key Innovation:** Self-contained orchestration where spawned agents operate within the same Claude instance using TodoWrite/TodoRead/Task() tools, requiring no external infrastructure.
 
