@@ -28,14 +28,14 @@ The system operates without external API keys, utilizing Claude's native tool ca
 - **Fractal Orchestration** - Task decomposition through meta-prompt generation and Task() agent spawning
 - **Auto-Connection** - Automated API discovery, fetching, and knowledge synthesis
 
-## Quick Start Guide
+## 🚀 Quick Start Guide
 
 ### Prerequisites
 - Node.js 18+ installed
 - Claude Code CLI tool
 - Git (for cloning)
 
-### Method 1: Standard Setup (Recommended)
+### Method 1: Standard Setup ✅ (Recommended)
 
 **Step 1: Clone and Build**
 ```bash
@@ -54,16 +54,16 @@ claude mcp add iron-manus-mcp node dist/index.js
 ```bash
 /mcp
 ```
-Expected output: Shows "iron-manus-mcp" server listed
+✅ Expected output: Shows "iron-manus-mcp" server listed
 
 **Step 4: Test Functionality**
 In Claude Code, run:
 ```
 Test the JARVIS FSM controller functionality
 ```
-Expected: JARVIS responds with phase progression
+✅ Expected: JARVIS responds with phase progression
 
-### Method 2: Alternative Setup (If Bash Issues)
+### Method 2: Alternative Setup ⚠️ (If Bash Issues)
 
 **Step 1: External Terminal Setup**
 ```bash
@@ -85,7 +85,7 @@ claude mcp add iron-manus-mcp node /full/path/to/iron-manus-mcp/dist/index.js
 /mcp
 ```
 
-### Method 3: Bash-Restricted Environment
+### Method 3: Bash-Restricted Environment 🔒
 
 **If cd commands fail in Claude Code:**
 ```bash
@@ -97,7 +97,7 @@ npm run build --prefix /path/to/iron-manus-mcp
 claude mcp add iron-manus-mcp node /path/to/iron-manus-mcp/dist/index.js
 ```
 
-### Verification Commands
+### 🔍 Verification Commands
 
 **Check MCP Registration:**
 ```bash
@@ -109,14 +109,14 @@ claude mcp add iron-manus-mcp node /path/to/iron-manus-mcp/dist/index.js
 Use the JARVIS tool to test basic functionality
 ```
 
-**Available Tools After Setup:**
+**🧰 Available Tools After Setup:**
 - mcp__iron-manus-mcp__JARVIS (Main FSM controller)
 - mcp__iron-manus-mcp__APISearch (API discovery)
 - mcp__iron-manus-mcp__MultiAPIFetch (Parallel requests)
 - mcp__iron-manus-mcp__KnowledgeSynthesize (Data validation)
 - mcp__iron-manus-mcp__APIValidator (Response validation)
 
-### Troubleshooting Setup Issues
+### 🛠️ Troubleshooting Setup Issues
 
 **Common Problems:**
 1. "No MCP servers configured" - Run registration command from correct directory
@@ -124,7 +124,7 @@ Use the JARVIS tool to test basic functionality
 3. Build errors - Check Node.js version (18+ required)
 4. Permission errors - Ensure write access to project directory
 
-**Quick Diagnostics:**
+**🔧 Quick Diagnostics:**
 ```bash
 node --version          # Check Node.js (should be 18+)
 ls dist/index.js        # Verify build completed
