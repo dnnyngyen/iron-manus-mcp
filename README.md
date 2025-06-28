@@ -27,9 +27,9 @@ Unlike traditional approaches that use these patterns for reasoning tasks, Iron 
 **Key Innovation:** Self-contained orchestration where spawned agents operate within the same Claude instance using TodoWrite/TodoRead/Task() tools, requiring no external infrastructure.
 
 **Context Segmentation Solution:** Addresses Claude Code's biggest weakness (context limitations) through:
-- **FSM phase segmentation:** Each phase operates with focused context scope
-- **Task() agent isolation:** Spawned agents get their own dedicated context windows
-- **Progressive context management:** Information flows between phases without overwhelming any single context
+- **FSM phase segmentation:** Each phase operates with focused context scope *(Software 3.0: natural language becomes structured workflow)*
+- **Task() agent isolation:** Spawned agents get their own dedicated context windows *(Software 3.0: cognitive processes become executable units)*
+- **Progressive context management:** Information flows between phases without overwhelming any single context *(Software 3.0: AI manages its own cognitive architecture)*
 
 *For detailed paradigm comparison, see [COGNITIVE_PARADIGMS.md](./docs/COGNITIVE_PARADIGMS.md)*
 
@@ -353,6 +353,11 @@ Spawned agents can create their own sub-tasks and spawn additional agents, enabl
 ### Meta-Cognitive Enhancement, Not Agent Control
 
 This project explores **Software 3.0** concepts where natural language becomes executable through AI augmentation. Rather than building external orchestration layers that control Claude, Iron Manus demonstrates how **meta-cognitive enhancement** can emerge from elegant integration with Claude's native capabilities.
+
+**Software 3.0 Principles in Action:**
+- **Natural language as executable code:** Todos become task specifications, meta-prompts become agent spawning instructions
+- **AI-driven architecture:** Claude manages its own cognitive processes rather than being managed by external systems
+- **Emergent complexity from simple tools:** Sophisticated orchestration emerges from basic TodoWrite/Task() integration
 
 **Core Philosophy:**
 - **Claude orchestrates its own reasoning** using native tools (TodoWrite/TodoRead/Task)
