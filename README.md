@@ -47,7 +47,16 @@ The system operates without external API keys, utilizing Claude's native tool ca
 - Claude Code CLI tool
 - Git (for cloning)
 
-### Method 1: Standard Setup ✅ (Recommended)
+```
+╔══════════════════════════════════════╗
+║           3 SETUP METHODS            ║
+║  Choose the one that fits your env   ║
+╚══════════════════════════════════════╝
+```
+
+---
+
+### 1️⃣ Method 1: Standard Setup ✅ (Recommended)
 
 **Step 1: Clone and Build**
 ```bash
@@ -66,16 +75,18 @@ claude mcp add iron-manus-mcp node dist/index.js
 ```bash
 /mcp
 ```
-✅ Expected output: Shows "iron-manus-mcp" server listed
+✓ Expected output: Shows "iron-manus-mcp" server listed
 
 **Step 4: Test Functionality**
 In Claude Code, run:
 ```
 Test the JARVIS FSM controller functionality
 ```
-✅ Expected: JARVIS responds with phase progression
+✓ Expected: JARVIS responds with phase progression
 
-### Method 2: Alternative Setup ⚠️ (If Bash Issues)
+---
+
+### 2️⃣ Method 2: Alternative Setup ⚠️ (If Bash Issues)
 
 **Step 1: External Terminal Setup**
 ```bash
@@ -97,7 +108,9 @@ claude mcp add iron-manus-mcp node /full/path/to/iron-manus-mcp/dist/index.js
 /mcp
 ```
 
-### Method 3: Bash-Restricted Environment 🔒
+---
+
+### 3️⃣ Method 3: Bash-Restricted Environment 🔒
 
 **If cd commands fail in Claude Code:**
 ```bash
@@ -108,6 +121,8 @@ npm run build --prefix /path/to/iron-manus-mcp
 # Then register:
 claude mcp add iron-manus-mcp node /path/to/iron-manus-mcp/dist/index.js
 ```
+
+---
 
 ### 🔍 Verification Commands
 
