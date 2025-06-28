@@ -8,7 +8,7 @@
 
 **Model Context Protocol Server with Finite State Machine Architecture**
 
-A modular MCP server implementing an 8-phase finite state machine for task orchestration, API integration, and knowledge synthesis.
+A modular MCP server implementing a 6-phase finite state machine for task orchestration, API integration, and knowledge synthesis.
 
 ## Overview
 
@@ -28,7 +28,7 @@ The system operates without external API keys, utilizing Claude's native tool ca
 
 ### Core Components
 
-- **JARVIS FSM Controller** - Implements 8-phase state machine: INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+- **JARVIS FSM Controller** - Implements 6-phase state machine: QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 - **MultiAPIFetch** - Parallel HTTP requests with timeout management and JSON truncation
 - **APISearch** - Intelligent API discovery with role-based filtering from 65+ endpoint registry
 - **KnowledgeSynthesize** - Cross-validation engine with conflict resolution and confidence scoring
@@ -185,11 +185,19 @@ This syntax automatically generates specialized prompts for Task() agents:
 // - Output specifications
 ```
 
-### 8-Phase Workflow
+### 6-Phase FSM Loop
 
 ```
-INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 ```
+
+**How it works:**
+- **QUERY**: Analyze user request and detect optimal role
+- **ENHANCE**: Add missing details and technical requirements  
+- **KNOWLEDGE**: Gather needed information (research/APIs)
+- **PLAN**: Break down into actionable tasks with meta-prompts
+- **EXECUTE**: Run tasks directly or spawn specialized agents
+- **VERIFY**: Validate completion and quality
 
 Each phase uses native Claude tools for state management and progression:
 
