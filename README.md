@@ -6,13 +6,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-MCP-purple.svg)]()
 
-**Model Context Protocol Server with Finite State Machine Architecture**
+**Model Context Protocol Server with Thread-of-Thought Meta-Orchestration**
 
-A modular MCP server implementing a 6-phase finite state machine for task orchestration, API integration, and knowledge synthesis.
+A modular MCP server implementing Thread-of-Thought cognitive architecture that enables Claude to orchestrate its own reasoning processes through a 6-phase finite state machine, API integration, knowledge synthesis, and hierarchical task delegation.
 
 ## Overview
 
-Iron Manus MCP provides a structured approach to task execution through a finite state machine that manages role-based cognitive enhancement, automated API discovery, and knowledge synthesis. The system implements fractal orchestration capabilities for complex task decomposition.
+Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (multi-path exploration), Iron Manus implements **Thread-of-Thought Meta-Orchestration** - where Claude uses structured cognitive phases to manage complex workflows, spawn specialized reasoning processes, and coordinate hierarchical task execution.
+
+**What makes this unique:** This MCP server provides tools that enable Claude to orchestrate its own meta-cognitive processes, creating a self-managing cognitive architecture that adapts reasoning strategies based on task complexity and domain requirements.
+
+**Technical Implementation:** Built as a production-ready MCP server with 6-phase FSM orchestration, 65+ API registry, role-based cognitive enhancement, and fractal task decomposition capabilities.
 
 ## Attribution & Disclaimers
 
