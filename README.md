@@ -141,7 +141,7 @@ node dist/index.js      # Test server (should start, Ctrl+C to exit)
 
 ## Architecture Overview
 
-![Architecture Diagram](architecture.png)
+![Architecture Diagram](docs/images/architecture.png)
 
 **Watch Demo:** [YouTube Video](https://www.youtube.com/watch?v=nImkimPQCjk)
 
@@ -176,7 +176,7 @@ Each phase uses native Claude tools for state management and progression:
 - **Execution** spawns Task() agents for complex work
 - **Verification** ensures quality through systematic checks
 
-![Runtime Flow](runtime.png)
+![Runtime Flow](docs/images/runtime.png)
 
 ## Example Usage
 
