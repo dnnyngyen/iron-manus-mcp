@@ -14,9 +14,77 @@ A modular MCP server implementing Thread-of-Thought cognitive architecture that 
 
 Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (multi-path exploration), Iron Manus implements **Thread-of-Thought Meta-Orchestration** - where Claude uses structured cognitive phases to manage complex workflows, spawn specialized reasoning processes, and coordinate hierarchical task execution.
 
+### Paradigm Evolution: From Reasoning to Meta-Orchestration
+
+**Chain-of-Thought (Traditional):**
+- **Purpose:** Single-task problem solving
+- **Pattern:** Linear reasoning steps (Problem → Step 1 → Step 2 → Answer)
+- **Focus:** Better reasoning quality through intermediate steps
+- **Scope:** Individual cognitive tasks
+
+**Thread-of-Thought Meta-Orchestration (Iron Manus):**
+- **Purpose:** Multi-task workflow management
+- **Pattern:** Dynamic cognitive phase switching (QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY)
+- **Focus:** Systematic project orchestration through meta-cognitive control
+- **Scope:** Complex project coordination and hierarchical task delegation
+
+**The Key Insight:** We've adapted thinking methodologies (how to reason) into meta-orchestration frameworks (how to manage reasoning processes). Instead of using structured thinking for problem-solving, we use it for process management - Claude thinks about how to think about complex projects.
+
 **What makes this unique:** This MCP server provides tools that enable Claude to orchestrate its own meta-cognitive processes, creating a self-managing cognitive architecture that adapts reasoning strategies based on task complexity and domain requirements.
 
 **Technical Implementation:** Built as a production-ready MCP server with 6-phase FSM orchestration, 65+ API registry, role-based cognitive enhancement, and fractal task decomposition capabilities.
+
+## Claude Code Native Feature Integration
+
+Thread-of-Thought Meta-Orchestration works because Iron Manus leverages Claude's existing meta-cognitive capabilities while providing structured cognitive scaffolding:
+
+### 1. TodoWrite/TodoRead Tools
+
+**What it does:** Claude's native task management system  
+**How Iron Manus uses it:**
+- **Phase PLAN:** Creates structured task breakdowns with meta-prompts
+- **Phase EXECUTE:** Reads current tasks and manages execution flow  
+- **Fractal orchestration:** Sub-agents create their own todo hierarchies
+
+### 2. Task() Tool
+
+**What it does:** Claude's native agent spawning capability  
+**How Iron Manus uses it:**
+- **Meta-prompt conversion:** `(ROLE: coder) (CONTEXT: auth) (PROMPT: implement JWT) (OUTPUT: code)` → Task() agent
+- **Recursive delegation:** Spawned agents can spawn their own sub-agents
+- **Role specialization:** Each Task() inherits specific thinking methodologies
+
+### 3. Single-Tool-Per-Iteration Enforcement
+
+**What it does:** Claude Code's tool constraint system  
+**How Iron Manus uses it:**
+- **Phase-based whitelists:** Each phase allows specific tools only
+- **Natural guidance:** Tool constraints presented as helpful suggestions
+- **Systematic flow:** Forces structured progression through cognitive phases
+
+### 4. MCP Integration Layer
+
+**What it does:** Claude Code's tool integration protocol  
+**How Iron Manus uses it:**
+- **External cognitive scaffolding:** FSM provides thinking structure from outside Claude
+- **State persistence:** Session management across tool calls
+- **Meta-cognitive prompting:** Role-specific thinking methodologies injected per phase
+
+**Thread-of-Thought Meta-Orchestration works because:**
+
+1. **Claude already has meta-cognitive capabilities** (TodoWrite, Task())
+2. **Iron Manus provides cognitive structure** (6-phase FSM guidance)  
+3. **MCP enables external orchestration** (FSM guides Claude's native thinking)
+4. **Tool restrictions create systematic flow** (allowed_next_tools per phase)
+5. **Role-based prompting enhances cognition** (specialized thinking methodologies)
+
+**Why This Is Unique:**
+
+Traditional approaches try to build orchestration OUTSIDE the LLM.
+
+Iron Manus uses Claude's existing meta-cognitive tools but provides structured cognitive scaffolding through MCP that guides HOW Claude thinks about complex projects.
+
+**Result:** Claude orchestrates its own reasoning processes using its native capabilities, but with Thread-of-Thought structure that ensures systematic, role-appropriate, hierarchical task management.
 
 ## Attribution & Disclaimers
 
@@ -279,14 +347,29 @@ Spawned agents can create their own sub-tasks and spawn additional agents, enabl
 
 ## Technical Philosophy
 
-This project explores **Software 3.0** concepts where natural language becomes executable through AI augmentation. Rather than building external orchestration layers, it demonstrates that sophisticated agent behavior can emerge from elegant tool integration.
+### Meta-Cognitive Enhancement, Not Agent Control
+
+This project explores **Software 3.0** concepts where natural language becomes executable through AI augmentation. Rather than building external orchestration layers that control Claude, Iron Manus demonstrates how **meta-cognitive enhancement** can emerge from elegant integration with Claude's native capabilities.
+
+**Core Philosophy:**
+- **Claude orchestrates its own reasoning** using native tools (TodoWrite/TodoRead/Task)
+- **MCP provides cognitive scaffolding**, not external control
+- **Structured guidance enhances thinking** without constraining natural reasoning
+- **Thread-of-Thought emerges** from systematic cognitive phase management
+
+**The Revolutionary Approach:**
+
+Traditional AI orchestration builds control systems OUTSIDE the LLM. Iron Manus works WITH Claude's existing meta-cognitive tools, providing structured cognitive frameworks that guide HOW Claude thinks about complex projects while preserving complete autonomy in reasoning.
+
+**Result:** Claude feels completely autonomous while operating within carefully designed cognitive architecture that enhances rather than constrains its capabilities.
 
 The approach prioritizes:
 
-- **Simplicity** over complexity
-- **Native integration** over external dependencies
-- **Emergent behavior** over rigid control structures
-- **Experimentation** over premature optimization
+- **Meta-cognitive enhancement** over external control
+- **Native tool integration** over custom orchestration
+- **Cognitive scaffolding** over rigid command structures  
+- **Systematic thinking guidance** over constraint-based control
+- **Emergent intelligence** over programmatic behavior
 
 ## Documentation
 

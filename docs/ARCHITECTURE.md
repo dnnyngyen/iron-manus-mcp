@@ -461,6 +461,137 @@ The result: **Sophisticated agent behavior through elegant prompt engineering** 
 
 ---
 
+## Code Implementation Examples
+
+### Meta-Prompt Extraction Logic (`src/core/fsm.ts:889-927`)
+
+The system converts special todo syntax into Task() agent spawns:
+
+```typescript
+export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | null {
+  // Regex-based parsing of special syntax
+  const roleMatch = todoContent.match(/\(ROLE:\s*([^)]+)\)/i);
+  const contextMatch = todoContent.match(/\(CONTEXT:\s*([^)]+)\)/i);
+  const promptMatch = todoContent.match(/\(PROMPT:\s*([^)]+)\)/i);
+  const outputMatch = todoContent.match(/\(OUTPUT:\s*([^)]+)\)/i);
+  
+  if (roleMatch && promptMatch) {
+    return {
+      role_specification: roleMatch[1].trim(),
+      context_parameters: contextMatch ? { domain: contextMatch[1].trim() } : {},
+      instruction_block: promptMatch[1].trim(),
+      output_requirements: outputMatch ? outputMatch[1].trim() : 'comprehensive_deliverable'
+    };
+  }
+  
+  return null;
+}
+```
+
+### Single-Tool-Per-Iteration Enforcement (`src/core/prompts.ts:908-917`)
+
+Tool constraints are enforced through phase-based whitelists:
+
+```typescript
+export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
+  INIT: ['JARVIS'],           // Force orchestrator
+  QUERY: ['JARVIS'],          // Natural thinking + orchestrator  
+  ENHANCE: ['JARVIS'],        // Natural thinking + orchestrator
+  KNOWLEDGE: ['WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'KnowledgeSynthesize', 'mcp__ide__executeCode', 'JARVIS'],
+  PLAN: ['TodoWrite'],        // Forced into planning mode
+  EXECUTE: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode'],
+  VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode'],
+  DONE: []
+};
+
+// Tool constraints presented as natural guidance
+export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
+  PLAN: 'Think through strategic planning, then use TodoWrite to create todos',
+  EXECUTE: 'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution)',
+  VERIFY: 'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output)'
+};
+```
+
+### Role-Specific Prompt Generation (`src/core/prompts.ts:610-645`)
+
+Meta-prompts become full agent prompts with role-specific cognitive frameworks:
+
+```typescript
+export function generateMetaPrompt(todoContent: string, role: Role, context: Record<string, any>): MetaPrompt {
+  const config = ROLE_CONFIG[role];
+  
+  return {
+    role_specification: `(ROLE: ${role})`,
+    context_parameters: {
+      domain_info: context.domain || 'general',
+      complexity_level: config.complexityLevel,
+      frameworks: config.suggestedFrameworks,
+      cognitive_frameworks: config.cognitiveFrameworks || config.suggestedFrameworks,
+      ...context
+    },
+    instruction_block: `(PROMPT: "${todoContent}
+
+${generateRoleSpecificThinkGuidance(role, config)}
+
+EXECUTION APPROACH:
+1. Think through your approach using the ${(config.cognitiveFrameworks || config.suggestedFrameworks).join(' and ')} frameworks
+2. Apply ${role} expertise with systematic thinking methodologies
+3. Follow ${config.validationRules.join(', ')} validation rules
+4. Use TodoWrite to create your own sub-task breakdown if needed
+5. Execute with systematic precision using ${config.suggestedFrameworks.join(' and ')} methodologies
+6. Report completion with detailed deliverables")`
+    ,
+    output_requirements: `(OUTPUT: ${config.defaultOutput})`
+  };
+}
+```
+
+### 6-Layer Prompt Cascade Integration
+
+**Layer 3: Dynamic Context Injection** (`src/core/fsm.ts:319-351`):
+
+```typescript
+// Real-time context injection between phases
+if (nextPhase === 'ENHANCE' && session.payload.interpreted_goal) {
+  augmentedPrompt += `\n\n**📋 CONTEXT:** ${session.payload.interpreted_goal}`;
+}
+
+if (nextPhase === 'PLAN') {
+  augmentedPrompt += `\n\n**🔄 FRACTAL ORCHESTRATION GUIDE:**
+For complex sub-tasks that need specialized expertise, create todos with this format:
+"(ROLE: coder) (CONTEXT: authentication_system) (PROMPT: Implement secure JWT) (OUTPUT: production_ready_code)"
+
+This enables Task() agent spawning in the EXECUTE phase.`;
+}
+```
+
+**Layer 5: Role-Specific Thinking Enhancement** (`src/core/prompts.ts:838-904`):
+
+```typescript
+function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): string {
+  const roleSpecificThinking: Record<Role, string> = {
+    planner: `**🧠 STRATEGIC THINKING REQUIRED:** Think strategically about:
+- System architecture and component relationships
+- Dependencies, timelines, and resource allocation
+- Risk assessment and mitigation strategies`,
+    
+    coder: `**🧠 IMPLEMENTATION REASONING REQUIRED:** Think through:
+- Modular architecture design patterns
+- Test-driven development approach
+- Error handling, edge cases, and robustness`,
+    
+    analyzer: `**🧠 ANALYTICAL THINKING REQUIRED:** Think systematically about:
+- Data validation and statistical significance
+- Pattern recognition and anomaly detection
+- Bias detection and methodology assessment`
+  };
+
+  return roleSpecificThinking[role];
+}
+```
+
+---
+
 ## Fractal Orchestration
 
 ### Concept
