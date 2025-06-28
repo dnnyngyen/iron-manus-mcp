@@ -1,5 +1,11 @@
 # Iron Manus MCP (Claude-Code Native Infinity Gauntlet)
 
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/dnnyngyen/iron-manus-mcp/releases)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-MCP-purple.svg)]()
+
 **Model Context Protocol Server with Finite State Machine Architecture**
 
 A modular MCP server implementing an 8-phase finite state machine for task orchestration, API integration, and knowledge synthesis.
