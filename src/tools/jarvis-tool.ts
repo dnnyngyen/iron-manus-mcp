@@ -5,7 +5,7 @@
 
 import { BaseTool, ToolSchema, ToolResult } from './base-tool.js';
 import { processState } from '../core/fsm.js';
-import { MessageJARVIS } from '../core/types.js';
+import { MessageJARVIS, Phase } from '../core/types.js';
 
 export interface JARVISArgs {
   session_id?: string;
@@ -20,7 +20,7 @@ export interface JARVISArgs {
  */
 export class JARVISTool extends BaseTool {
   readonly name = 'JARVIS';
-  readonly description = '🚀 **JARVIS Finite State Machine Controller** - Accurate replication of Manus\'s PyArmor-protected architecture. Implements the 6-step agent loop (Analyze Events → Select Tools → Wait for Execution → Iterate → Submit Results → Enter Standby) with 3 modules (Planner/Knowledge/Datasource) plus fractal orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, performance tracking, and single-tool-per-iteration enforcement. Hijacks Sequential Thinking for deterministic agent control.';
+  readonly description = 'JARVIS Finite State Machine Controller - Accurate replication of Manus PyArmor-protected architecture. Implements the 6-step agent loop (Analyze Events, Select Tools, Wait for Execution, Iterate, Submit Results, Enter Standby) with 3 modules (Planner/Knowledge/Datasource) plus fractal orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, performance tracking, and single-tool-per-iteration enforcement. Hijacks Sequential Thinking for deterministic agent control.';
   
   readonly inputSchema: ToolSchema = {
     type: 'object',

@@ -2,7 +2,7 @@
 
 **Model Context Protocol Server with Finite State Machine Architecture**
 
-A modular MCP server implementing a 6-phase finite state machine for task orchestration, API integration, and knowledge synthesis.
+A modular MCP server implementing an 8-phase finite state machine for task orchestration, API integration, and knowledge synthesis.
 
 ## Overview
 
@@ -16,7 +16,7 @@ The system operates without external API keys, utilizing Claude's native tool ca
 
 ### Core Components
 
-- **JARVIS FSM Controller** - Implements 6-phase state machine: INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+- **JARVIS FSM Controller** - Implements 8-phase state machine: INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
 - **MultiAPIFetch** - Parallel HTTP requests with timeout management and JSON truncation
 - **APISearch** - Intelligent API discovery with role-based filtering from 65+ endpoint registry
 - **KnowledgeSynthesize** - Cross-validation engine with conflict resolution and confidence scoring
@@ -79,10 +79,10 @@ This syntax automatically generates specialized prompts for Task() agents:
 // - Output specifications
 ```
 
-### 6-Phase Workflow
+### 8-Phase Workflow
 
 ```
-QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
 ```
 
 Each phase uses native Claude tools for state management and progression:
@@ -127,11 +127,15 @@ iron-manus-mcp/
 ├── src/
 │   ├── index.ts          # MCP server entry point
 │   ├── core/
-│   │   ├── fsm.ts        # 6-phase state machine
+│   │   ├── fsm.ts        # 8-phase state machine
 │   │   ├── prompts.ts    # Role-specific prompt templates
 │   │   ├── state.ts      # Session management
-│   │   └── types.ts      # Core interfaces
+│   │   ├── types.ts      # Core interfaces
+│   │   └── api-registry.ts # 65+ API endpoint registry
+│   ├── tools/            # Modular tool system
+│   ├── agents/           # Agent definitions
 │   └── utils/
+├── __tests__/            # Comprehensive test suite
 └── docs/                 # Technical documentation
 ```
 
@@ -145,6 +149,9 @@ The system includes specialized roles with distinct thinking methodologies:
 - **Analyzer** - Data analysis and pattern recognition
 - **Researcher** - Information gathering and synthesis
 - **Synthesizer** - Integration and optimization
+- **UI Architect** - V0-style UI architecture and systematic design
+- **UI Implementer** - V0-style UI implementation with concurrent execution
+- **UI Refiner** - V0-style UI refinement with polished aesthetics
 
 ### Recursive Capabilities
 

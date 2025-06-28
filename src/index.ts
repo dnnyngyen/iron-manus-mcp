@@ -37,13 +37,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     return {
       content: [{
         type: 'text',
-        text: `❌ **Tool Error**: ${errorMessage}`
+        text: `ERROR Tool Error: ${errorMessage}`
       }],
       isError: true
     };
   }
 });
 
-// Start server
-const transport = new StdioServerTransport();
-server.connect(transport);
+// Export server creation function for testing
+export function createServer() {
+  return server;
+}
+
+// Start server (only when not in test environment)
+if (process.env.NODE_ENV !== 'test') {
+  const transport = new StdioServerTransport();
+  server.connect(transport);
+}

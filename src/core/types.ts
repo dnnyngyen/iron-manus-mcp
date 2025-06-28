@@ -1,4 +1,4 @@
-// Manus FSM Types - Accurate replication of Manus's 6-step agent loop + 3 modules + fractal orchestration
+// Manus FSM Types - Accurate replication of Manus's 8-phase agent loop + 3 modules + fractal orchestration
 
 export type Phase = 
   | 'INIT' 

@@ -1,7 +1,7 @@
 {
   "name": "iron-manus-mcp",
   "version": "1.1.0",
-  "description": "Minimal FSM-driven MCP server that replaces Manus's 6-step agent loop",
+  "description": "Minimal FSM-driven MCP server with 8-phase agent loop and 65+ API registry",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -9,6 +9,10 @@
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
     "clean": "rm -rf dist",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

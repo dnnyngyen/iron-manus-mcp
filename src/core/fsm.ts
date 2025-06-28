@@ -438,7 +438,7 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
             session.detected_role = claudeSelectedRole;
             session.payload.awaiting_role_selection = false;
             
-            console.log(`✅ Claude selected role: ${claudeSelectedRole}`);
+            console.log(`SUCCESS Claude selected role: ${claudeSelectedRole}`);
           } catch (error) {
             console.error('Error processing Claude role selection:', error);
             // Fall back to hardcoded role detection
@@ -602,7 +602,7 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
                 };
                 
               } catch (autoConnectionError) {
-                console.warn('[FSM-KNOWLEDGE] ⚠️ Auto-connection failed, falling back to manual mode:', autoConnectionError);
+                console.warn('[FSM-KNOWLEDGE] WARNING Auto-connection failed, falling back to manual mode:', autoConnectionError);
                 
                 // Graceful fallback - mark auto-connection as failed but continue
                 session.payload.auto_connection_successful = false;
@@ -815,35 +815,35 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
     // Add auto-connection results to KNOWLEDGE phase prompt
     if (session.payload.auto_connection_successful) {
       const metadata = session.payload.auto_connection_metadata;
-      augmentedPrompt += `\n\n**🚀 AUTO-CONNECTION RESULTS:**\n`;
+      augmentedPrompt += `\n\nAUTO-CONNECTION RESULTS:\n`;
       augmentedPrompt += `- APIs Discovered: ${session.payload.api_usage_metrics?.apis_discovered || 0}\n`;
       augmentedPrompt += `- APIs Successfully Queried: ${metadata?.apis_successful || 0}/${metadata?.apis_attempted || 0}\n`;
       augmentedPrompt += `- Synthesis Confidence: ${((metadata?.synthesis_confidence || 0) * 100).toFixed(1)}%\n`;
       augmentedPrompt += `- Processing Time: ${metadata?.total_processing_time || 0}ms\n`;
       augmentedPrompt += `- Sources Used: ${metadata?.sources_used?.join(', ') || 'None'}\n`;
       if (metadata?.contradictions_found && metadata.contradictions_found > 0) {
-        augmentedPrompt += `- ⚠️ Contradictions Found: ${metadata.contradictions_found}\n`;
+        augmentedPrompt += `- WARNING Contradictions Found: ${metadata.contradictions_found}\n`;
       }
       augmentedPrompt += `\n**📄 AUTO-SYNTHESIZED KNOWLEDGE:**\n${session.payload.synthesized_knowledge || 'No knowledge synthesized'}`;
     } else if (session.payload.auto_connection_successful === false) {
-      augmentedPrompt += `\n\n**⚠️ AUTO-CONNECTION STATUS:**\n`;
+      augmentedPrompt += `\n\nWARNING AUTO-CONNECTION STATUS:\n`;
       augmentedPrompt += `- Auto-connection failed or no relevant APIs found\n`;
       augmentedPrompt += `- APIs Discovered: ${session.payload.api_usage_metrics?.apis_discovered || 0}\n`;
       augmentedPrompt += `- Fallback Message: ${session.payload.synthesized_knowledge || 'Manual research tools required'}\n`;
       augmentedPrompt += `- Manual tools available: APISearch, MultiAPIFetch, KnowledgeSynthesize, WebSearch, WebFetch`;
     }
   } else if (nextPhase === 'PLAN' && session.payload.enhanced_goal) {
-    augmentedPrompt += `\n\n**🎯 GOAL TO PLAN:** ${session.payload.enhanced_goal}`;
+    augmentedPrompt += `\n\nGOAL TO PLAN: ${session.payload.enhanced_goal}`;
     augmentedPrompt += `\n\n**🔄 FRACTAL ORCHESTRATION GUIDE:**\nFor complex sub-tasks that need specialized expertise, create todos with this format:\n"(ROLE: coder) (CONTEXT: authentication_system) (PROMPT: Implement secure JWT authentication with password reset) (OUTPUT: production_ready_code)"\n\nThis enables Task() agent spawning in the EXECUTE phase.`;
   } else if (nextPhase === 'EXECUTE') {
     const currentTaskIndex = session.payload.current_task_index || 0;
     const currentTodos = session.payload.current_todos || [];
     const currentTodo = currentTodos[currentTaskIndex];
     
-    augmentedPrompt += `\n\n**📊 EXECUTION CONTEXT:**\n- Current Task Index: ${currentTaskIndex}\n- Total Tasks: ${currentTodos.length}\n- Current Task: ${currentTodo || 'None'}\n- Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Objective: ${session.initial_objective}`;
+    augmentedPrompt += `\n\nEXECUTION CONTEXT:\n- Current Task Index: ${currentTaskIndex}\n- Total Tasks: ${currentTodos.length}\n- Current Task: ${currentTodo || 'None'}\n- Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Objective: ${session.initial_objective}`;
     
     // Add fractal execution guidance
-    augmentedPrompt += `\n\n**🔄 FRACTAL EXECUTION PROTOCOL:**\n1. Check current todo (index ${currentTaskIndex}) for meta-prompt patterns\n2. If todo contains (ROLE:...) pattern, use Task() tool to spawn specialized agent\n3. If todo is direct execution, use appropriate tools (Bash/Browser/etc.)\n4. After each action, report results back\n\n**⚡ SINGLE TOOL PER ITERATION:** Choose ONE tool call per turn (Manus requirement).`;
+    augmentedPrompt += `\n\nFRACTAL EXECUTION PROTOCOL:\n1. Check current todo (index ${currentTaskIndex}) for meta-prompt patterns\n2. If todo contains (ROLE:...) pattern, use Task() tool to spawn specialized agent\n3. If todo is direct execution, use appropriate tools (Bash/Browser/etc.)\n4. After each action, report results back\n\nSINGLE TOOL PER ITERATION: Choose ONE tool call per turn (Manus requirement).`;
   } else if (nextPhase === 'VERIFY') {
     const todos = session.payload.current_todos || [];
     const taskBreakdown = calculateTaskBreakdown(todos);
@@ -855,9 +855,9 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
     );
     const criticalTasksCompleted = criticalTasks.filter((todo: any) => todo.status === 'completed').length;
     
-    augmentedPrompt += `\n\n**✅ VERIFICATION CONTEXT:**\n- Original Objective: ${session.initial_objective}\n- Final Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Role Applied: ${session.detected_role}`;
-    augmentedPrompt += `\n\n**📊 COMPLETION METRICS:**\n- Overall Completion: ${completionPercentage}% (${taskBreakdown.completed}/${taskBreakdown.total} tasks)\n- Critical Tasks Completed: ${criticalTasksCompleted}/${criticalTasks.length}\n- Tasks Breakdown: ${taskBreakdown.completed} completed, ${taskBreakdown.in_progress} in-progress, ${taskBreakdown.pending} pending`;
-    augmentedPrompt += `\n\n**⚠️ VERIFICATION REQUIREMENTS:**\n- Critical tasks must be 100% complete\n- Overall completion must be ≥95%\n- No high-priority tasks can remain pending\n- No tasks can remain in-progress\n- Execution success rate must be ≥70%\n- verification_passed=true requires backing metrics`;
+    augmentedPrompt += `\n\nVERIFICATION CONTEXT:\n- Original Objective: ${session.initial_objective}\n- Final Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Role Applied: ${session.detected_role}`;
+    augmentedPrompt += `\n\nCOMPLETION METRICS:\n- Overall Completion: ${completionPercentage}% (${taskBreakdown.completed}/${taskBreakdown.total} tasks)\n- Critical Tasks Completed: ${criticalTasksCompleted}/${criticalTasks.length}\n- Tasks Breakdown: ${taskBreakdown.completed} completed, ${taskBreakdown.in_progress} in-progress, ${taskBreakdown.pending} pending`;
+    augmentedPrompt += `\n\nVERIFICATION REQUIREMENTS:\n- Critical tasks must be 100% complete\n- Overall completion must be >=95%\n- No high-priority tasks can remain pending\n- No tasks can remain in-progress\n- Execution success rate must be >=70%\n- verification_passed=true requires backing metrics`;
     
     if (session.payload.verification_failure_reason) {
       augmentedPrompt += `\n\n**🚨 PREVIOUS VERIFICATION FAILURE:**\n${session.payload.verification_failure_reason}\nLast Completion: ${session.payload.last_completion_percentage}%`;

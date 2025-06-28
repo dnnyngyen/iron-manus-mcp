@@ -121,13 +121,13 @@ export class APIValidatorTool extends BaseTool {
    * Format success response
    */
   private formatSuccessResponse(url: string, result: any): string {
-    return `# ✅ API Validation Success
+    return `# SUCCESS API Validation Success
 
 **Endpoint**: ${url}
 **Status**: Working correctly
 **Response Code**: ${result.code}
 
-## 🎯 Integration Ready
+## Integration Ready
 This endpoint is validated and ready for use in MultiAPIFetch.`;
   }
 
@@ -141,7 +141,7 @@ This endpoint is validated and ready for use in MultiAPIFetch.`;
     workingResult: any,
     docUrl?: string
   ): string {
-    return `# 🔧 API Endpoint Auto-Corrected
+    return `# INFO API Endpoint Auto-Corrected
 
 **Original URL**: ${originalUrl}
 **Working URL**: ${workingUrl}
@@ -150,7 +150,7 @@ This endpoint is validated and ready for use in MultiAPIFetch.`;
 - **Original Error**: HTTP ${originalResult.code || 'Unknown'} - ${originalResult.error}
 - **Corrected Status**: HTTP ${workingResult.code} - Working
 
-## 🎯 Recommendation
+## Recommendation
 Use the corrected URL: \`${workingUrl}\`
 
 ${docUrl ? `## 📚 Documentation
@@ -175,7 +175,7 @@ The API registry should be updated with the working endpoint.`;
     const documentation = docUrl ? 
       `\n## 📚 Check Documentation\n${docUrl}` : '';
 
-    return `# ❌ API Validation Failed
+    return `# ERROR API Validation Failed
 
 **Endpoint**: ${originalUrl}
 **Error**: HTTP ${result.code || 'Unknown'} - ${result.error}
@@ -183,7 +183,7 @@ The API registry should be updated with the working endpoint.`;
 ## 🚨 All Endpoints Failed
 ${alternatives}
 
-## 🔧 Recommended Actions
+## Recommended Actions
 1. **Check API Status**: Service may be down or deprecated
 2. **Verify Documentation**: API structure may have changed
 3. **Try Manual Testing**: Test endpoints in browser or Postman
@@ -191,7 +191,7 @@ ${alternatives}
 
 ${documentation}
 
-## ⚡ Fallback Strategy
+## Fallback Strategy
 Consider using alternative APIs for this functionality.`;
   }
 }

@@ -128,13 +128,13 @@ export class APISearchTool extends BaseTool {
 
 ${apiList}
 
-## 📊 **Discovery Summary**
+## Discovery Summary
 - **Total APIs analyzed**: ${apiResults.length}
 - **Results after filtering**: ${filteredResults.length}
 - **Average relevance score**: ${filteredResults.length > 0 ? (filteredResults.reduce((sum, r) => sum + r.relevance_score, 0) / filteredResults.length * 100).toFixed(1) + '%' : 'N/A'}
 - **Role-based matches**: ${filteredResults.filter(r => r.role_preference_bonus > 0).length}
 
-## 🎯 **Integration Guidance**
+## Integration Guidance
 The APIs above are ranked by relevance to your objective and role preferences. Consider:
 1. **Reliability scores** for production use
 2. **Authentication requirements** for implementation complexity
@@ -149,11 +149,11 @@ The APIs above are ranked by relevance to your objective and role preferences. C
     } catch (error) {
       console.error('APISearch Error:', error);
       
-      const errorResponse = `# ❌ **API Search Error**
+      const errorResponse = `# ERROR API Search Error
 
 **Error**: ${error instanceof Error ? error.message : 'Unknown error'}
 
-## 🔧 **Recovery Protocol**
+## Recovery Protocol
 1. **Objective**: Provide a clear, descriptive goal or task requiring API data
 2. **User Role**: Must be one of: planner, coder, critic, researcher, analyzer, synthesizer, ui_architect, ui_implementer, ui_refiner
 3. **Max Results**: Optional number between 1-20 (default: 5)

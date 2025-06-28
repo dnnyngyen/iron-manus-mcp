@@ -390,8 +390,8 @@ export function generateRoleEnhancedPrompt(phase: Phase, role: Role, objective: 
   if (phase === 'KNOWLEDGE') {
     const roleAPIGuidance = getRoleSpecificAPIGuidance(role);
     basePrompt = basePrompt.replace(
-      '**🎯 INTELLIGENT API SELECTION:** Based on your role and objective, select APIs that match your domain expertise. Each role has preferred API categories and workflows optimized for their specific needs.',
-      `**🎯 INTELLIGENT API SELECTION:** Based on your role and objective:
+      'INTELLIGENT API SELECTION: Based on your role and objective, select APIs that match your domain expertise. Each role has preferred API categories and workflows optimized for their specific needs.',
+      `INTELLIGENT API SELECTION: Based on your role and objective:
 
 ${roleAPIGuidance}`
     );
@@ -407,11 +407,11 @@ ${roleAPIGuidance}`
   
   const thinkingMethodology = `
 
-**🧠 THINKING METHODOLOGY FOR ${role.toUpperCase()}:**
+THINKING METHODOLOGY FOR ${role.toUpperCase()}:
 ${config.thinkingMethodology.map(step => `• ${step}`).join('\n')}
 
-**🎯 FOCUS:** ${config.focus}
-**🔧 FRAMEWORKS:** ${config.suggestedFrameworks.join(', ')}
+FOCUS: ${config.focus}
+FRAMEWORKS: ${config.suggestedFrameworks.join(', ')}
 
 **🛠️ TOOL GUIDANCE:** ${toolGuidance}
 
@@ -432,7 +432,7 @@ Think through your analysis approach before proceeding. Consider:
 - Are there any ambiguities that need clarification?
 - What type of task is this (research, coding, deployment, etc.)?
 
-**🧠 CLAUDE-POWERED ROLE SELECTION:**
+CLAUDE-POWERED ROLE SELECTION:
 {{#if awaiting_role_selection}}
 The system needs your intelligent analysis to select the most appropriate role for this task. Your understanding of context and nuance is far superior to keyword matching. Here's the task:
 
@@ -446,7 +446,7 @@ The system needs your intelligent analysis to select the most appropriate role f
 
 {{else}}
 
-**✅ ROLE SELECTED:** {{detected_role}}
+ROLE SELECTED: {{detected_role}}
 The system has determined your optimal role based on the objective analysis.
 
 {{/if}}
@@ -486,7 +486,7 @@ Think through your knowledge requirements before proceeding. Assess:
 - Are there any technical constraints or requirements to consider?
 - What knowledge gaps might exist that could impact success?
 
-**🧠 CLAUDE-POWERED API SELECTION:**
+CLAUDE-POWERED API SELECTION:
 {{#if awaiting_api_selection}}
 The system needs your intelligent analysis to select the most relevant APIs. Your natural language understanding is far superior to keyword matching. Here's the task:
 
@@ -503,15 +503,15 @@ Focus on intelligent relevance over simple keyword matching.
 
 {{else}}
 
-**🚀 AUTO-CONNECTION ACTIVE:** The system has automatically discovered, fetched, and synthesized knowledge from relevant APIs based on your role and objective. Review the auto-generated knowledge below and determine if additional research is needed.
+AUTO-CONNECTION ACTIVE: The system has automatically discovered, fetched, and synthesized knowledge from relevant APIs based on your role and objective. Review the auto-generated knowledge below and determine if additional research is needed.
 
-**🎯 INTELLIGENT API SELECTION:** Based on your role and objective, the system automatically selected APIs that match your domain expertise. Each role has preferred API categories optimized for specific needs.
+INTELLIGENT API SELECTION: Based on your role and objective, the system automatically selected APIs that match your domain expertise. Each role has preferred API categories optimized for specific needs.
 
-**⚡ AUTOMATED WORKFLOW COMPLETED:**
-1. ✅ API Discovery - Relevant APIs identified for your domain
-2. ✅ Multi-Source Fetching - Data gathered from top-ranked APIs
-3. ✅ Knowledge Synthesis - Information cross-validated and synthesized
-4. ✅ Quality Assessment - Confidence scoring and contradiction detection
+AUTOMATED WORKFLOW COMPLETED:
+1. SUCCESS API Discovery - Relevant APIs identified for your domain
+2. SUCCESS Multi-Source Fetching - Data gathered from top-ranked APIs
+3. SUCCESS Knowledge Synthesis - Information cross-validated and synthesized
+4. SUCCESS Quality Assessment - Confidence scoring and contradiction detection
 {{/if}}
 
 **🔄 MANUAL OVERRIDE OPTIONS:**
@@ -628,7 +628,7 @@ export function generateMetaPrompt(todoContent: string, role: Role, context: Rec
 
 ${thinkGuidance}
 
-**🎯 EXECUTION APPROACH:**
+EXECUTION APPROACH:
 1. Think through your approach using the ${(config.cognitiveFrameworks || config.suggestedFrameworks).join(' and ')} frameworks
 2. Apply ${role} expertise with systematic thinking methodologies
 3. Follow ${config.validationRules.join(', ')} validation rules
@@ -638,7 +638,7 @@ ${thinkGuidance}
 7. Think critically about work quality against ${config.authorityLevel} standards before completion
 8. Report completion with detailed deliverables
 
-**🧠 COGNITIVE ENHANCEMENT:** Your reasoning effectiveness is enhanced through systematic thinking and role-specific frameworks.")`
+COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced through systematic thinking and role-specific frameworks.")`
     ,
     output_requirements: `(OUTPUT: ${config.defaultOutput})`
   };
@@ -698,7 +698,7 @@ ${constraintFramework}
 
 ${encapsulationGuidance}
 
-**🎯 COMPONENT-COGNITIVE EXECUTION APPROACH:**
+COMPONENT-COGNITIVE EXECUTION APPROACH:
 1. Think through your approach using unified ${(config.cognitiveFrameworks || config.suggestedFrameworks).join(' and ')} + V0 Component Generation frameworks
 2. Apply ${role} expertise with systematic thinking methodologies and duality integration
 3. Follow ${config.validationRules.join(', ')} validation rules + unified constraint validation
@@ -709,7 +709,7 @@ ${encapsulationGuidance}
 8. Think critically about work quality against ${config.authorityLevel} + Component-Cognitive Duality standards
 9. Report completion with detailed deliverables including constraint satisfaction metrics
 
-**🧠 COMPONENT-COGNITIVE ENHANCEMENT:** Your reasoning effectiveness is enhanced through systematic thinking, role-specific frameworks, and unified constraint-driven component generation.")`
+COMPONENT-COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced through systematic thinking, role-specific frameworks, and unified constraint-driven component generation.")`
     ,
     output_requirements: `(OUTPUT: ${config.defaultOutput} + Component-Cognitive Duality Metrics)`
   };
@@ -723,7 +723,7 @@ function generateComponentCognitiveDualityGuidance(
   constraints: UnifiedConstraint[]
 ): string {
   const modeSpecificGuidance: Record<CognitiveContext['reasoning_mode'], string> = {
-    component_generation: `**🧠 COMPONENT GENERATION REASONING:** Think systematically about V0-style component creation:
+    component_generation: `COMPONENT GENERATION REASONING: Think systematically about V0-style component creation:
 - Component hierarchy and composition patterns (atomic → composite → ecosystem)
 - Framework-specific constraints (React/Vue/Svelte patterns)
 - Accessibility compliance and WAI-ARIA integration
@@ -731,13 +731,13 @@ function generateComponentCognitiveDualityGuidance(
 - Props interface design and component API definition
 - Performance optimization and bundle size considerations`,
 
-    cognitive_orchestration: `**🧠 COGNITIVE ORCHESTRATION REASONING:** Think strategically about Manus FSM orchestration:`,
+    cognitive_orchestration: `COGNITIVE ORCHESTRATION REASONING: Think strategically about Manus FSM orchestration:`,
     
-    unified: `**🧠 UNIFIED REASONING:** Think holistically combining both approaches:`,
+    unified: `UNIFIED REASONING: Think holistically combining both approaches:`,
     
-    component_focused: `**🧠 COMPONENT-FOCUSED REASONING:** Focus on component generation:`,
+    component_focused: `COMPONENT-FOCUSED REASONING: Focus on component generation:`,
     
-    cognitive_focused: `**🧠 COGNITIVE-FOCUSED REASONING:** Focus on cognitive orchestration:
+    cognitive_focused: `COGNITIVE-FOCUSED REASONING: Focus on cognitive orchestration:
 - Phase transition logic and state management
 - Task decomposition and fractal orchestration
 - Role-based cognitive enhancement application
@@ -745,7 +745,7 @@ function generateComponentCognitiveDualityGuidance(
 - Session state persistence and performance tracking
 - Constraint validation and compliance enforcement`,
 
-    hybrid_duality: `**🧠 HYBRID DUALITY REASONING:** Think holistically about unified component-cognitive patterns:
+    hybrid_duality: `HYBRID DUALITY REASONING: Think holistically about unified component-cognitive patterns:
 - Bidirectional mapping between V0 Component↔Manus Task hierarchies
 - Unified constraint propagation across component/project/ecosystem scopes
 - Encapsulation pattern integration with cognitive orchestration
@@ -837,14 +837,14 @@ function requiresPythonExecution(objective: string, role: Role): boolean {
 // Generate role-specific Think tool guidance for cognitive enhancement
 function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): string {
   const roleSpecificThinking: Record<Role, string> = {
-    planner: `**🧠 STRATEGIC THINKING REQUIRED:** Think strategically about:
+    planner: `STRATEGIC THINKING REQUIRED: Think strategically about:
 - System architecture and component relationships
 - Strategic decomposition using Hierarchical Decomposition framework
 - Dependencies, timelines, and resource allocation
 - Risk assessment and mitigation strategies
 - Success criteria and validation checkpoints`,
 
-    coder: `**🧠 IMPLEMENTATION REASONING REQUIRED:** Think through the implementation approach:
+    coder: `IMPLEMENTATION REASONING REQUIRED: Think through the implementation approach:
 - Modular architecture design patterns and component boundaries
 - Test-driven development approach and testing strategy
 - Error handling, edge cases, and robustness considerations
@@ -852,21 +852,21 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Integration points and API design decisions
 - **Python Execution**: For complex algorithms, calculations, or code generation, use mcp__ide__executeCode to write and test Python scripts`,
 
-    critic: `**🧠 CRITICAL ASSESSMENT REQUIRED:** Think critically about quality and security:
+    critic: `CRITICAL ASSESSMENT REQUIRED: Think critically about quality and security:
 - Security vulnerabilities and attack vectors using Security-First Assessment
 - Code quality, performance bottlenecks, and optimization opportunities
 - Compliance with standards, regulations, and best practices
 - Multi-layer validation across functional, security, and performance dimensions
 - Risk severity assessment and remediation prioritization`,
 
-    researcher: `**🧠 RESEARCH ANALYSIS REQUIRED:** Think systematically about the research approach:
+    researcher: `RESEARCH ANALYSIS REQUIRED: Think systematically about the research approach:
 - Parallel research validation strategies and source credibility assessment
 - Information synthesis patterns and data correlation analysis
 - Research scope boundaries and information completeness criteria
 - Source triangulation and verification methodologies
 - Knowledge gaps identification and research direction prioritization`,
 
-    analyzer: `**🧠 ANALYTICAL REASONING REQUIRED:** Think analytically about the data and patterns:
+    analyzer: `ANALYTICAL REASONING REQUIRED: Think analytically about the data and patterns:
 - Multi-dimensional analysis matrix construction and variable relationships
 - Statistical pattern recognition and data correlation significance
 - Data validation methodologies and quality assurance protocols
@@ -874,26 +874,26 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Statistical significance assessment and confidence interval analysis
 - **Python Analysis**: Use mcp__ide__executeCode for statistical analysis, data processing, performance metrics calculation, and visualization`,
 
-    synthesizer: `**🧠 INTEGRATION REASONING REQUIRED:** Think holistically about integration and optimization:
+    synthesizer: `INTEGRATION REASONING REQUIRED: Think holistically about integration and optimization:
 - Component integration strategies and system interoperability
 - Optimization framework selection and performance metric definition
 - Integration testing approaches and quality synthesis validation
 - System-level emergence patterns and holistic performance assessment
 - Trade-off analysis between conflicting requirements and constraints`,
 
-    ui_architect: `**🧠 UI ARCHITECTURE REASONING REQUIRED:** Think systematically about UI design architecture:
+    ui_architect: `UI ARCHITECTURE REASONING REQUIRED: Think systematically about UI design architecture:
 - Component hierarchy and design system structure
 - User experience flow and interaction patterns
 - Accessibility and inclusive design principles
 - Design token systems and theming architecture`,
 
-    ui_implementer: `**🧠 UI IMPLEMENTATION REASONING REQUIRED:** Think through UI implementation:
+    ui_implementer: `UI IMPLEMENTATION REASONING REQUIRED: Think through UI implementation:
 - Component implementation patterns and best practices
 - Responsive design and cross-device compatibility
 - Performance optimization for UI rendering
 - Integration with design systems and style guides`,
 
-    ui_refiner: `**🧠 UI REFINEMENT REASONING REQUIRED:** Think critically about UI refinement:
+    ui_refiner: `UI REFINEMENT REASONING REQUIRED: Think critically about UI refinement:
 - Visual polish and aesthetic improvements
 - User interaction feedback and micro-interactions
 - Cross-browser compatibility and testing
@@ -941,7 +941,7 @@ function getRoleSpecificAPIGuidance(role: Role): string {
 - **Evidence Standards**: Peer-reviewed sources preferred, multiple source triangulation required`,
 
     analyzer: `
-**📊 ANALYZER API PREFERENCES:**
+ANALYZER API PREFERENCES:
 - **Primary Categories**: Financial data, cryptocurrency, business metrics, statistical APIs
 - **Recommended Workflow**: APISearch → financial/data APIs → MultiAPIFetch → KnowledgeSynthesize
 - **Key APIs**: Alpha Vantage, CoinGecko, business analytics, market data sources
@@ -950,7 +950,7 @@ function getRoleSpecificAPIGuidance(role: Role): string {
 - **Evidence Standards**: Real-time data preferred, historical trend validation essential`,
 
     ui_architect: `
-**🎨 UI ARCHITECT API PREFERENCES:**
+UI ARCHITECT API PREFERENCES:
 - **Primary Categories**: Design inspiration, color palettes, typography, visual frameworks
 - **Recommended Workflow**: APISearch → design/visual APIs → MultiAPIFetch → KnowledgeSynthesize
 - **Key APIs**: Unsplash, Colormind, design systems, font APIs, visual inspiration platforms

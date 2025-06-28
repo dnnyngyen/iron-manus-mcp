@@ -1,0 +1,47 @@
+[
+  {
+    "session_id": "session_1750982582143_iw2tpi7v6",
+    "performance_metrics": {
+      "session_id": "session_1750982582143_iw2tpi7v6",
+      "detected_role": "planner",
+      "current_phase": "QUERY",
+      "phase_transitions": 0,
+      "reasoning_effectiveness": 0.8,
+      "performance_grade": "GOOD",
+      "cognitive_enhancement_active": true,
+      "task_complexity_handled": "simple",
+      "session_duration_minutes": 0
+    },
+    "archived_at": 1751069259392
+  },
+  {
+    "session_id": "session_1750982593040_q6ft201be",
+    "performance_metrics": {
+      "session_id": "session_1750982593040_q6ft201be",
+      "detected_role": "researcher",
+      "current_phase": "QUERY",
+      "phase_transitions": 0,
+      "reasoning_effectiveness": 0.8,
+      "performance_grade": "GOOD",
+      "cognitive_enhancement_active": true,
+      "task_complexity_handled": "simple",
+      "session_duration_minutes": 0
+    },
+    "archived_at": 1751069259393
+  },
+  {
+    "session_id": "session_1750982602972_3xe4iaki8",
+    "performance_metrics": {
+      "session_id": "session_1750982602972_3xe4iaki8",
+      "detected_role": "researcher",
+      "current_phase": "QUERY",
+      "phase_transitions": 0,
+      "reasoning_effectiveness": 0.8,
+      "performance_grade": "GOOD",
+      "cognitive_enhancement_active": true,
+      "task_complexity_handled": "simple",
+      "session_duration_minutes": 0
+    },
+    "archived_at": 1751069259393
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "iron-manus": {
+      "command": "node",
+      "args": ["dist/index.js"],
+      "cwd": "/Users/dannynguyen/iron-manus-mcp",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

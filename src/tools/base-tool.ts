@@ -21,6 +21,7 @@ export interface ToolResult {
     type: 'text';
     text: string;
   }>;
+  isError?: boolean;
 }
 
 /**
@@ -74,7 +75,8 @@ export abstract class BaseTool {
       content: [{
         type: 'text',
         text
-      }]
+      }],
+      isError: false
     };
   }
 
@@ -86,8 +88,9 @@ export abstract class BaseTool {
     return {
       content: [{
         type: 'text',
-        text: `❌ **${this.name} Error:** ${errorMessage}`
-      }]
+        text: `ERROR Tool Error: ${errorMessage}`
+      }],
+      isError: true
     };
   }
 }

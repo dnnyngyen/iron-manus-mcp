@@ -312,7 +312,7 @@ export class MultiAPIFetchTool extends BaseTool {
       
       // Format individual results
       const formattedResults = apiResults.map((result, i) => {
-        const status = result.success ? '✅' : '❌';
+        const status = result.success ? 'SUCCESS' : 'ERROR';
         const url = new URL(result.endpoint);
         const domain = url.hostname;
         
@@ -348,7 +348,7 @@ export class MultiAPIFetchTool extends BaseTool {
 **Average Response Time**: ${avgResponseTime.toFixed(0)}ms
 **Total Data Retrieved**: ${(totalDataSize / 1024).toFixed(2)}KB
 
-## 🎯 **Performance Summary**
+## Performance Summary
 - **Success Rate**: ${((successful / validEndpoints.length) * 100).toFixed(1)}%
 - **Concurrent Requests**: ${maxConcurrent}
 - **Request Timeout**: ${timeoutMs}ms
@@ -357,17 +357,17 @@ export class MultiAPIFetchTool extends BaseTool {
 ${Object.keys(errorsByType).length > 0 ? `## ⚠️ **Error Analysis**
 ${Object.entries(errorsByType).map(([type, count]) => `- **${type} Errors**: ${count}`).join('\n')}
 
-` : ''}## 📊 **API Results**
+` : ''}## API Results
 
 ${formattedResults}
 
-## 🔧 **Integration Guidance**
+## Integration Guidance
 - **Successful APIs**: Use the returned data for your application logic
 - **Failed APIs**: Check error types and implement appropriate retry logic
 - **Rate Limiting**: Some APIs may have been rate-limited; retry later if needed
 - **Data Sanitization**: Large responses have been truncated for readability
 
-## 🚀 **Performance Metrics**
+## Performance Metrics
 - **Parallel Execution**: ${maxConcurrent} concurrent requests
 - **Memory Usage**: Responses limited to 5MB each
 - **Timeout Handling**: ${timeoutMs}ms per request
@@ -385,12 +385,12 @@ ${formattedResults}
       console.error(`MultiAPIFetch Error: ${errorMessage}`);
       
       // Enhanced error handling with recovery guidance
-      const errorResponse = `# ❌ **Multi-API Fetch Error**
+      const errorResponse = `# ERROR Multi-API Fetch Error
 
 **Error**: ${errorMessage}
 **Duration**: ${totalDuration}ms
 
-## 🔧 **Recovery Protocol**
+## Recovery Protocol
 1. **API Endpoints**: Ensure all URLs are valid and accessible
    - Must be valid HTTP/HTTPS URLs
    - Maximum 10 endpoints per request
@@ -418,7 +418,7 @@ ${formattedResults}
 }
 \`\`\`
 
-## 🛡️ **Built-in Protections**
+## Built-in Protections
 - **Rate Limiting**: Prevents API abuse
 - **Timeout Management**: Prevents hanging requests
 - **Concurrent Limiting**: Prevents overwhelming servers

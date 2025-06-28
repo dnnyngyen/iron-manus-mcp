@@ -185,7 +185,7 @@ export class KnowledgeSynthesisTool extends BaseTool {
         }).join('\n') : 'None detected';
       
       // Generate comprehensive response
-      const responseText = `# 🧠 Knowledge Synthesis Results
+      const responseText = `# Knowledge Synthesis Results
 
 **Sources Analyzed**: ${sourceCount}
 **Sources Used**: ${usedSources} (above ${confidenceThreshold} confidence threshold)
@@ -194,13 +194,13 @@ export class KnowledgeSynthesisTool extends BaseTool {
 **Contradictions Found**: ${contradictionCount}
 **Processing Time**: ${totalDuration}ms
 
-## 📊 **Quality Assessment**
+## Quality Assessment
 - **Source Agreement**: ${sourceAgreementPercentage.toFixed(1)}%
 - **Average Input Confidence**: ${(averageConfidence * 100).toFixed(1)}%
 - **Information Completeness**: ${(informationCompletenessScore * 100).toFixed(1)}%
 - **Synthesis Reliability**: ${this.getSynthesisReliabilityGrade(synthesisResult.confidence, sourceAgreementPercentage, contradictionCount)}
 
-## 🎯 **Synthesized Knowledge**
+## Synthesized Knowledge
 
 ${synthesisResult.content}
 
@@ -219,18 +219,18 @@ ${highConfidenceResponses.map((response, index) => {
         return `### ${index + 1}. ${response.source}
 **Confidence**: ${(response.confidence * 100).toFixed(1)}%
 **Data Preview**: ${preview}
-**Status**: ${synthesisResult.sources.includes(response.source) ? '✅ Used in synthesis' : '❌ Excluded'}
+**Status**: ${synthesisResult.sources.includes(response.source) ? 'SUCCESS Used in synthesis' : 'EXCLUDED'}
 
 `;
       }).join('')}
 
-## 🛡️ **Validation Metrics**
+## Validation Metrics
 - **Cross-validation Algorithm**: String similarity + semantic analysis
 - **Confidence Scoring**: Weighted by source reliability and agreement
 - **Contradiction Detection**: Multi-level conflict identification
 - **Evidence Transparency**: Full source attribution and reasoning
 
-## 🔧 **Integration Recommendations**
+## Integration Recommendations
 
 ${this.getIntegrationRecommendations(synthesisResult, args.synthesis_mode, contradictionCount)}
 
@@ -246,12 +246,12 @@ ${this.getIntegrationRecommendations(synthesisResult, args.synthesis_mode, contr
       console.error(`KnowledgeSynthesize Error: ${errorMessage}`);
       
       // Enhanced error handling with recovery guidance
-      const errorResponse = `# ❌ **Knowledge Synthesis Error**
+      const errorResponse = `# ERROR Knowledge Synthesis Error
 
 **Error**: ${errorMessage}
 **Duration**: ${totalDuration}ms
 
-## 🔧 **Recovery Protocol**
+## Recovery Protocol
 1. **API Responses**: Ensure array contains valid response objects
    - Each response must have: source (string), data (string), confidence (0-1)
    - Maximum 20 responses per request
@@ -288,7 +288,7 @@ ${this.getIntegrationRecommendations(synthesisResult, args.synthesis_mode, contr
 }
 \`\`\`
 
-## 🧠 **Synthesis Capabilities**
+## Synthesis Capabilities
 - **Cross-Validation**: Multi-source data comparison
 - **Conflict Resolution**: Intelligent contradiction handling
 - **Confidence Scoring**: Reliability assessment
@@ -610,7 +610,7 @@ ${this.getIntegrationRecommendations(synthesisResult, args.synthesis_mode, contr
     const recommendations: string[] = [];
     
     if (result.confidence > 0.8) {
-      recommendations.push('✅ **High confidence synthesis** - Safe for production use');
+      recommendations.push('SUCCESS High confidence synthesis - Safe for production use');
     } else if (result.confidence > 0.6) {
       recommendations.push('⚠️ **Medium confidence** - Consider additional validation');
     } else {
@@ -618,7 +618,7 @@ ${this.getIntegrationRecommendations(synthesisResult, args.synthesis_mode, contr
     }
     
     if (contradictions === 0) {
-      recommendations.push('✅ **No contradictions detected** - Information is consistent');
+      recommendations.push('SUCCESS No contradictions detected - Information is consistent');
     } else if (contradictions <= 2) {
       recommendations.push('⚠️ **Minor contradictions** - Review conflict details');
     } else {
@@ -633,7 +633,7 @@ ${this.getIntegrationRecommendations(synthesisResult, args.synthesis_mode, contr
         recommendations.push('⚖️ **Weighted mode** - Prioritize high-confidence sources');
         break;
       case 'hierarchical':
-        recommendations.push('📊 **Hierarchical mode** - Trust tier-1 sources most');
+        recommendations.push('INFO Hierarchical mode - Trust tier-1 sources most');
         break;
       case 'conflict_resolution':
         recommendations.push('🛠️ **Conflict resolution** - Contradictions have been addressed');
