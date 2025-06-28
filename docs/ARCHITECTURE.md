@@ -1,14 +1,19 @@
-# Iron Manus JARVIS Architecture Guide
-## The Complete Guide to Deterministic Agent Control
+# Iron Manus MCP Technical Architecture
+## Implementation Guide for Developers and System Architects
+
+**Documentation Navigation:**
+- **Community/Developers**: See [README.md](../README.md) for overview and [GETTING_STARTED.md](./GETTING_STARTED.md) for setup
+- **Researchers**: See [COGNITIVE_PARADIGMS.md](./COGNITIVE_PARADIGMS.md) for academic analysis  
+- **This Document**: Technical implementation details for system architects and implementers
 
 ### Table of Contents
 1. [Executive Summary](#executive-summary)
 2. [Core Architecture](#core-architecture)
 3. [The 6-Phase Orchestration Loop](#the-6-phase-orchestration-loop)
-4. [Meta-Prompting System](#meta-prompting-system)
-5. [Fractal Orchestration](#fractal-orchestration)
-6. [State Management](#state-management)
-7. [Value Propositions](#value-propositions)
+4. [Code Implementation Examples](#code-implementation-examples)
+5. [Meta-Prompting System](#meta-prompting-system)
+6. [Fractal Orchestration](#fractal-orchestration)
+7. [State Management](#state-management)
 8. [Implementation Patterns](#implementation-patterns)
 9. [Quick Reference](#quick-reference)
 
@@ -16,13 +21,19 @@
 
 ## Executive Summary
 
-**What**: Iron Manus JARVIS is an **AI Operating System Kernel** that implements Software 3.0 natural language computing through strict hierarchical control and sandboxed execution environments.
+**Target Audience**: Technical implementers, system architects, and developers building AI orchestration systems.
 
-**Why**: Traditional LLM interactions lack systematic structure and consistency. Iron Manus JARVIS creates a **kernel-level control plane** that manages AI processes with the same rigor as an operating system manages applications - through system calls, environment variables, and process isolation.
+**What**: Iron Manus MCP implements Meta Thread-of-Thought orchestration through a 6-phase FSM that manages Claude's cognitive processes using native Claude Code tools (TodoWrite/TodoRead/Task).
 
-**How**: Through a **6-layer kernel architecture** that functions like an OS kernel managing a sandboxed application process. The FSM serves as the **ultimate authority** that allocates resources (tools), schedules processes (phases), and defines unbreakable rules (constraints) while Claude operates as a sophisticated **application in user space**.
+**Why**: Large projects typically overwhelm Claude's context window. Iron Manus solves this through systematic context segmentation - each phase and spawned agent gets focused, clean context.
 
-**Key Innovation**: The first system to achieve sophisticated agent behavior by treating **AI as a sandboxed application process** running on a **natural language operating system kernel** - strict control without constraint through elegant system-level architecture.
+**How**: 
+- **FSM Controller** manages 6 phases (QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY)
+- **Context Segmentation** prevents information overload through phase isolation
+- **Agent Spawning** creates specialized sub-agents with dedicated contexts via Task() tool
+- **Native Tool Integration** uses only Claude Code's built-in TodoWrite/TodoRead/Task capabilities
+
+**Key Innovation**: First implementation of Thread-of-Thought patterns for orchestration (not reasoning) - context segmentation enables complex project management within Claude's native limitations.
 
 ## The OS Kernel & Sandboxed Application Architecture
 
