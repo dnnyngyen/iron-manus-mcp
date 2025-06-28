@@ -14,38 +14,19 @@ A modular MCP server implementing Thread-of-Thought cognitive architecture that 
 
 Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (multi-path exploration), Iron Manus implements **Thread-of-Thought Meta-Orchestration** - where Claude uses structured cognitive phases to manage complex workflows, spawn specialized reasoning processes, and coordinate hierarchical task execution.
 
-### Approach Comparison: Context Processing vs Self-Orchestration
+### Approach
 
-**Chain-of-Thought (CoT) - Traditional Reasoning:**
-- **Purpose:** Step-by-step logical reasoning for complex problems
-- **Pattern:** Linear decomposition (Problem → Step 1 → Step 2 → Answer)
-- **Strengths:** Excellent for structured reasoning, mathematical problems, logical deduction
-- **Limitations:** Struggles with chaotic contexts, mixed information sources
-- **Scope:** Single-task problem solving
+Iron Manus implements **Thread-of-Thought Meta-Orchestration** by combining:
 
-**Thread-of-Thought (THoT) - Context Segmentation:**
-- **Purpose:** Managing chaotic, complex contexts with mixed information
-- **Pattern:** Context segmentation and progressive analysis  
-- **Strengths:** Handles unstructured data, multi-source information, complex contexts
-- **Limitations:** Verbose responses, increased computational cost, context dependency
-- **Scope:** Information processing and synthesis
+- **Claude Code's native Chain-of-Thought** for structured workflow phases
+- **Thread-of-Thought patterns** for complex context management  
+- **Self-orchestration within single runtime** using native meta-cognitive tools
 
-**Iron Manus Meta-Orchestration - Self-Orchestrating Hybrid:**
-- **Purpose:** Adaptive cognitive process management for complex projects
-- **Pattern:** Dynamic phase switching with context-aware methodology selection
-- **Innovation:** **Self-orchestration within single runtime** - Claude orchestrates its own reasoning using native tools
-- **Hybrid Approach:** **Claude Code's native Chain-of-Thought** for structured reasoning phases + THoT patterns for complex context management
-- **Unique Capability:** **Only possible with Claude Code's native meta-cognitive tools** (TodoWrite/TodoRead/Task) - no external infrastructure needed
+Unlike traditional approaches that use these patterns for reasoning tasks, Iron Manus adapts them for **meta-orchestration** - Claude orchestrates its own reasoning processes through structured cognitive phases while maintaining complete autonomy.
 
-**The Key Insight:** 
+**Key Innovation:** Self-contained orchestration where spawned agents operate within the same Claude instance using TodoWrite/TodoRead/Task() tools, requiring no external infrastructure.
 
-Traditional approaches adapt CoT or THoT for reasoning tasks. Iron Manus adapts BOTH paradigms for **meta-orchestration** - using **Claude Code's native Chain-of-Thought** for structured workflow progression while employing THoT's context segmentation patterns for complex project management.
-
-**Why This Works Uniquely with Claude:**
-- **Self-contained orchestration:** No external agents or infrastructure required
-- **Native tool integration:** Leverages Claude Code's existing TodoWrite/Task() capabilities  
-- **Runtime recursion:** Spawned agents operate within the same Claude instance
-- **Adaptive methodology:** Switches between **Claude Code's native CoT** and THoT patterns based on context complexity
+*For detailed paradigm comparison, see [COGNITIVE_PARADIGMS.md](./docs/COGNITIVE_PARADIGMS.md)*
 
 **What makes this unique:** This MCP server provides tools that enable Claude to orchestrate its own meta-cognitive processes, creating a self-managing cognitive architecture that adapts reasoning strategies based on task complexity and domain requirements.
 
@@ -392,6 +373,7 @@ The approach prioritizes:
 
 - **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Technical deep dive
 - **[GETTING_STARTED.md](./docs/GETTING_STARTED.md)** - Tutorial and examples
+- **[COGNITIVE_PARADIGMS.md](./docs/COGNITIVE_PARADIGMS.md)** - CoT vs THoT paradigm comparison
 - **[EXAMPLES.md](./docs/EXAMPLES.md)** - Real usage scenarios
 - **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** - Setup and environment issues
 
