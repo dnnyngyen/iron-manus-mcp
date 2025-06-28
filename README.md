@@ -34,18 +34,18 @@ Unlike traditional Chain-of-Thought (single-task reasoning) or Tree-of-Thought (
 - **Purpose:** Adaptive cognitive process management for complex projects
 - **Pattern:** Dynamic phase switching with context-aware methodology selection
 - **Innovation:** **Self-orchestration within single runtime** - Claude orchestrates its own reasoning using native tools
-- **Hybrid Approach:** CoT for structured reasoning phases + THoT patterns for complex context management
+- **Hybrid Approach:** **Claude Code's native Chain-of-Thought** for structured reasoning phases + THoT patterns for complex context management
 - **Unique Capability:** **Only possible with Claude Code's native meta-cognitive tools** (TodoWrite/TodoRead/Task) - no external infrastructure needed
 
 **The Revolutionary Insight:** 
 
-Traditional approaches adapt CoT or THoT for reasoning tasks. Iron Manus adapts BOTH paradigms for **meta-orchestration** - using CoT's structured progression for workflow phases while employing THoT's context segmentation for complex project management.
+Traditional approaches adapt CoT or THoT for reasoning tasks. Iron Manus adapts BOTH paradigms for **meta-orchestration** - using **Claude Code's native Chain-of-Thought** for structured workflow progression while employing THoT's context segmentation patterns for complex project management.
 
 **Why This Works Uniquely with Claude:**
 - **Self-contained orchestration:** No external agents or infrastructure required
-- **Native tool integration:** Leverages Claude's existing TodoWrite/Task() capabilities  
+- **Native tool integration:** Leverages Claude Code's existing TodoWrite/Task() capabilities  
 - **Runtime recursion:** Spawned agents operate within the same Claude instance
-- **Adaptive methodology:** Switches between CoT and THoT patterns based on context complexity
+- **Adaptive methodology:** Switches between **Claude Code's native CoT** and THoT patterns based on context complexity
 
 **What makes this unique:** This MCP server provides tools that enable Claude to orchestrate its own meta-cognitive processes, creating a self-managing cognitive architecture that adapts reasoning strategies based on task complexity and domain requirements.
 
