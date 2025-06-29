@@ -46,8 +46,8 @@ jobs:
     - name: Create coverage directory
       run: mkdir -p coverage
 
-    - name: Run unit tests
-      run: npm run test -- --run --reporter verbose
+    - name: Run unit tests (no coverage)
+      run: npm run test -- --run --reporter verbose --no-coverage
       env:
         MIN_COMPLETION_PERCENT: 70
         CI: true
