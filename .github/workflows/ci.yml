@@ -27,6 +27,13 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Verify Node.js and environment
+      run: |
+        echo "Node version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+        echo "ES Module support test..."
+        node -e "console.log('ES modules working')"
+
     - name: Run linter
       run: npm run lint
 
@@ -39,11 +46,16 @@ jobs:
     - name: Create coverage directory
       run: mkdir -p coverage
 
-    - name: Run tests with coverage
-      run: npm run test:ci
+    - name: Run tests without coverage first
+      run: npm test
       env:
         MIN_COMPLETION_PERCENT: 70
-        VITEST_THREADS: false
+        
+    - name: Run tests with coverage
+      run: npx vitest run --coverage --pool=forks --poolOptions.forks.singleFork=true
+      env:
+        MIN_COMPLETION_PERCENT: 70
+        NODE_OPTIONS: "--max-old-space-size=4096"
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
