@@ -1,45 +1,49 @@
-# 🦾 Iron Manus MCP
+# 🦾 Iron Manus MCP v0.2.0
 
-> **Meta Thread-of-Thought (THoT) orchestration for Claude Code** - A production-ready MCP server that enables Claude to autonomously manage complex projects through structured 6-phase workflows.
+> **FSM-driven MCP server with 8-phase agent loop orchestration** - A comprehensive tool orchestration system that manages complex workflows through structured phases and 65+ API registry integration.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
-[![Coverage](https://img.shields.io/badge/coverage-80%25-green.svg)](https://codecov.io/gh/dnnyngyen/iron-manus-mcp)
+[![Tests](https://img.shields.io/badge/tests-107%2F107-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-![Demo](docs/images/demo.gif)
 
 ## What It Does
 
-Iron Manus MCP solves Claude Code's biggest weakness: **context window limitations**. Instead of cramming everything into one massive context, it breaks complex work into focused phases and spawns specialized sub-agents with clean contexts.
+Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages complex workflows through structured phases. It features a complete tool registry with JARVIS FSM controller and intelligent API selection from 65+ endpoints.
 
 **6-Phase Workflow**: `QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY`
 
-**Key Benefits:**
-- ✅ **Handles Large Projects** - Context segmentation prevents information overload
-- ✅ **Autonomous Management** - Claude creates its own todos and spawns specialized agents  
-- ✅ **No External Dependencies** - Uses only Claude Code's native tools
-- ✅ **95%+ Success Rate** - Built-in verification ensures completion
-- ✅ **SSRF Protection** - Enterprise-grade security built-in
+**Key Features:**
+- 🔄 **6-Phase FSM Loop** - Structured workflow orchestration with INIT/DONE states
+- 🛠️ **Modular Tool Registry** - Extensible architecture with 5+ specialized tools
+- 📡 **65+ API Registry** - Intelligent API discovery and selection system
+- 🔒 **SSRF Protection** - Enterprise-grade security with allowlist validation
+- ✅ **107/107 Tests Passing** - Comprehensive test coverage with Vitest
+- 📦 **ES Modules** - Modern JavaScript with TypeScript 5.0 support
 
 ## Quick Start
 
 ```bash
-# Clone and build
+# Clone and install
 git clone https://github.com/dnnyngyen/iron-manus-mcp
 cd iron-manus-mcp
-npm install && npm run build
+npm install
 
-# Register with Claude Code
+# Build TypeScript
+npm run build
+
+# Run tests (optional)
+npm test
+
+# Start server
+npm start
+```
+
+**For MCP Integration:**
+Add to your MCP client configuration or register with Claude Code:
+```bash
 claude mcp add iron-manus-mcp node dist/index.js
-
-# Verify installation
-/mcp
-```
-
-**Test it:**
-```
-Create a React dashboard with authentication and real-time data
 ```
 
 ## Example Usage
@@ -55,15 +59,15 @@ await mcp.callTool({
 });
 ```
 
-**Automatic Flow:**
-1. **QUERY** - Analyzes request and detects optimal role (e.g., `coder`)
-2. **ENHANCE** - Adds missing requirements (auth, validation, docs)
-3. **KNOWLEDGE** - Auto-discovers relevant APIs and patterns
-4. **PLAN** - Creates specialized todos with meta-prompts
-5. **EXECUTE** - Spawns `Task(api_architect)` and `Task(tester)` agents
-6. **VERIFY** - Ensures 95%+ completion before marking done
+**6-Phase Flow:**
+1. **QUERY** - Analyze request and detect role
+2. **ENHANCE** - Add missing requirements and context
+3. **KNOWLEDGE** - Auto-discover relevant APIs and patterns
+4. **PLAN** - Create structured tasks with meta-prompts
+5. **EXECUTE** - Process tasks with specialized tools
+6. **VERIFY** - Validate completion and quality
 
-## Tools Available
+## Available Tools
 
 - `JARVIS` - Main FSM controller (6-phase orchestration)
 - `APISearch` - Intelligent API discovery from 65+ endpoint registry
@@ -71,38 +75,86 @@ await mcp.callTool({
 - `KnowledgeSynthesize` - Cross-validation with conflict resolution
 - `APIValidator` - Response validation and confidence scoring
 
-## Configuration
+## Development
 
+**Prerequisites:**
+- Node.js 18+ (tested with 18.x, 20.x, 22.x)
+- npm 8+
+- TypeScript 5.0+
+
+**Available Scripts:**
+```bash
+npm run build        # TypeScript compilation
+npm test            # Run full test suite (107 tests)
+npm run test:nocov   # Run tests without coverage
+npm run lint        # ESLint checking
+npm run format      # Prettier formatting
+npm start          # Start compiled server
+npm run dev        # Build and start server
+```
+
+**Configuration:**
 Environment variables for customization:
-
 ```bash
 KNOWLEDGE_MAX_CONCURRENCY=2          # API concurrency limit
 KNOWLEDGE_TIMEOUT_MS=4000            # Request timeout
 ALLOWED_HOSTS="api.github.com,httpbin.org"  # SSRF whitelist
 ENABLE_SSRF_PROTECTION=true          # Security toggle
-VERIFICATION_COMPLETION_THRESHOLD=95  # Quality threshold
+MIN_COMPLETION_PERCENT=70            # Quality threshold
 ```
 
-## Documentation
+## Testing
 
-- **[Quick Start](docs/GETTING_STARTED.md)** - Setup and basic usage
-- **[Examples](docs/EXAMPLES.md)** - 15+ real-world use cases
-- **[Architecture](docs/ARCHITECTURE.md)** - Technical deep-dive
-- **[Security](docs/SECURITY.md)** - SSRF protection and best practices
-- **[Vision](docs/VISION.md)** - Software 3.0 philosophy
+Comprehensive test suite with 107 tests using Vitest:
+
+```bash
+# Run all tests
+npm test
+
+# Run tests without coverage
+npm run test:nocov
+
+# Run specific test types
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+```
+
+**Test Coverage:**
+- Configuration management
+- SSRF protection and security
+- FSM state transitions
+- Tool integrations
+- API registry functionality
+- Server initialization and MCP compliance
 
 ## Security
 
-Iron Manus includes enterprise-grade SSRF protection:
-- Blocks private/localhost IPs
-- Validates URL schemes
+Enterprise-grade SSRF protection built-in:
+- Blocks private/localhost IPs (192.168.x.x, 127.x.x.x, etc.)
+- Validates URL schemes (HTTP/HTTPS only)
 - Enforces allowlist when configured
-- Rate limiting and content size limits
+- Request timeout and size limits
+- Rate limiting per API endpoint
+
+## Architecture
+
+**Core Components:**
+- **FSM Engine** - 6-phase state machine orchestration
+- **Tool Registry** - Modular tool architecture with dependency injection
+- **API Registry** - 65+ APIs with role-based selection
+- **Security Layer** - SSRF guard with comprehensive validation
+- **Type System** - Full TypeScript interfaces and schemas
 
 ## License
 
 MIT - See [LICENSE](LICENSE) file for details.
 
+## Version History
+
+- **v0.2.0** - Complete refactor with Jest→Vitest migration, repository flattening, 6-phase FSM
+- **v0.1.x** - Initial release with 6-phase workflow
+
 ---
 
-**Built with Software 3.0 principles** - Natural language becomes executable through AI orchestration.
+**Built for modern AI orchestration** - Structured workflows meet intelligent automation.

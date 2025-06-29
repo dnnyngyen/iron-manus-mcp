@@ -1,11 +1,11 @@
-# Getting Started with Iron Manus JARVIS
-## 5-Minute Quick Start Guide
+# Getting Started with Iron Manus MCP v0.2.0
+## Quick Start Guide
 
 ### What You'll Learn
-- How to use JARVIS for autonomous task execution
-- Understanding the 6-phase workflow
-- Creating meta-prompts for specialized agents
-- Watching recursive agent spawning in action
+- How to use the JARVIS FSM controller
+- Understanding the 6-phase workflow (QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY)
+- Tool orchestration and API registry usage
+- Testing and development workflow
 
 ---
 
