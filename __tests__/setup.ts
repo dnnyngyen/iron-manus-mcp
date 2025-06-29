@@ -1,15 +1,15 @@
 // Jest setup file for Iron Manus MCP tests
 // Configure global test environment and utilities
 
-import { jest, expect, afterEach } from '@jest/globals';
+import { vi, expect, afterEach } from 'vitest';
 
 // Mock console methods to avoid cluttering test output
 const originalConsole = global.console;
 global.console = {
   ...originalConsole,
   // Keep error and warn for debugging, silence info/log
-  log: jest.fn(),
-  info: jest.fn(),
+  log: vi.fn(),
+  info: vi.fn(),
   // Keep error and warn for test debugging
   error: originalConsole.error,
   warn: originalConsole.warn,
@@ -78,9 +78,8 @@ expect.extend({
 });
 
 // Global test timeout
-jest.setTimeout(10000);
 
 // Clean up after tests
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });

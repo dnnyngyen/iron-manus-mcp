@@ -20,31 +20,32 @@ export interface JARVISArgs {
  */
 export class JARVISTool extends BaseTool {
   readonly name = 'JARVIS';
-  readonly description = 'JARVIS Finite State Machine Controller - Accurate replication of Manus PyArmor-protected architecture. Implements the 6-step agent loop (Analyze Events, Select Tools, Wait for Execution, Iterate, Submit Results, Enter Standby) with 3 modules (Planner/Knowledge/Datasource) plus fractal orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, performance tracking, and single-tool-per-iteration enforcement. Hijacks Sequential Thinking for deterministic agent control.';
-  
+  readonly description =
+    'JARVIS Finite State Machine Controller - Implements the 6-step agent loop (QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY) with Meta Thread-of-Thought orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, fractal task decomposition, performance tracking, and single-tool-per-iteration enforcement. Enables Claude to autonomously manage complex projects through context segmentation.';
+
   readonly inputSchema: ToolSchema = {
     type: 'object',
     properties: {
       session_id: {
         type: 'string',
-        description: 'Unique session identifier (auto-generated if not provided)'
+        description: 'Unique session identifier (auto-generated if not provided)',
       },
       phase_completed: {
         type: 'string',
         enum: ['QUERY', 'ENHANCE', 'KNOWLEDGE', 'PLAN', 'EXECUTE', 'VERIFY'],
-        description: 'Phase that Claude just completed (omit for initial call)'
+        description: 'Phase that Claude just completed (omit for initial call)',
       },
       initial_objective: {
         type: 'string',
-        description: 'User\'s goal (only on first call)'
+        description: "User's goal (only on first call)",
       },
       payload: {
         type: 'object',
         description: 'Phase-specific data from Claude',
-        additionalProperties: true
-      }
+        additionalProperties: true,
+      },
     },
-    required: []
+    required: [],
   };
 
   /**
@@ -65,7 +66,7 @@ export class JARVISTool extends BaseTool {
         session_id: args.session_id,
         ...(args.phase_completed && { phase_completed: args.phase_completed }),
         ...(args.initial_objective && { initial_objective: args.initial_objective }),
-        ...(args.payload && { payload: args.payload })
+        ...(args.payload && { payload: args.payload }),
       };
 
       // Process through FSM
@@ -74,7 +75,6 @@ export class JARVISTool extends BaseTool {
       // Format response
       const responseText = JSON.stringify(result, null, 2);
       return this.createResponse(responseText);
-
     } catch (error) {
       console.error('JARVIS FSM Error:', error);
       return this.createErrorResponse(error instanceof Error ? error : String(error));

@@ -193,7 +193,7 @@ Before diving into phases, it's crucial to understand that Claude operates withi
 - Example: `planner` gets "Break down into components and identify dependencies"
 - Provides concrete reasoning frameworks, not abstract enhancement
 
-**Layer 3: Dynamic Context Injection** (`src/core/fsm.ts:319-351`)
+**Layer 3: Dynamic Context Injection** (``)
 - Real-time context from previous phases, current tasks, metrics
 - Execution context, completion percentages, reasoning effectiveness
 - Makes each prompt highly specific to current state
@@ -233,7 +233,7 @@ The result: Claude feels autonomous while operating within **carefully engineere
 #### **Phase 1: QUERY** - "Analyze Events"
 **Purpose**: Role detection and objective clarification
 
-**Code Location**: `src/core/fsm.ts:128-140`
+**Code Location**: ``
 ```typescript
 case 'QUERY':
   if (input.phase_completed === 'QUERY') {
@@ -259,7 +259,7 @@ Think through your analysis approach before proceeding. Consider:
 #### **Phase 2: ENHANCE** - "Select Tools"
 **Purpose**: Goal refinement and requirement specification
 
-**Context Injection** (`src/core/fsm.ts:319-320`):
+**Context Injection** (``):
 ```typescript
 if (nextPhase === 'ENHANCE' && session.payload.interpreted_goal) {
   augmentedPrompt += `\n\n**📋 CONTEXT:** ${session.payload.interpreted_goal}`;
@@ -283,7 +283,7 @@ if (nextPhase === 'ENHANCE' && session.payload.interpreted_goal) {
 #### **Phase 4: PLAN** - "Iterate" (Meta-Prompt Injection Point)
 **Purpose**: Strategic decomposition and fractal orchestration setup
 
-**Fractal Orchestration Guidance** (`src/core/fsm.ts:322-323`):
+**Fractal Orchestration Guidance** (``):
 ```typescript
 augmentedPrompt += `\n\n**🔄 FRACTAL ORCHESTRATION GUIDE:**
 For complex sub-tasks that need specialized expertise, create todos with this format:
@@ -301,7 +301,7 @@ This enables Task() agent spawning in the EXECUTE phase.`;
 - Complex: `"(ROLE: analyzer) (CONTEXT: typescript_evaluation) (PROMPT: Examine files for quality) (OUTPUT: technical_report)"`
 - Complex todos get processed through `extractMetaPromptFromTodo()` to generate specialized agent prompts
 
-**MCP Processing** (`src/core/fsm.ts:170-188`):
+**MCP Processing** (``):
 ```typescript
 const enhancedResults = extractEnhancedMetaPrompts(rawTodos, {
   enableSecurity: true,
@@ -313,7 +313,7 @@ const enhancedResults = extractEnhancedMetaPrompts(rawTodos, {
 #### **Phase 5: EXECUTE** - "Submit Results" (Fractal Iteration Engine)
 **Purpose**: Task execution with recursive agent spawning
 
-**Execution Context** (`src/core/fsm.ts:324-332`):
+**Execution Context** (``):
 ```typescript
 augmentedPrompt += `**📊 EXECUTION CONTEXT:**
 - Current Task Index: ${currentTaskIndex}
@@ -328,7 +328,7 @@ augmentedPrompt += `**📊 EXECUTION CONTEXT:**
 3. **Direct execution** → Layer 5 tool constraints guide Claude toward `Bash`/`Read`/`Write` for simple tasks
 4. **Single tool per iteration** → Layer 5 enforcement ensures Claude reports back via `JARVIS`
 
-**Fractal Iteration Control** (`src/core/fsm.ts:208-217`):
+**Fractal Iteration Control** (``):
 ```typescript
 if (input.payload.more_tasks_pending || currentTaskIndex < totalTasks - 1) {
   session.payload.current_task_index = currentTaskIndex + 1;
@@ -341,7 +341,7 @@ if (input.payload.more_tasks_pending || currentTaskIndex < totalTasks - 1) {
 #### **Phase 6: VERIFY** - "Enter Standby"
 **Purpose**: Mathematical validation and intelligent rollback
 
-**Validation Rules** (`src/core/fsm.ts:467-500`):
+**Validation Rules** (``):
 ```typescript
 // Rule 1: 100% critical task completion required
 if (criticalTasks.length > 0 && criticalTasksCompleted < criticalTasks.length) {
@@ -356,7 +356,7 @@ if (completionPercentage < 95) {
 }
 ```
 
-**Rollback Logic** (`src/core/fsm.ts:237-251`):
+**Rollback Logic** (``):
 ```typescript
 if (verificationResult.completionPercentage < 50) {
   nextPhase = 'PLAN'; // Severe: restart planning
@@ -390,7 +390,7 @@ The system guides Claude to create todos with special syntax that triggers sophi
 3. **Generation**: `generateMetaPrompt()` creates full prompt stacks for spawned agents
 4. **Spawning**: Task() tool receives multi-layer prompts combining role methodology + context + instructions
 
-### Extraction & Generation Logic (`src/core/fsm.ts:398-413`)
+### Extraction & Generation Logic (``)
 
 ```typescript
 export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | null {
@@ -474,7 +474,7 @@ The result: **Sophisticated agent behavior through elegant prompt engineering** 
 
 ## Code Implementation Examples
 
-### Meta-Prompt Extraction Logic (`src/core/fsm.ts:889-927`)
+### Meta-Prompt Extraction Logic (``)
 
 The system converts special todo syntax into Task() agent spawns:
 
@@ -559,7 +559,7 @@ EXECUTION APPROACH:
 
 ### 6-Layer Prompt Cascade Integration
 
-**Layer 3: Dynamic Context Injection** (`src/core/fsm.ts:319-351`):
+**Layer 3: Dynamic Context Injection** (``):
 
 ```typescript
 // Real-time context injection between phases
@@ -672,7 +672,7 @@ interface SessionState {
 
 ### Reasoning Effectiveness Tracking
 ```typescript
-// Performance updates based on task success (src/core/fsm.ts:426-437)
+// Performance updates based on task success ()
 export function updateReasoningEffectiveness(sessionId: string, success: boolean, complexity: 'simple' | 'complex' = 'simple'): void {
   const session = stateManager.getSessionState(sessionId);
   const multiplier = complexity === 'complex' ? 0.15 : 0.1;

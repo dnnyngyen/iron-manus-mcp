@@ -20,21 +20,18 @@ const __dirname = path.dirname(__filename);
 const REFERENCE_INDEX = {
   'processState': {
     file: 'src/core/fsm.ts',
-    line: 104,
     referencedIn: ['docs/ARCHITECTURE.md:149'],
     description: 'Main FSM processing function',
     type: 'function'
   },
   'validateTaskCompletion': {
     file: 'src/core/fsm.ts',
-    line: 467,
-    referencedIn: ['src/core/fsm.ts:220', 'docs/ARCHITECTURE.md:333'],
+    referencedIn: ['src/core/fsm.ts', 'docs/ARCHITECTURE.md'],
     description: 'Mathematical validation engine',
     type: 'function'
   },
   'extractMetaPromptFromTodo': {
     file: 'src/core/fsm.ts',
-    line: 398,
     referencedIn: ['src/index.ts:5', 'docs/ARCHITECTURE.md:382'],
     description: 'Meta-prompt extraction for fractal orchestration',
     type: 'function'
@@ -53,13 +50,13 @@ const DOCUMENTATION_REFERENCES = {
     file: 'docs/ARCHITECTURE.md',
     referencedIn: ['README.md', 'docs/README.md'],
     description: 'Complete guide to deterministic agent control',
-    codeReferences: ['src/core/fsm.ts:104']
+    codeReferences: ['src/core/fsm.ts']
   },
   'ORCHESTRATION_LOOP': {
     file: 'docs/ORCHESTRATION.md',
     referencedIn: ['docs/README.md'],
     description: 'Chronological breakdown of 6-phase workflow',
-    codeReferences: ['src/core/fsm.ts:132']
+    codeReferences: ['src/core/fsm.ts']
   }
 };
 

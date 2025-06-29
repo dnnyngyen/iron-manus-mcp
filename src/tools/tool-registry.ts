@@ -90,9 +90,11 @@ export class ToolRegistry {
   async executeTool(name: string, args: any): Promise<any> {
     const tool = this.getTool(name);
     if (!tool) {
-      throw new Error(`Tool '${name}' not found. Available tools: ${this.getToolNames().join(', ')}`);
+      throw new Error(
+        `Tool '${name}' not found. Available tools: ${this.getToolNames().join(', ')}`
+      );
     }
-    
+
     return await tool.handle(args);
   }
 }
