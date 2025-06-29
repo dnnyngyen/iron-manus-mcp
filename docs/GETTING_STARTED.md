@@ -64,7 +64,7 @@ I want to create a React todo app with TypeScript
    - Direct execution for simple tasks
    - Spawns Task(ui_architect) for design
    - Spawns Task(coder) for implementation
-6. **VERIFY**: Checks 95% completion + all critical tasks done
+6. **VERIFY**: Checks high completion rate + all critical tasks done
 
 ### Example 2: Analysis Project
 **User Input:**
@@ -126,7 +126,7 @@ QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 - Single tool per iteration, reports back each time
 
 **VERIFY**:
-- Mathematical validation (95% overall + 100% critical tasks)
+- Mathematical validation (high overall + 100% critical tasks)
 - Intelligent rollback if completion insufficient
 - Quality assessment and final checks
 
@@ -198,7 +198,7 @@ QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 - System will guide tool choices naturally
 
 ### 5. Quality Validation
-- 95% completion threshold ensures thorough work
+- High completion threshold ensures thorough work
 - Critical tasks must be 100% complete
 - Automatic rollback and retry for incomplete work
 

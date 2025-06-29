@@ -71,7 +71,7 @@ await mcp.callTool({
 - **KNOWLEDGE** - Information gathering (WebSearch, research, analysis)
 - **PLAN** - Task decomposition with meta-prompt creation
 - **EXECUTE** - Iterative execution with agent spawning
-- **VERIFY** - Mathematical validation (95% threshold) with intelligent rollback
+- **VERIFY** - Mathematical validation with intelligent rollback
 
 ### Native Tool Integration
 
@@ -155,7 +155,7 @@ await mcp.callTool({
 - **Minimal complexity** - No APIs, databases, or external orchestration
 - **Self-contained** - Everything runs through Claude's existing capabilities
 - **Transparent operation** - Clear phases and decision points
-- **Reliable outcomes** - 95% completion threshold with intelligent rollback
+- **Reliable outcomes** - High completion threshold with intelligent rollback
 
 ## 🔧 System Requirements
 
