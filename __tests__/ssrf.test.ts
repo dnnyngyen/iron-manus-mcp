@@ -55,7 +55,7 @@ describe('SSRF Protection', () => {
   });
 
   it('should respect allowed hosts whitelist', () => {
-    const allowedHosts = ['api.example.com', '*.github.com'];
+    const allowedHosts = ['api.example.com', '*.github.com', '*.githubusercontent.com'];
     
     expect(ssrfGuard('https://api.example.com/data', allowedHosts)).toBe(true);
     expect(ssrfGuard('https://api.github.com/repos', allowedHosts)).toBe(true);
