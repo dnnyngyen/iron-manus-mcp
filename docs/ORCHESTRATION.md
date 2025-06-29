@@ -9,7 +9,7 @@
   Code Execution (src/index.ts:31):
   const result = await toolRegistry.executeTool(name, args);
 
-  FSM Logic (src/core/fsm.ts:109-121):
+  FSM Logic ():
   if (input.initial_objective) {
     session.initial_objective = input.initial_objective;
     session.detected_role = detectEnhancedRole(input.initial_objective); // Enhanced AST-based role detection
@@ -24,7 +24,7 @@
   Phase 1: QUERY - "Analyze Events"
 
   Natural Language: I need to understand what the user is really asking for
-  MCP Server: Phase transitions from INIT→QUERY (src/core/fsm.ts:128-130)
+  MCP Server: Phase transitions from INIT→QUERY ()
   System Prompt (src/core/prompts.ts:194-210):
   Think through your analysis approach before proceeding. Consider:
   - What is the user really asking for at its core?
@@ -44,7 +44,7 @@
   What I Do: I analyze the objective, detect it's a technical evaluation task, identify the primary role as "analyzer"
   Tool Call: JARVIS with phase_completed: 'QUERY' and payload: {interpreted_goal: "Conduct comprehensive architectural analysis..."}
 
-  MCP Server Response (src/core/fsm.ts:133-140):
+  MCP Server Response ():
   if (input.phase_completed === 'QUERY') {
     if (input.payload?.interpreted_goal) {
       session.payload.interpreted_goal = input.payload.interpreted_goal;
@@ -60,7 +60,7 @@
   System Prompt (src/core/prompts.ts:595-596):
   Think through enhancement opportunities, then call JARVIS with phase_completed: "ENHANCE"
 
-  Context Injection (src/core/fsm.ts:319-320):
+  Context Injection ():
   if (nextPhase === 'ENHANCE' && session.payload.interpreted_goal) {
     augmentedPrompt += `\n\n**📋 CONTEXT:** ${session.payload.interpreted_goal}`;
   }
@@ -69,7 +69,7 @@
   What I Do: I take the interpreted goal and add missing details, edge cases, technical constraints
   Tool Call: JARVIS with phase_completed: 'ENHANCE' and payload: {enhanced_goal: "Comprehensive architectural quality assessment..."}
 
-  MCP Server Response (src/core/fsm.ts:143-150):
+  MCP Server Response ():
   if (input.phase_completed === 'ENHANCE') {
     if (input.payload?.enhanced_goal) {
       session.payload.enhanced_goal = input.payload.enhanced_goal;
@@ -91,7 +91,7 @@
   What I Do: I evaluate my domain knowledge, determine I have sufficient TypeScript/Node.js expertise, decide no external research needed
   Tool Call: JARVIS with phase_completed: 'KNOWLEDGE' and payload: {knowledge_gathered: "Sufficient domain knowledge available..."}
 
-  MCP Server Response (src/core/fsm.ts:152-159):
+  MCP Server Response ():
   if (input.phase_completed === 'KNOWLEDGE') {
     if (input.payload?.knowledge_gathered) {
       session.payload.knowledge_gathered = input.payload.knowledge_gathered;
@@ -107,7 +107,7 @@
   System Prompt (src/core/prompts.ts:598):
   Think through strategic planning, then use TodoWrite to create todos, then call JARVIS with phase_completed: "PLAN"
 
-  Fractal Orchestration Guidance (src/core/fsm.ts:322-323):
+  Fractal Orchestration Guidance ():
   augmentedPrompt += `\n\n**🔄 FRACTAL ORCHESTRATION GUIDE:**\nFor complex sub-tasks that need specialized expertise, create todos with this format:\n"(ROLE: coder) 
   (CONTEXT: authentication_system) (PROMPT: Implement secure JWT authentication with password reset) (OUTPUT: production_ready_code)"\n\nThis enables Task() agent 
   spawning in the EXECUTE phase.`;
@@ -123,7 +123,7 @@
   Tool Call: TodoWrite with structured todo list
   Then: JARVIS with phase_completed: 'PLAN' and payload: {plan_created: true}
 
-  MCP Server Response (src/core/fsm.ts:162-188):
+  MCP Server Response ():
   if (input.phase_completed === 'PLAN') {
     if (input.payload?.plan_created) {
       // Process todos with enhanced AST-based MetaPrompt extraction
@@ -144,7 +144,7 @@
   Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), mcp__ide__executeCode (Python
   analysis/computation)
 
-  Execution Context (src/core/fsm.ts:324-332):
+  Execution Context ():
   const currentTaskIndex = session.payload.current_task_index || 0;
   const currentTodos = session.payload.current_todos || [];
   const currentTodo = currentTodos[currentTaskIndex];
@@ -152,7 +152,7 @@
   augmentedPrompt += `\n\n**📊 EXECUTION CONTEXT:**\n- Current Task Index: ${currentTaskIndex}\n- Total Tasks: ${currentTodos.length}\n- Current Task: ${currentTodo 
   || 'None'}\n- Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%`;
 
-  Fractal Execution Protocol (src/core/fsm.ts:331-332):
+  Fractal Execution Protocol ():
   augmentedPrompt += `\n\n**🔄 FRACTAL EXECUTION PROTOCOL:**\n1. Check current todo (index ${currentTaskIndex}) for meta-prompt patterns\n2. If todo contains 
   (ROLE:...) pattern, use Task() tool to spawn specialized agent\n3. If todo is direct execution, use appropriate tools (Bash/Browser/etc.)\n4. After each action, 
   report results back\n\n**⚡ SINGLE TOOL PER ITERATION:** Choose ONE tool call per turn (Manus requirement).`;
@@ -163,7 +163,7 @@
   - Iteration 2: TodoWrite to mark task complete, update status
   - Iteration 3: JARVIS to report execution results
 
-  MCP Server Response (src/core/fsm.ts:191-217):
+  MCP Server Response ():
   if (input.phase_completed === 'EXECUTE') {
     Object.assign(session.payload, input.payload);
 
@@ -189,7 +189,7 @@
   System Prompt (src/core/prompts.ts:600):
   Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), mcp__ide__executeCode (analytical verification)
 
-  Verification Context (src/core/fsm.ts:333-350):
+  Verification Context ():
   const todos = session.payload.current_todos || [];
   const taskBreakdown = calculateTaskBreakdown(todos);
   const completionPercentage = calculateCompletionPercentage(taskBreakdown);
@@ -204,7 +204,7 @@
   What I Do: I assess the work against original objective, check completion status
   Tool Call: JARVIS with phase_completed: 'VERIFY' and payload: {verification_passed: true/false}
 
-  MCP Server Validation (src/core/fsm.ts:220-253):
+  MCP Server Validation ():
   if (input.phase_completed === 'VERIFY') {
     const verificationResult = validateTaskCompletion(session, input.payload);
 
@@ -220,7 +220,7 @@
     }
   }
 
-  Validation Rules (src/core/fsm.ts:467-500):
+  Validation Rules ():
   // Rule 1: 100% critical task completion required
   if (criticalTasks.length > 0 && criticalTasksCompleted < criticalTasks.length) {
     result.reason = `Critical tasks incomplete: ${criticalTasksCompleted}/${criticalTasks.length} completed`;

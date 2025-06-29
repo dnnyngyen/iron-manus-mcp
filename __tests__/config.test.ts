@@ -28,14 +28,14 @@ describe('Configuration Management', () => {
     expect(CONFIG.AUTO_CONNECTION_ENABLED).toBe(true);
   });
 
-  it('should override defaults with environment variables', () => {
+  it('should override defaults with environment variables', async () => {
     process.env.KNOWLEDGE_MAX_CONCURRENCY = '5';
     process.env.KNOWLEDGE_TIMEOUT_MS = '8000';
     process.env.AUTO_CONNECTION_ENABLED = 'false';
     
     // Re-import to get updated config
-    delete require.cache[require.resolve('../src/config.js')];
-    const { CONFIG: updatedConfig } = require('../src/config.js');
+    
+    const { CONFIG: updatedConfig } = await import("../src/config.js?t=" + Date.now());
     
     expect(updatedConfig.KNOWLEDGE_MAX_CONCURRENCY).toBe(5);
     expect(updatedConfig.KNOWLEDGE_TIMEOUT_MS).toBe(8000);
@@ -69,11 +69,11 @@ describe('Configuration Management', () => {
     Object.assign(CONFIG as any, originalConfig);
   });
 
-  it('should parse ALLOWED_HOSTS correctly', () => {
+  it('should parse ALLOWED_HOSTS correctly', async () => {
     process.env.ALLOWED_HOSTS = 'api.example.com,*.github.com,httpbin.org';
     
-    delete require.cache[require.resolve('../src/config.js')];
-    const { CONFIG: updatedConfig } = require('../src/config.js');
+    
+    const { CONFIG: updatedConfig } = await import("../src/config.js?t=" + Date.now());
     
     expect(updatedConfig.ALLOWED_HOSTS).toEqual([
       'api.example.com',
@@ -82,11 +82,11 @@ describe('Configuration Management', () => {
     ]);
   });
 
-  it('should handle empty ALLOWED_HOSTS', () => {
+  it('should handle empty ALLOWED_HOSTS', async () => {
     process.env.ALLOWED_HOSTS = '';
     
-    delete require.cache[require.resolve('../src/config.js')];
-    const { CONFIG: updatedConfig } = require('../src/config.js');
+    
+    const { CONFIG: updatedConfig } = await import("../src/config.js?t=" + Date.now());
     
     expect(updatedConfig.ALLOWED_HOSTS).toEqual([]);
   });

@@ -1,5 +1,5 @@
 // API Registry Tests - Tests for role-based API selection and registry functionality
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { 
   selectRelevantAPIs, 
   getAPIByName, 

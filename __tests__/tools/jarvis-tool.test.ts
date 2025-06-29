@@ -1,21 +1,21 @@
 // JARVIS Tool Tests - Tests for the FSM controller tool integration
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { JARVISTool } from '../../src/tools/jarvis-tool.js';
 import { processState } from '../../src/core/fsm.js';
 import { MessageJARVIS, Role, Phase } from '../../src/core/types.js';
 
 // Mock the FSM module
-jest.mock('../../src/core/fsm.js', () => ({
-  processState: jest.fn()
+vi.mock('../../src/core/fsm.js', () => ({
+  processState: vi.fn()
 }));
 
 describe('JARVIS Tool Integration', () => {
   let jarvisTool: JARVISTool;
-  const mockProcessState = processState as jest.MockedFunction<typeof processState>;
+  const mockProcessState = processState as vi.MockedFunction<typeof processState>;
 
   beforeEach(() => {
     jarvisTool = new JARVISTool();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Tool Definition', () => {

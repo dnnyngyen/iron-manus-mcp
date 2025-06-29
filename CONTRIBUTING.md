@@ -60,23 +60,34 @@ All code is automatically validated through:
 npm run lint          # Check code style
 npm run format        # Auto-fix formatting
 npm run test          # Run test suite
-npm run test:coverage # Ensure 70%+ coverage
+npm run test:coverage # Ensure 80%+ coverage
 ```
 
 ### File Organization
 
 ```
 src/
-├── index.ts          # MCP server entry point
-├── core/             # Core FSM and orchestration logic
-│   ├── fsm.ts        # State machine implementation
-│   ├── prompts.ts    # Role-specific prompt templates
-│   ├── state.ts      # Session management
-│   ├── types.ts      # TypeScript interfaces
-│   └── api-registry.ts # API endpoint registry
-├── tools/            # MCP tool implementations
-├── agents/           # Agent role definitions
-└── utils/            # Shared utilities
+├── index.ts              # MCP server entry point
+├── config.ts             # Configuration layer
+├── core/                 # Core FSM and orchestration logic
+│   ├── fsm.ts           # State machine implementation
+│   ├── prompts.ts       # Role-specific prompt templates
+│   ├── state.ts         # Session management
+│   ├── types.ts         # TypeScript interfaces
+│   └── api-registry.ts  # API endpoint registry
+├── phase-engine/         # FSM phase engine
+│   └── FSM.ts           # Modular FSM with dependency injection
+├── knowledge/            # Knowledge synthesis
+│   └── autoConnection.ts # API discovery and synthesis
+├── security/             # SSRF protection
+│   └── ssrfGuard.ts     # URL validation and security
+├── validation/           # Zod schemas
+│   └── schemas.ts       # Runtime type validation
+├── verification/         # Metrics and verification
+│   └── metrics.ts       # Task completion validation
+├── tools/               # MCP tool implementations
+├── agents/              # Agent role definitions
+└── utils/               # Shared utilities
 ```
 
 ## Testing Requirements

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 2024-12-29
+## [0.2.0] - 2025-01-01
 
 ### Added
 - **Modular Architecture**: Split fsm.ts into focused modules (phase-engine/, knowledge/, verification/)

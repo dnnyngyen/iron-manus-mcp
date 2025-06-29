@@ -1,22 +1,22 @@
 // FSM phase transition tests
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createFSM } from '../src/phase-engine/FSM.js';
-import { validateTaskCompletion } from '../src/verification/metrics.js';
-import { autoFetchAPIs, autoSynthesize, AUTO_CONNECTION_CONFIG } from '../src/knowledge/autoConnection.js';
 
 describe('FSM Phase Transitions', () => {
   let fsm: ReturnType<typeof createFSM>;
   
   beforeEach(() => {
+    // Mock autoConnection function for testing
+    const mockAutoConnection = async (query: string) => {
+      return {
+        answer: `Mock answer for: ${query}`,
+        contradictions: [],
+        confidence: 0.8
+      };
+    };
+
     fsm = createFSM({
-      knowledge: {
-        autoFetch: autoFetchAPIs,
-        autoSynthesize: autoSynthesize,
-        config: AUTO_CONNECTION_CONFIG,
-      },
-      verification: {
-        validateCompletion: validateTaskCompletion,
-      },
+      autoConnection: mockAutoConnection
     });
   });
 

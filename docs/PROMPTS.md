@@ -141,7 +141,7 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
 - **Reusable cognitive components**: Thinking methodologies as functions
 - **Polymorphic behavior**: Same input, different processing based on role
 
-### Layer 3: Dynamic Context Injection (`src/core/fsm.ts:319-351`)
+### Layer 3: Dynamic Context Injection (``)
 
 **Software 3.0 Concept**: **Runtime State Programming in Natural Language**
 

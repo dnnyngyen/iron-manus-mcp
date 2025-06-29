@@ -9,6 +9,15 @@ import {
   APIUsageMetrics,
 } from '../core/types.js';
 import {
+  detectEnhancedRole,
+  extractEnhancedMetaPrompts,
+  tokenBudgetOkay,
+  detectFractalDelegation,
+  recordCognitiveLoad,
+  KnowledgePhaseResult,
+  AutoConnectionDeps,
+} from "./helpers.js";
+import {
   generateRoleEnhancedPrompt,
   detectRole,
   generateRoleSelectionPrompt,
@@ -26,89 +35,18 @@ import { autoFetchAPIs, autoSynthesize, AUTO_CONNECTION_CONFIG } from '../knowle
 import { validateTaskCompletion, calculateTaskBreakdown, calculateCompletionPercentage } from '../verification/metrics.js';
 import { CONFIG } from '../config.js';
 
-// Fallback implementations for cognitive features
-function detectEnhancedRole(objective: string): Role {
-  return detectRole(objective); // Use basic role detection
-}
+// Core FSM implementation using basic, proven functionality
 
-function extractEnhancedMetaPrompts(todos: any[], options: any): any[] {
-  return []; // Return empty for now
-}
-
-function extractEnhancedMetaPrompt(content: string, options: any): any {
-  return null; // Return null for now
-}
-
-// Interfaces for cognitive features
-interface EnhancedMetaPrompt {
-  role: Role;
-  context: string;
-  prompt: string;
-  output: string;
-}
-
-interface ValidationContext {
-  phase: Phase;
-  role: Role;
-  objective: string;
-  reasoning?: string;
-}
-
-// Add ValidationSeverity enum for compatibility
-enum ValidationSeverity {
-  CRITICAL = 'CRITICAL',
-  ERROR = 'ERROR',
-  WARNING = 'WARNING',
-  INFO = 'INFO',
-}
-
-// Default implementations for cognitive features
-const reasoningRulesEngine = {
-  validateReasoning: (context: ValidationContext) => ({
-    isValid: true,
-    issues: [],
-    confidence: 0.8,
-    violations: [],
-  }),
-};
-
-const cognitiveFrameworkManager = {
-  injectCognitiveFramework: (role: Role, phase: Phase, prompt: string, context: any) => ({
-    enhancedReasoning: prompt,
-    injectedFrameworks: [],
-    appliedPatterns: [],
-  }),
-};
-
-function getExtractionPerformanceMetrics() {
-  return {
-    parseTime: 10,
-    cacheHitRate: 0.8,
-    successRate: 0.95,
-  };
-}
-
-export interface FSMDependencies {
-  knowledge: {
-    autoFetch: typeof autoFetchAPIs;
-    autoSynthesize: typeof autoSynthesize;
-    config: typeof AUTO_CONNECTION_CONFIG;
-  };
-  verification: {
-    validateCompletion: typeof validateTaskCompletion;
-  };
-}
-
-export function createFSM(deps: FSMDependencies) {
+export function createFSM(deps: AutoConnectionDeps) {
   return {
     processState: (input: MessageJARVIS) => processState(input, deps),
     extractMetaPromptFromTodo,
-    extractEnhancedMetaPromptFromTodo,
+    // extractEnhancedMetaPromptFromTodo removed - use extractMetaPromptFromTodo
     updateReasoningEffectiveness,
   };
 }
 
-export async function processState(input: MessageJARVIS, deps: FSMDependencies): Promise<FromJARVIS> {
+export async function processState(input: MessageJARVIS, deps: AutoConnectionDeps): Promise<FromJARVIS> {
   const sessionId = input.session_id;
   const session = stateManager.getSessionState(sessionId);
 
@@ -120,7 +58,7 @@ export async function processState(input: MessageJARVIS, deps: FSMDependencies):
     const roleSelectionPrompt = generateRoleSelectionPrompt(input.initial_objective);
 
     // Set temporary role as fallback, but request Claude selection
-    session.detected_role = detectEnhancedRole(input.initial_objective); // Fallback for now
+    session.detected_role = detectRole(input.initial_objective);
     session.current_phase = 'INIT';
     session.reasoning_effectiveness = CONFIG.INITIAL_REASONING_EFFECTIVENESS;
 
@@ -198,23 +136,11 @@ export async function processState(input: MessageJARVIS, deps: FSMDependencies):
         // Confirm plan created and move to execution
         if (input.payload?.plan_created) {
           session.payload.plan_created = true;
-          // Process todos with enhanced AST-based MetaPrompt extraction
+          // Process todos using proven regex-based extraction
           const rawTodos = input.payload.todos_with_metaprompts || [];
           if (rawTodos.length > 0) {
-            const enhancedResults = extractEnhancedMetaPrompts(rawTodos, {
-              enableSecurity: true,
-              enableCaching: true,
-              enableOptimization: true,
-              maxComplexity: 'EXPERT' as any,
-              timeoutMs: 5000,
-            });
-
-            // Store enhanced todos and performance metrics
-            session.payload.current_todos = enhancedResults.map(result => result.todo);
-            session.payload.ast_performance_metrics = getExtractionPerformanceMetrics();
-            session.payload.enhanced_extraction_count = enhancedResults.filter(
-              r => r.metaPrompt
-            ).length;
+            // Store todos directly - meta-prompt extraction happens during execution
+            session.payload.current_todos = rawTodos;
           } else {
             session.payload.current_todos = [];
           }
@@ -275,7 +201,7 @@ export async function processState(input: MessageJARVIS, deps: FSMDependencies):
   return output;
 }
 
-async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: FSMDependencies) {
+async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: AutoConnectionDeps) {
   // Check if Claude provided API selection response
   if (session.payload.awaiting_api_selection && input.payload?.claude_response) {
     try {
@@ -291,24 +217,12 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: FS
         session.payload.awaiting_api_selection = false;
 
         // Proceed with auto-connection using Claude's selected APIs
-        if (deps.knowledge.config.enabled) {
-          const topAPIs = claudeSelectedAPIs.slice(0, 3).map(r => r.api.url);
-          const fetchResults = await deps.knowledge.autoFetch(
-            topAPIs,
-            deps.knowledge.config.max_concurrent,
-            deps.knowledge.config.timeout_ms
-          );
-
-          const objective = session.payload.enhanced_goal || session.initial_objective || '';
-          const synthesisResult = await deps.knowledge.autoSynthesize(
-            fetchResults,
-            objective,
-            deps.knowledge.config.confidence_threshold
-          );
-
-          session.payload.synthesized_knowledge = synthesisResult.synthesizedContent;
-          session.payload.api_fetch_responses = fetchResults;
-        }
+        const objective = session.payload.enhanced_goal || session.initial_objective || '';
+        const result: KnowledgePhaseResult = await deps.autoConnection(objective);
+        
+        session.payload.synthesized_knowledge = result.answer;
+        session.payload.knowledge_contradictions = result.contradictions;
+        session.payload.knowledge_confidence = result.confidence;
       }
     } catch (error) {
       console.error('Error processing Claude API selection:', error);
@@ -335,7 +249,7 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: FS
   }
 }
 
-async function runAutoConnection(session: any, deps: FSMDependencies) {
+async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
   try {
     const startTime = Date.now();
 
@@ -376,64 +290,44 @@ async function runAutoConnection(session: any, deps: FSMDependencies) {
 
     if (relevantAPIs.length > 0) {
       // AUTO-CONNECTION: Automatically fetch and synthesize knowledge
-      if (deps.knowledge.config.enabled) {
-        try {
-          const autoConnectionStartTime = Date.now();
+      try {
+        const autoConnectionStartTime = Date.now();
+        const objective = session.payload.enhanced_goal || session.initial_objective || '';
+        
+        const result: KnowledgePhaseResult = await deps.autoConnection(objective);
+        
+        // Store synthesized knowledge in session
+        session.payload.synthesized_knowledge = result.answer;
+        session.payload.knowledge_contradictions = result.contradictions;
+        session.payload.knowledge_confidence = result.confidence;
 
-          // Step 1: Auto-fetch from top APIs
-          const topAPIs = relevantAPIs.slice(0, 3).map(r => r.api.url);
+        // Update API usage metrics with auto-connection results
+        const autoConnectionTime = Date.now() - autoConnectionStartTime;
+        session.payload.api_usage_metrics.apis_queried = relevantAPIs.length;
+        session.payload.api_usage_metrics.synthesis_confidence = result.confidence;
+        session.payload.api_usage_metrics.api_response_time = autoConnectionTime;
+        session.payload.api_usage_metrics.knowledge_synthesis_quality = result.confidence;
 
-          const fetchResults = await deps.knowledge.autoFetch(
-            topAPIs,
-            deps.knowledge.config.max_concurrent,
-            deps.knowledge.config.timeout_ms
-          );
+        // Mark auto-connection as successful
+        session.payload.auto_connection_successful = true;
+        session.payload.auto_connection_metadata = {
+          apis_attempted: relevantAPIs.length,
+          synthesis_confidence: result.confidence,
+          total_processing_time: autoConnectionTime,
+          contradictions_found: result.contradictions.length,
+        };
+      } catch (autoConnectionError) {
+        console.warn(
+          '[FSM-KNOWLEDGE] WARNING Auto-connection failed, falling back to manual mode:',
+          autoConnectionError
+        );
 
-          // Step 2: Auto-synthesize knowledge
-          const objective = session.payload.enhanced_goal || session.initial_objective || '';
-
-          const synthesisResult = await deps.knowledge.autoSynthesize(
-            fetchResults,
-            objective,
-            deps.knowledge.config.confidence_threshold
-          );
-
-          // Step 3: Store synthesized knowledge in session
-          session.payload.synthesized_knowledge = synthesisResult.synthesizedContent;
-          session.payload.api_fetch_responses = fetchResults;
-
-          // Step 4: Update API usage metrics with auto-connection results
-          const autoConnectionTime = Date.now() - autoConnectionStartTime;
-          session.payload.api_usage_metrics.apis_queried = fetchResults.length;
-          session.payload.api_usage_metrics.synthesis_confidence = synthesisResult.overallConfidence;
-          session.payload.api_usage_metrics.api_response_time = autoConnectionTime;
-          session.payload.api_usage_metrics.knowledge_synthesis_quality = synthesisResult.overallConfidence;
-
-          // Mark auto-connection as successful
-          session.payload.auto_connection_successful = true;
-          session.payload.auto_connection_metadata = {
-            apis_attempted: topAPIs.length,
-            apis_successful: synthesisResult.metadata.successfulSources,
-            synthesis_confidence: synthesisResult.overallConfidence,
-            total_processing_time: autoConnectionTime,
-            sources_used: synthesisResult.sourcesUsed,
-            contradictions_found: synthesisResult.contradictions.length,
-          };
-        } catch (autoConnectionError) {
-          console.warn(
-            '[FSM-KNOWLEDGE] WARNING Auto-connection failed, falling back to manual mode:',
-            autoConnectionError
-          );
-
-          // Graceful fallback
-          session.payload.auto_connection_successful = false;
-          session.payload.synthesized_knowledge = `Auto-connection failed: ${autoConnectionError instanceof Error ? autoConnectionError.message : 'Unknown error'}. Manual API tools are still available.`;
-          session.payload.api_usage_metrics.knowledge_synthesis_quality = 0.0;
-        }
-      } else {
+        // Graceful fallback
         session.payload.auto_connection_successful = false;
-        session.payload.synthesized_knowledge =
-          'Auto-connection is disabled. Use manual API tools: APISearch, MultiAPIFetch, KnowledgeSynthesize.';
+        session.payload.synthesized_knowledge = `Auto-connection failed: ${autoConnectionError instanceof Error ? autoConnectionError.message : 'Unknown error'}. Manual API tools are still available.`;
+        session.payload.knowledge_contradictions = [];
+        session.payload.knowledge_confidence = 0;
+        session.payload.api_usage_metrics.knowledge_synthesis_quality = 0.0;
       }
     } else {
       session.payload.auto_connection_successful = false;
@@ -491,9 +385,9 @@ function handleExecutePhase(session: any, input: MessageJARVIS): Phase {
   }
 }
 
-function handleVerifyPhase(session: any, input: MessageJARVIS, deps: FSMDependencies): Phase {
+function handleVerifyPhase(session: any, input: MessageJARVIS, deps: AutoConnectionDeps): Phase {
   // Enhanced verification with strict completion percentage validation
-  const verificationResult = deps.verification.validateCompletion(session, input.payload);
+  const verificationResult = validateTaskCompletion(session, input.payload);
 
   if (verificationResult.isValid && input.payload?.verification_passed === true) {
     return 'DONE';
@@ -532,27 +426,8 @@ function generateSystemPrompt(session: any, nextPhase: Phase, input: MessageJARV
     session.initial_objective
   );
 
-  // Apply reasoning rules engine validation and enhancement
-  const validationContext = createValidationContext(session, nextPhase, roleEnhancedPrompt, input);
-  const reasoningValidation = reasoningRulesEngine.validateReasoning(validationContext);
-
-  // Apply cognitive framework injection for enhanced reasoning
-  const cognitiveEnhancement = cognitiveFrameworkManager.injectCognitiveFramework(
-    session.detected_role,
-    nextPhase,
-    roleEnhancedPrompt,
-    validationContext
-  );
-
-  // Update reasoning effectiveness based on validation results
-  if (reasoningValidation.confidence > 0.8) {
-    session.reasoning_effectiveness = Math.min(1.0, session.reasoning_effectiveness + 0.05);
-  } else if (reasoningValidation.confidence < 0.5) {
-    session.reasoning_effectiveness = Math.max(0.3, session.reasoning_effectiveness - 0.05);
-  }
-
-  // Start with enhanced reasoning or original prompt
-  let augmentedPrompt = cognitiveEnhancement.enhancedReasoning || roleEnhancedPrompt;
+  // Use the role-enhanced prompt directly (proven functionality)
+  let augmentedPrompt = roleEnhancedPrompt;
 
   // Add phase-specific context
   augmentedPrompt = addPhaseSpecificContext(augmentedPrompt, nextPhase, session);
@@ -651,28 +526,7 @@ function addVerifyPhaseContext(prompt: string, session: any): string {
 
 // Helper function to extract meta-prompt from todo content (Enhanced with AST fallback)
 export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | null {
-  // Try enhanced AST-based extraction first
-  try {
-    const enhanced = extractEnhancedMetaPrompt(todoContent, {
-      enableSecurity: false, // Keep disabled for backward compatibility
-      enableCaching: true,
-      enableOptimization: false,
-      timeoutMs: 1000, // Short timeout for compatibility
-    });
-
-    if (enhanced) {
-      return {
-        role_specification: enhanced.role_specification,
-        context_parameters: enhanced.context_parameters,
-        instruction_block: enhanced.instruction_block,
-        output_requirements: enhanced.output_requirements,
-      };
-    }
-  } catch (error) {
-    console.warn('Enhanced extraction failed, falling back to regex:', error);
-  }
-
-  // Fallback to original regex-based extraction
+  // Use proven regex-based meta-prompt extraction
   const roleMatch = todoContent.match(/\(ROLE:\s*([^)]+)\)/i);
   const contextMatch = todoContent.match(/\(CONTEXT:\s*([^)]+)\)/i);
   const promptMatch = todoContent.match(/\(PROMPT:\s*([^)]+)\)/i);
@@ -690,15 +544,7 @@ export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | nul
   return null;
 }
 
-// Enhanced version for new code that wants full AST capabilities
-export function extractEnhancedMetaPromptFromTodo(todoContent: string): EnhancedMetaPrompt | null {
-  return extractEnhancedMetaPrompt(todoContent, {
-    enableSecurity: true,
-    enableCaching: true,
-    enableOptimization: true,
-    timeoutMs: 5000,
-  });
-}
+// Enhanced function removed - use extractMetaPromptFromTodo for all meta-prompt extraction
 
 // Performance tracking for reasoning effectiveness
 export function updateReasoningEffectiveness(
@@ -718,17 +564,4 @@ export function updateReasoningEffectiveness(
   stateManager.updateSessionState(sessionId, session);
 }
 
-// Helper function to create validation context for reasoning rules engine
-function createValidationContext(
-  session: any,
-  phase: Phase,
-  reasoning: string,
-  input: MessageJARVIS
-): ValidationContext {
-  return {
-    role: session.detected_role,
-    phase: phase,
-    objective: session.initial_objective || '',
-    reasoning: reasoning,
-  };
-}
+// Validation context no longer needed - removed with enhanced features

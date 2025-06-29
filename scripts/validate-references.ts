@@ -49,7 +49,7 @@ const DOCUMENTATION_REFERENCES: Record<string, DocumentationReference> = {
     file: 'docs/001_ARCHITECTURE_GUIDE.md',
     referencedIn: ['README.md'],
     description: 'Architecture guide',
-    codeReferences: ['src/core/fsm.ts:104']
+    codeReferences: ['src/core/fsm.ts']
   }
 };
 

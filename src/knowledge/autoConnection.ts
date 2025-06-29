@@ -293,3 +293,46 @@ function calculateSimpleSimilarity(text1: string, text2: string): number {
   const commonWords = words1.filter(word => words2.includes(word));
   return commonWords.length / Math.max(words1.length, words2.length);
 }
+
+/**
+ * Main auto-connection function that matches the AutoConnectionDeps interface
+ * @param query - The query/objective to research
+ * @returns Promise<KnowledgePhaseResult>
+ */
+export async function autoConnection(query: string): Promise<{ answer: string; contradictions: string[]; confidence: number }> {
+  try {
+    // Use a subset of sample APIs for demonstration
+    const sampleUrls = [
+      'https://httpbin.org/json',
+      'https://api.github.com/repos/microsoft/TypeScript',
+      'https://jsonplaceholder.typicode.com/posts/1',
+    ];
+
+    // Auto-fetch from sample APIs
+    const fetchResults = await autoFetchAPIs(
+      sampleUrls,
+      AUTO_CONNECTION_CONFIG.max_concurrent,
+      AUTO_CONNECTION_CONFIG.timeout_ms
+    );
+
+    // Auto-synthesize knowledge
+    const synthesisResult = await autoSynthesize(
+      fetchResults,
+      query,
+      AUTO_CONNECTION_CONFIG.confidence_threshold
+    );
+
+    return {
+      answer: synthesisResult.synthesizedContent,
+      contradictions: synthesisResult.contradictions,
+      confidence: synthesisResult.overallConfidence,
+    };
+  } catch (error) {
+    console.warn('Auto-connection failed:', error);
+    return {
+      answer: `Auto-connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      contradictions: [],
+      confidence: 0,
+    };
+  }
+}
