@@ -47,7 +47,7 @@ jobs:
       run: mkdir -p coverage
 
     - name: Run unit tests (no coverage)
-      run: npm run test -- --run --reporter verbose --no-coverage
+      run: npm run test:nocov
       env:
         MIN_COMPLETION_PERCENT: 70
         CI: true

@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:nocov": "vitest run --reporter verbose",
     "test:integration": "vitest run --testNamePattern=integration",
     "test:unit": "vitest run --testNamePattern=unit",
     "test:e2e": "vitest run --testNamePattern=e2e",
