@@ -36,21 +36,14 @@ jobs:
     - name: Build project
       run: npm run build
 
-    - name: Debug environment
-      run: |
-        echo "Node version: $(node --version)"
-        echo "NPM version: $(npm --version)"
-        echo "Working directory: $(pwd)"
-        echo "Directory contents:"
-        ls -la
-        echo "Node modules coverage:"
-        ls -la node_modules/@vitest/ || echo "No vitest in node_modules"
-        
     - name: Create coverage directory
       run: mkdir -p coverage
 
     - name: Run tests with coverage
       run: npm run test:ci
+      env:
+        MIN_COMPLETION_PERCENT: 70
+        VITEST_THREADS: false
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3

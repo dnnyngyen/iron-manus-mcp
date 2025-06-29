@@ -6,6 +6,7 @@ export default defineConfig({
     environment: 'node',
     coverage: {
       provider: 'v8',
+      threads: false, // Disable threading to prevent OOM on CI
       reporter: ['text', 'json', 'html'],
       thresholds: {
         lines: 80,
