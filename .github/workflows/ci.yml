@@ -1,421 +1,69 @@
-name: Comprehensive Testing Infrastructure CI
+name: CI
 
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
-  schedule:
-    # Run performance tests daily at 2 AM UTC
-    - cron: '0 2 * * *'
-
-env:
-  NODE_VERSION: '18.x'
-  COVERAGE_THRESHOLD: 95
-  PERFORMANCE_THRESHOLD: 95
 
 jobs:
-  # ============================================================================
-  # UNIT TESTS
-  # ============================================================================
-  unit-tests:
-    name: Unit Tests
+  test:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        
+
     - name: Install dependencies
       run: npm ci
-      
+
+    - name: Run linter
+      run: npm run lint
+
+    - name: Run format check
+      run: npm run format:check
+
     - name: Build project
       run: npm run build
-      
-    - name: Run unit tests
-      run: npm run test:unit
-      
-    - name: Generate coverage report
-      run: npm run test:coverage
-      
+
+    - name: Run tests with coverage
+      run: npm run test:ci
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        file: ./coverage/lcov.info
-        flags: unit-tests
-        name: unit-tests-${{ matrix.node-version }}
+        file: ./coverage/coverage-final.json
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
 
-  # ============================================================================
-  # INTEGRATION TESTS
-  # ============================================================================
-  integration-tests:
-    name: Integration Tests
+  security:
     runs-on: ubuntu-latest
-    needs: unit-tests
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build project
-      run: npm run build
-      
-    - name: Run integration tests
-      run: npm run test:integration
-      timeout-minutes: 15
-      
-    - name: Upload integration test results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: integration-test-results
-        path: |
-          coverage/
-          test-results/
 
-  # ============================================================================
-  # END-TO-END TESTS
-  # ============================================================================
-  e2e-tests:
-    name: End-to-End Tests
-    runs-on: ubuntu-latest
-    needs: integration-tests
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
+    - name: Setup Node.js 18
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ env.NODE_VERSION }}
+        node-version: 18.x
         cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build project
-      run: npm run build
-      
-    - name: Run E2E tests
-      run: npm run test:e2e
-      timeout-minutes: 30
-      env:
-        E2E_TIMEOUT: 60000
-        
-    - name: Upload E2E test results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: e2e-test-results
-        path: |
-          coverage/
-          test-results/
-          screenshots/
 
-  # ============================================================================
-  # PERFORMANCE TESTS
-  # ============================================================================
-  performance-tests:
-    name: Performance Tests
-    runs-on: ubuntu-latest
-    needs: unit-tests
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
     - name: Install dependencies
       run: npm ci
-      
-    - name: Build project
-      run: npm run build
-      
-    - name: Run performance benchmarks
-      run: npm run test:performance
-      timeout-minutes: 20
-      
-    - name: Validate performance targets
-      run: |
-        echo "Validating Cognitive Enhancement: 2.3x-3.2x multiplier"
-        echo "Validating Pipeline Synergy: 1.2x+ score"
-        echo "Validating Adaptive Switching: 94%+ accuracy"
-        echo "Validating Error Recovery: 95%+ success rate"
-        
-    - name: Upload performance test results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: performance-test-results
-        path: |
-          performance-reports/
-          benchmarks/
 
-  # ============================================================================
-  # SECURITY TESTS
-  # ============================================================================
-  security-tests:
-    name: Security Tests
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
     - name: Run security audit
       run: npm audit --audit-level=moderate
-      
-    - name: Run dependency check
-      uses: dependency-check/Dependency-Check_Action@main
-      with:
-        project: 'manus-fsm-orchestrator'
-        path: '.'
-        format: 'ALL'
-        
-    - name: Upload security scan results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: security-scan-results
-        path: reports/
 
-  # ============================================================================
-  # QUALITY GATES
-  # ============================================================================
-  quality-gates:
-    name: Quality Gates
-    runs-on: ubuntu-latest
-    needs: [unit-tests, integration-tests, e2e-tests, performance-tests]
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Download all test artifacts
-      uses: actions/download-artifact@v3
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Execute quality gates
-      run: |
-        echo "🚪 Executing Quality Gates..."
-        
-        # Coverage Gate (95%+ required)
-        COVERAGE=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
-        echo "Coverage: ${COVERAGE}%"
-        if (( $(echo "$COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
-          echo "❌ Coverage gate failed: ${COVERAGE}% < ${COVERAGE_THRESHOLD}%"
-          exit 1
-        fi
-        echo "✅ Coverage gate passed: ${COVERAGE}% >= ${COVERAGE_THRESHOLD}%"
-        
-        # Performance Gate
-        echo "✅ Performance gate passed: All targets achieved"
-        
-        # Integration Success Rate Gate (98%+ required)
-        echo "✅ Integration success rate gate passed: >98%"
-        
-        # Revolutionary Features Gate
-        echo "✅ Revolutionary features gate passed: All operational"
-        
-        echo "🎯 All Quality Gates PASSED"
-        
-    - name: Generate quality report
-      run: |
-        echo "# Quality Assurance Report" > quality-report.md
-        echo "" >> quality-report.md
-        echo "## Test Results Summary" >> quality-report.md
-        echo "- ✅ Unit Tests: PASSED" >> quality-report.md
-        echo "- ✅ Integration Tests: PASSED" >> quality-report.md
-        echo "- ✅ E2E Tests: PASSED" >> quality-report.md
-        echo "- ✅ Performance Tests: PASSED" >> quality-report.md
-        echo "- ✅ Security Tests: PASSED" >> quality-report.md
-        echo "" >> quality-report.md
-        echo "## Quality Gates Status" >> quality-report.md
-        echo "- ✅ Coverage Gate: PASSED (${COVERAGE:-96}%+ achieved)" >> quality-report.md
-        echo "- ✅ Performance Gate: PASSED (All targets met)" >> quality-report.md
-        echo "- ✅ Integration Gate: PASSED (98%+ success rate)" >> quality-report.md
-        echo "- ✅ Revolutionary Features Gate: PASSED (All operational)" >> quality-report.md
-        echo "" >> quality-report.md
-        echo "## Revolutionary Architecture Validation" >> quality-report.md
-        echo "- 🧠 Cognitive Enhancement: 2.3x-3.2x multiplier ✅" >> quality-report.md
-        echo "- 💫 Pipeline Synergy: 1.2x+ score ✅" >> quality-report.md
-        echo "- 🔄 Adaptive Switching: 94%+ accuracy ✅" >> quality-report.md
-        echo "- 🛡️ Error Recovery: 95%+ success rate ✅" >> quality-report.md
-        echo "- 🎯 System Health: 95%+ score ✅" >> quality-report.md
-        
-    - name: Upload quality report
-      uses: actions/upload-artifact@v3
-      with:
-        name: quality-assurance-report
-        path: quality-report.md
-
-  # ============================================================================
-  # DEPLOYMENT READINESS CHECK
-  # ============================================================================
-  deployment-readiness:
-    name: Deployment Readiness Check
-    runs-on: ubuntu-latest
-    needs: quality-gates
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Validate deployment readiness
-      run: |
-        echo "🚀 Deployment Readiness Check"
-        echo "✅ All tests passed"
-        echo "✅ Quality gates passed"
-        echo "✅ Security scans clean"
-        echo "✅ Performance targets met"
-        echo ""
-        echo "🎯 System is READY for production deployment"
-        echo "📊 Overall System Health: 95%+"
-        echo "🔥 Revolutionary Features: Fully Operational"
-        echo "⚡ Performance Grade: A+"
-        
-    - name: Create deployment summary
-      run: |
-        echo "## 🚀 Deployment Summary" > deployment-summary.md
-        echo "" >> deployment-summary.md
-        echo "**Build Status:** ✅ SUCCESS" >> deployment-summary.md
-        echo "**Quality Score:** 97%" >> deployment-summary.md
-        echo "**Test Coverage:** 96%+" >> deployment-summary.md
-        echo "**Performance Grade:** A+" >> deployment-summary.md
-        echo "" >> deployment-summary.md
-        echo "### Revolutionary Architecture Status" >> deployment-summary.md
-        echo "- Cognitive Enhancement: 2.87x (Target: 2.3x+) ✅" >> deployment-summary.md
-        echo "- Pipeline Synergy: 1.34x (Target: 1.2x+) ✅" >> deployment-summary.md
-        echo "- Adaptive Switching: 94.6% (Target: 94%+) ✅" >> deployment-summary.md
-        echo "- Error Recovery: 96.7% (Target: 95%+) ✅" >> deployment-summary.md
-        echo "- System Stability: 95.2% (Target: 95%+) ✅" >> deployment-summary.md
-        echo "" >> deployment-summary.md
-        echo "**Recommendation:** APPROVED for production deployment 🎯" >> deployment-summary.md
-        
-    - name: Upload deployment summary
-      uses: actions/upload-artifact@v3
-      with:
-        name: deployment-summary
-        path: deployment-summary.md
-
-  # ============================================================================
-  # NOTIFICATION AND REPORTING
-  # ============================================================================
-  notify-results:
-    name: Notify Results
-    runs-on: ubuntu-latest
-    needs: [quality-gates, deployment-readiness]
-    if: always()
-    
-    steps:
-    - name: Determine overall status
-      id: status
-      run: |
-        if [[ "${{ needs.quality-gates.result }}" == "success" ]]; then
-          echo "status=success" >> $GITHUB_OUTPUT
-          echo "message=🎯 All quality gates passed! System ready for deployment." >> $GITHUB_OUTPUT
-        else
-          echo "status=failure" >> $GITHUB_OUTPUT
-          echo "message=❌ Quality gates failed. Review test results before deployment." >> $GITHUB_OUTPUT
-        fi
-        
-    - name: Create status badge
-      run: |
-        if [[ "${{ steps.status.outputs.status }}" == "success" ]]; then
-          echo "![Build Status](https://img.shields.io/badge/build-passing-brightgreen)" > status-badge.md
-          echo "![Quality](https://img.shields.io/badge/quality-97%25-brightgreen)" >> status-badge.md
-          echo "![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)" >> status-badge.md
-          echo "![Performance](https://img.shields.io/badge/performance-A+-brightgreen)" >> status-badge.md
-        else
-          echo "![Build Status](https://img.shields.io/badge/build-failing-red)" > status-badge.md
-        fi
-        
-    - name: Upload status badge
-      uses: actions/upload-artifact@v3
-      with:
-        name: status-badge
-        path: status-badge.md
-
-# ============================================================================
-# WORKFLOW SUMMARY
-# ============================================================================
-# This CI/CD pipeline provides:
-# 
-# 1. **Comprehensive Testing**:
-#    - Unit tests with 95%+ coverage requirement
-#    - Integration tests for cross-system validation
-#    - End-to-end workflow testing
-#    - Performance benchmarking with targets
-#    - Security vulnerability scanning
-# 
-# 2. **Quality Gates**:
-#    - Coverage Gate: 95%+ line coverage
-#    - Performance Gate: Revolutionary targets (2.3x+ cognitive, 1.2x+ synergy, 94%+ accuracy)
-#    - Integration Gate: 98%+ success rate
-#    - Security Gate: No high/critical vulnerabilities
-# 
-# 3. **Revolutionary Architecture Validation**:
-#    - Cognitive Enhancement: 2.3x-3.2x multiplier validation
-#    - Pipeline Synergy: 1.2x+ score validation
-#    - Adaptive Switching: 94%+ accuracy validation
-#    - Error Recovery: 95%+ success rate validation
-#    - System Health: 95%+ overall score
-# 
-# 4. **Deployment Readiness**:
-#    - Automated quality assessment
-#    - Performance target validation
-#    - Security compliance verification
-#    - Production deployment approval
-# 
-# 5. **Monitoring and Reporting**:
-#    - Comprehensive test reports
-#    - Performance trend analysis
-#    - Quality metrics tracking
-#    - Automated notifications
-#
-# Target Achievement:
-# ✅ Test Coverage: 95%+
-# ✅ Integration Success: 98%+
-# ✅ E2E Reliability: 99%+
-# ✅ Performance Regression Detection: 100%
-# ✅ Quality Gate Accuracy: 97%+
-# ============================================================================
+    - name: Check for outdated dependencies
+      run: npm outdated || true

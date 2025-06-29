@@ -13,14 +13,14 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts",
     "format:check": "prettier --check src/**/*.ts",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:integration": "jest --testPathPattern=integration",
-    "test:unit": "jest --testPathPattern=unit",
-    "test:e2e": "jest --testPathPattern=e2e",
-    "test:performance": "jest --testPathPattern=performance",
-    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --testNamePattern=integration",
+    "test:unit": "vitest run --testNamePattern=unit", 
+    "test:e2e": "vitest run --testNamePattern=e2e",
+    "test:performance": "vitest run --testNamePattern=performance",
+    "test:ci": "vitest run --coverage",
     "validate-references": "node scripts/validate-references.js",
     "update-references": "ts-node scripts/update-references.ts",
     "refs:validate": "npm run validate-references",
@@ -33,18 +33,16 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "axios": "^1.10.0",
-    "dotenv": "^16.5.0"
+    "dotenv": "^16.5.0",
+    "p-limit": "^6.2.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
-    "@types/supertest": "^2.0.0",
-    "jest": "^29.5.0",
     "prettier": "^3.6.2",
-    "supertest": "^6.3.0",
-    "ts-jest": "^29.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "zod": "^3.25.67"
   },
   "engines": {
     "node": ">=18.0.0"
