@@ -7,22 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- CONTRIBUTING.md with comprehensive development guidelines
-- PERFORMANCE.md guide for context optimization and scaling strategies
-- META_PROMPT_GUIDE.md with visual syntax reference and examples
-- INTERACTIVE_DEMO.md showing step-by-step 6-phase FSM orchestration
-- Enhanced TROUBLESHOOTING.md with FSM state errors and meta-prompt validation
-- Expanded EXAMPLES.md with 15 real-world use cases across multiple domains
-- INTEGRATION.md for multi-MCP server coordination patterns (planned)
+## [0.2.0] - 2024-12-29
 
-### Documentation Improvements
-- Added visual architecture diagrams verification and enhancement
-- Created interactive demo walkthrough for new users
-- Comprehensive troubleshooting guide for runtime issues
-- Performance optimization strategies for large-scale projects
-- Meta-prompt syntax validation and best practices
-- Contributing guidelines for community development
+### Added
+- **Modular Architecture**: Split fsm.ts into focused modules (phase-engine/, knowledge/, verification/)
+- **Configuration Layer**: Centralized config.ts with environment variable support
+- **SSRF Protection**: Enterprise-grade security with ssrfGuard and URL validation
+- **Type Safety**: Zod validation schemas for all inputs and outputs
+- **Testing Infrastructure**: Vitest setup with FSM, SSRF, and config tests
+- **CI/CD Pipeline**: GitHub Actions workflow with Node 18/20 testing
+- **Concurrency Control**: Replaced custom semaphore with p-limit for better safety
+- **Documentation**: Concise README (≤500 words), SECURITY.md, and VISION.md
+
+### Changed  
+- **BREAKING**: Refactored FSM into dependency-injected architecture
+- **BREAKING**: Updated tool descriptions to remove PyArmor references
+- Moved research JSON files to docs/research/ directory
+- Improved error handling and logging throughout codebase
+- Enhanced verification logic with configurable thresholds
+
+### Security
+- Added SSRF protection blocking private IPs and localhost
+- Implemented URL sanitization and allowlist support
+- Added rate limiting and content size restrictions
+- Environment-based security configuration
+
+### Developer Experience
+- Modular codebase with clear separation of concerns
+- Comprehensive type validation with Zod
+- Enhanced debugging and error messages
+- Improved code maintainability and testability
 
 ## [1.1.0] - 2024-06-27
 

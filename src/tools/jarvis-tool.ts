@@ -21,7 +21,7 @@ export interface JARVISArgs {
 export class JARVISTool extends BaseTool {
   readonly name = 'JARVIS';
   readonly description =
-    'JARVIS Finite State Machine Controller - Accurate replication of Manus PyArmor-protected architecture. Implements the 6-step agent loop (Analyze Events, Select Tools, Wait for Execution, Iterate, Submit Results, Enter Standby) with 3 modules (Planner/Knowledge/Datasource) plus fractal orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, performance tracking, and single-tool-per-iteration enforcement. Hijacks Sequential Thinking for deterministic agent control.';
+    'JARVIS Finite State Machine Controller - Implements the 6-step agent loop (QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY) with Meta Thread-of-Thought orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, fractal task decomposition, performance tracking, and single-tool-per-iteration enforcement. Enables Claude to autonomously manage complex projects through context segmentation.';
 
   readonly inputSchema: ToolSchema = {
     type: 'object',
