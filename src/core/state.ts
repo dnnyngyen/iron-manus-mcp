@@ -1,15 +1,15 @@
 // Enhanced session state management - replicates Manus's event stream and performance tracking
 // + Component-Cognitive Duality integration for V0 encapsulation patterns
 import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { 
-  SessionState, 
-  Phase, 
-  Role, 
+import {
+  SessionState,
+  Phase,
+  Role,
   ComponentCognitiveDuality,
   UnifiedConstraint,
   EncapsulationPattern,
   CognitiveContext,
-  ComponentCognitiveMetrics 
+  ComponentCognitiveMetrics,
 } from './types.js';
 
 const STATE_FILE = './iron_manus_state.json';
@@ -33,15 +33,15 @@ class StateManager {
         detected_role: 'researcher', // Default role
         payload: {
           current_task_index: 0, // Moved to payload where execution state belongs
-          current_todos: []
+          current_todos: [],
         },
         reasoning_effectiveness: 0.8, // Initial effectiveness score
-        last_activity: Date.now()
+        last_activity: Date.now(),
       };
       this.sessions.set(sessionId, newSession);
       this.saveState();
     }
-    
+
     const session = this.sessions.get(sessionId)!;
     session.last_activity = Date.now();
     return session;
@@ -81,7 +81,7 @@ class StateManager {
     const session = this.getSessionState(sessionId);
     const phaseTransitions = session.payload.phase_transition_count || 0;
     const effectiveness = session.reasoning_effectiveness;
-    
+
     return {
       session_id: sessionId,
       detected_role: session.detected_role,
@@ -91,7 +91,9 @@ class StateManager {
       performance_grade: this.calculatePerformanceGrade(effectiveness),
       cognitive_enhancement_active: effectiveness > 0.7,
       task_complexity_handled: (session.payload.current_task_index || 0) > 3 ? 'complex' : 'simple',
-      session_duration_minutes: Math.round((Date.now() - (session.last_activity || Date.now())) / (1000 * 60))
+      session_duration_minutes: Math.round(
+        (Date.now() - (session.last_activity || Date.now())) / (1000 * 60)
+      ),
     };
   }
 
@@ -109,23 +111,26 @@ class StateManager {
   // ============================================================================
 
   // Initialize component-cognitive duality for a session
-  initializeComponentCognitiveDuality(sessionId: string, dualityConfig: Partial<ComponentCognitiveDuality>): void {
+  initializeComponentCognitiveDuality(
+    sessionId: string,
+    dualityConfig: Partial<ComponentCognitiveDuality>
+  ): void {
     const session = this.getSessionState(sessionId);
-    
+
     const defaultDuality: ComponentCognitiveDuality = {
       component_task_mapping: {
         component_id: `session_${sessionId}_component`,
         task_objective: session.initial_objective,
         constraint_hierarchy: [],
         generation_pattern: 'atomic',
-        cognitive_enhancement: session.reasoning_effectiveness
+        cognitive_enhancement: session.reasoning_effectiveness,
       },
       project_phase_mapping: {
         project_scope: session.initial_objective,
         phase_sequence: ['QUERY', 'ENHANCE', 'KNOWLEDGE', 'PLAN', 'EXECUTE', 'VERIFY', 'DONE'],
         constraint_propagation: [],
         integration_patterns: ['sequential_orchestration'],
-        orchestration_mode: 'sequential'
+        orchestration_mode: 'sequential',
       },
       ecosystem_session_mapping: {
         ecosystem_context: { session_id: sessionId },
@@ -137,9 +142,9 @@ class StateManager {
           framework_selection: ['iron_manus_fsm'],
           constraint_resolution: 'adaptive',
           performance_metrics: this.initializeComponentCognitiveMetrics(),
-          duality_effectiveness: 0.8
-        }
-      }
+          duality_effectiveness: 0.8,
+        },
+      },
     };
 
     // Merge with provided configuration
@@ -154,7 +159,10 @@ class StateManager {
   }
 
   // Update component-cognitive duality state
-  updateComponentCognitiveDuality(sessionId: string, updates: Partial<ComponentCognitiveDuality>): void {
+  updateComponentCognitiveDuality(
+    sessionId: string,
+    updates: Partial<ComponentCognitiveDuality>
+  ): void {
     const existing = this.getComponentCognitiveDuality(sessionId);
     if (existing) {
       const updated = { ...existing, ...updates };
@@ -168,7 +176,7 @@ class StateManager {
     const constraints = this.unifiedConstraints.get(sessionId) || [];
     constraints.push(constraint);
     this.unifiedConstraints.set(sessionId, constraints);
-    
+
     // Update duality state with new constraint
     const duality = this.getComponentCognitiveDuality(sessionId);
     if (duality) {
@@ -208,7 +216,7 @@ class StateManager {
     if (duality) {
       duality.ecosystem_session_mapping.cognitive_context = {
         ...duality.ecosystem_session_mapping.cognitive_context,
-        ...contextUpdates
+        ...contextUpdates,
       };
       this.updateComponentCognitiveDuality(sessionId, duality);
     }
@@ -221,20 +229,20 @@ class StateManager {
         generation_speed: 0,
         constraint_satisfaction: 0,
         accessibility_score: 0,
-        reusability_index: 0
+        reusability_index: 0,
       },
       cognitive_orchestration: {
         reasoning_effectiveness: 0.8,
         phase_transition_efficiency: 0,
         task_completion_rate: 0,
-        fractal_orchestration_depth: 1
+        fractal_orchestration_depth: 1,
       },
       duality_synergy: {
         integration_coherence: 0.8,
         constraint_unification: 0,
         cross_domain_efficiency: 0,
-        architectural_elegance: 0.8
-      }
+        architectural_elegance: 0.8,
+      },
     };
   }
 
@@ -243,7 +251,7 @@ class StateManager {
     const baseMetrics = this.getSessionPerformanceMetrics(sessionId);
     const duality = this.getComponentCognitiveDuality(sessionId);
     const constraints = this.getUnifiedConstraints(sessionId);
-    
+
     if (!duality) {
       return baseMetrics;
     }
@@ -256,10 +264,13 @@ class StateManager {
         constraint_count: constraints.length,
         encapsulation_patterns: duality.ecosystem_session_mapping.encapsulation_patterns.length,
         orchestration_mode: duality.project_phase_mapping.orchestration_mode,
-        duality_effectiveness: duality.ecosystem_session_mapping.cognitive_context.duality_effectiveness,
-        performance_metrics: duality.ecosystem_session_mapping.cognitive_context.performance_metrics,
-        framework_selection: duality.ecosystem_session_mapping.cognitive_context.framework_selection
-      }
+        duality_effectiveness:
+          duality.ecosystem_session_mapping.cognitive_context.duality_effectiveness,
+        performance_metrics:
+          duality.ecosystem_session_mapping.cognitive_context.performance_metrics,
+        framework_selection:
+          duality.ecosystem_session_mapping.cognitive_context.framework_selection,
+      },
     };
   }
 
@@ -267,7 +278,7 @@ class StateManager {
   private loadComponentCognitiveState(): void {
     const dualityFile = './iron_manus_component_cognitive_duality.json';
     const constraintsFile = './iron_manus_unified_constraints.json';
-    
+
     if (existsSync(dualityFile)) {
       try {
         const data = readFileSync(dualityFile, 'utf-8');
@@ -277,7 +288,7 @@ class StateManager {
         console.warn('Failed to load component-cognitive duality state, starting fresh');
       }
     }
-    
+
     if (existsSync(constraintsFile)) {
       try {
         const data = readFileSync(constraintsFile, 'utf-8');
@@ -293,10 +304,16 @@ class StateManager {
   private saveComponentCognitiveState(): void {
     try {
       const dualityData = Object.fromEntries(this.componentCognitiveDuality);
-      writeFileSync('./iron_manus_component_cognitive_duality.json', JSON.stringify(dualityData, null, 2));
-      
+      writeFileSync(
+        './iron_manus_component_cognitive_duality.json',
+        JSON.stringify(dualityData, null, 2)
+      );
+
       const constraintsData = Object.fromEntries(this.unifiedConstraints);
-      writeFileSync('./iron_manus_unified_constraints.json', JSON.stringify(constraintsData, null, 2));
+      writeFileSync(
+        './iron_manus_unified_constraints.json',
+        JSON.stringify(constraintsData, null, 2)
+      );
     } catch (error) {
       console.error('Failed to save component-cognitive state:', error);
     }
@@ -304,30 +321,30 @@ class StateManager {
 
   // Enhanced cleanup with performance archiving (including component-cognitive duality)
   cleanup(): void {
-    const cutoff = Date.now() - (24 * 60 * 60 * 1000);
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     const archivedSessions: any[] = [];
-    
+
     for (const [sessionId, session] of this.sessions) {
       if (session.last_activity < cutoff) {
         // Archive enhanced performance data including component-cognitive duality
         archivedSessions.push({
           session_id: sessionId,
           performance_metrics: this.getEnhancedSessionMetrics(sessionId),
-          archived_at: Date.now()
+          archived_at: Date.now(),
         });
-        
+
         // Clean up component-cognitive duality data
         this.componentCognitiveDuality.delete(sessionId);
         this.unifiedConstraints.delete(sessionId);
         this.sessions.delete(sessionId);
       }
     }
-    
+
     // Save archived performance data for analysis
     if (archivedSessions.length > 0) {
       this.saveArchivedMetrics(archivedSessions);
     }
-    
+
     this.saveState();
     this.saveComponentCognitiveState();
   }
@@ -336,12 +353,12 @@ class StateManager {
     try {
       const archiveFile = './iron_manus_performance_archive.json';
       let existingArchive: any[] = [];
-      
+
       if (existsSync(archiveFile)) {
         const data = readFileSync(archiveFile, 'utf-8');
         existingArchive = JSON.parse(data);
       }
-      
+
       existingArchive.push(...archivedSessions);
       writeFileSync(archiveFile, JSON.stringify(existingArchive, null, 2));
     } catch (error) {
@@ -353,6 +370,9 @@ class StateManager {
 export const stateManager = new StateManager();
 
 // Periodic cleanup (runs every hour)
-setInterval(() => {
-  stateManager.cleanup();
-}, 60 * 60 * 1000);
+setInterval(
+  () => {
+    stateManager.cleanup();
+  },
+  60 * 60 * 1000
+);

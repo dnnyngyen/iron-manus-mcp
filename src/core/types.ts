@@ -1,41 +1,41 @@
 // Manus FSM Types - Accurate replication of Manus's 8-phase agent loop + 3 modules + fractal orchestration
 
-export type Phase = 
-  | 'INIT' 
-  | 'QUERY'      // Manus: "Analyze Events" 
-  | 'ENHANCE'    // Manus: "Select Tools"
-  | 'KNOWLEDGE'  // Manus: "Wait for Execution" (Knowledge Module)
-  | 'PLAN'       // Manus: "Iterate" (Planner Module)
-  | 'EXECUTE'    // Manus: "Submit Results" (Datasource Module)
-  | 'VERIFY'     // Quality check
-  | 'DONE';      // Manus: "Enter Standby"
+export type Phase =
+  | 'INIT'
+  | 'QUERY' // Manus: "Analyze Events"
+  | 'ENHANCE' // Manus: "Select Tools"
+  | 'KNOWLEDGE' // Manus: "Wait for Execution" (Knowledge Module)
+  | 'PLAN' // Manus: "Iterate" (Planner Module)
+  | 'EXECUTE' // Manus: "Submit Results" (Datasource Module)
+  | 'VERIFY' // Quality check
+  | 'DONE'; // Manus: "Enter Standby"
 
 // Role detection from Manus's modular architecture
-export type Role = 
-  | 'planner'     // Maps to Manus Planner Module
-  | 'coder'       // Implementation and development
-  | 'critic'      // Quality assessment and security
-  | 'researcher'  // Maps to Manus Knowledge Module  
-  | 'analyzer'    // Data analysis and insights
+export type Role =
+  | 'planner' // Maps to Manus Planner Module
+  | 'coder' // Implementation and development
+  | 'critic' // Quality assessment and security
+  | 'researcher' // Maps to Manus Knowledge Module
+  | 'analyzer' // Data analysis and insights
   | 'synthesizer' // Integration and optimization
-  | 'ui_architect'   // V0-Style UI architecture and systematic design
+  | 'ui_architect' // V0-Style UI architecture and systematic design
   | 'ui_implementer' // V0-Style UI implementation with concurrent execution
-  | 'ui_refiner';    // V0-Style UI refinement with polished aesthetics
+  | 'ui_refiner'; // V0-Style UI refinement with polished aesthetics
 
 // Complexity levels for validation and processing
 export enum ComplexityLevel {
   SIMPLE = 'simple',
-  MODERATE = 'moderate', 
+  MODERATE = 'moderate',
   COMPLEX = 'complex',
-  ENTERPRISE = 'enterprise'
+  ENTERPRISE = 'enterprise',
 }
 
 // Security levels for AST validation (moved from cognitive-ast.ts)
 export enum SecurityLevel {
   TRUSTED = 'TRUSTED',
-  SAFE = 'SAFE', 
+  SAFE = 'SAFE',
   RESTRICTED = 'RESTRICTED',
-  BLOCKED = 'BLOCKED'
+  BLOCKED = 'BLOCKED',
 }
 
 // Deliverable types for output validation (moved from cognitive-ast.ts)
@@ -47,7 +47,7 @@ export enum DeliverableType {
   IMPLEMENTATION = 'IMPLEMENTATION',
   REVIEW = 'REVIEW',
   TESTING = 'TESTING',
-  DEPLOYMENT = 'DEPLOYMENT'
+  DEPLOYMENT = 'DEPLOYMENT',
 }
 
 // Basic validation interfaces for core modules (simplified from cognitive-ast.ts)
@@ -70,7 +70,7 @@ export enum InferredType {
   DOMAIN_CONTEXT = 'DOMAIN_CONTEXT',
   INSTRUCTION_SET = 'INSTRUCTION_SET',
   DELIVERABLE_SPEC = 'DELIVERABLE_SPEC',
-  PARAMETER_VALUE = 'PARAMETER_VALUE'
+  PARAMETER_VALUE = 'PARAMETER_VALUE',
 }
 
 export interface ValidationResult {
@@ -100,10 +100,10 @@ export interface ASTNode {
 
 // Meta-prompt structure for fractal orchestration (Level 1 → Level 2 → Level 3)
 export interface MetaPrompt {
-  role_specification: string;    // (ROLE: agent_type)
+  role_specification: string; // (ROLE: agent_type)
   context_parameters: Record<string, any>; // (CONTEXT: domain_info)
-  instruction_block: string;     // (PROMPT: "detailed_instructions")
-  output_requirements: string;   // (OUTPUT: specific_deliverables)
+  instruction_block: string; // (PROMPT: "detailed_instructions")
+  output_requirements: string; // (OUTPUT: specific_deliverables)
 }
 
 // Enhanced TodoItem for fractal orchestration with Component-Cognitive Duality
@@ -114,10 +114,10 @@ export interface TodoItem {
   priority: 'high' | 'medium' | 'low';
   type?: 'TaskAgent' | 'SubAgent' | 'DirectExecution'; // Fractal level indicator
   meta_prompt?: MetaPrompt; // For Task() agent spawning
-  
+
   // Component-Cognitive Duality Extensions
   duality_mode?: 'ui-generation' | 'cognitive-orchestration' | 'unified';
-  component_mapping?: ComponentTaskMapping;  // V0 component correspondence
+  component_mapping?: ComponentTaskMapping; // V0 component correspondence
   constraint_level?: 'atomic' | 'component' | 'phase' | 'session';
 }
 
@@ -157,7 +157,7 @@ export interface SessionState {
   payload: Record<string, any>; // Event stream simulation (includes current_task_index, current_todos)
   reasoning_effectiveness: number; // Performance tracking
   last_activity: number;
-  
+
   // Component-Cognitive Duality Extensions
   duality_mode?: 'ui-generation' | 'cognitive-orchestration' | 'unified';
   ecosystem_mapping?: EcosystemSessionMapping; // V0 ecosystem correspondence
@@ -166,24 +166,24 @@ export interface SessionState {
 
 // V0 Ecosystem mapping for session-level duality
 export interface EcosystemSessionMapping {
-  ecosystemName?: string;                      // Vercel deployment name
-  deploymentStrategy?: string;                 // Production, preview, etc.
-  projectPortfolio?: ProjectPhaseMapping[];    // Active projects
-  integrationServices?: string[];              // External APIs, databases
-  coherenceMode?: 'unified' | 'isolated';     // Cross-system consistency
+  ecosystemName?: string; // Vercel deployment name
+  deploymentStrategy?: string; // Production, preview, etc.
+  projectPortfolio?: ProjectPhaseMapping[]; // Active projects
+  integrationServices?: string[]; // External APIs, databases
+  coherenceMode?: 'unified' | 'isolated'; // Cross-system consistency
 }
 
 // Project-Phase level mapping (legacy - moved to extracted ProjectPhaseMapping)
 
 // Performance metrics for duality operations
 export interface DualityPerformanceMetrics {
-  cognitiveEffectiveness: number;              // Thinking methodology effectiveness
-  componentGenerationSpeed?: number;           // Components/minute (UI mode)
-  phaseTransitionEfficiency: number;           // Successful transitions/total
-  systemCoherence: number;                     // Cross-mode consistency (0-1)
-  dualityUtilization: number;                  // % time in unified mode
-  modeSwitch_frequency: number;                // Switches per session
-  modeSwitch_latency: number;                  // Average switch time (ms)
+  cognitiveEffectiveness: number; // Thinking methodology effectiveness
+  componentGenerationSpeed?: number; // Components/minute (UI mode)
+  phaseTransitionEfficiency: number; // Successful transitions/total
+  systemCoherence: number; // Cross-mode consistency (0-1)
+  dualityUtilization: number; // % time in unified mode
+  modeSwitch_frequency: number; // Switches per session
+  modeSwitch_latency: number; // Average switch time (ms)
 }
 
 // ================================
@@ -202,7 +202,7 @@ export interface ComponentTaskMapping {
   cognitive_enhancement: number;
 }
 
-// Extracted project phase mapping interface  
+// Extracted project phase mapping interface
 export interface ProjectPhaseMapping {
   project_scope: string;
   phase_sequence: Phase[];
@@ -245,7 +245,13 @@ export interface ResourceLimits {
 }
 
 export interface CognitiveContext {
-  reasoning_mode: 'hybrid_duality' | 'component_focused' | 'cognitive_focused' | 'unified' | 'component_generation' | 'cognitive_orchestration';
+  reasoning_mode:
+    | 'hybrid_duality'
+    | 'component_focused'
+    | 'cognitive_focused'
+    | 'unified'
+    | 'component_generation'
+    | 'cognitive_orchestration';
   framework_selection: string[];
   constraint_resolution: 'strict' | 'adaptive' | 'permissive' | 'flexible';
   performance_metrics: ComponentCognitiveMetrics;
@@ -301,50 +307,54 @@ export interface APIUsageMetrics {
 
 // ============================================================================
 // COMPONENT-COGNITIVE DUALITY MAPPING
-// Unified constraint hierarchy bridging V0's Component→Project→Ecosystem 
+// Unified constraint hierarchy bridging V0's Component→Project→Ecosystem
 // with Manus Task→Phase→Session patterns
 // ============================================================================
 
 // V0-inspired constraint types for component generation domain
-export type ComponentConstraintType = 
-  | 'framework'      // React, Vue, Svelte constraints
-  | 'styling'        // Tailwind, Material UI, Chakra UI constraints  
-  | 'accessibility'  // WAI-ARIA, WCAG compliance constraints
-  | 'integration'    // Third-party library integration constraints
-  | 'architecture'   // Component composition and hierarchy constraints
-  | 'performance';   // Optimization and bundle size constraints
+export type ComponentConstraintType =
+  | 'framework' // React, Vue, Svelte constraints
+  | 'styling' // Tailwind, Material UI, Chakra UI constraints
+  | 'accessibility' // WAI-ARIA, WCAG compliance constraints
+  | 'integration' // Third-party library integration constraints
+  | 'architecture' // Component composition and hierarchy constraints
+  | 'performance'; // Optimization and bundle size constraints
 
 // Unified constraint hierarchy interface
 export interface UnifiedConstraint {
   id: string;
   type: ComponentConstraintType;
   scope: 'component' | 'project' | 'ecosystem'; // V0 hierarchy levels
-  cognitive_phase: Phase;                       // Manus phase mapping
-  constraint_value: any;                        // Flexible constraint data
+  cognitive_phase: Phase; // Manus phase mapping
+  constraint_value: any; // Flexible constraint data
   priority: 'critical' | 'high' | 'medium' | 'low';
-  validation_rules: string[];                   // Constraint validation logic
-  dependency_graph: string[];                   // Inter-constraint dependencies
+  validation_rules: string[]; // Constraint validation logic
+  dependency_graph: string[]; // Inter-constraint dependencies
 }
 
 // Component-Cognitive duality mapping structure
 export interface ComponentCognitiveDuality {
   // V0 Component ↔ Manus Task mapping
   component_task_mapping: ComponentTaskMapping;
-  
-  // V0 Project ↔ Manus Phase mapping  
+
+  // V0 Project ↔ Manus Phase mapping
   project_phase_mapping: ProjectPhaseMapping;
-  
+
   // V0 Ecosystem ↔ Manus Session mapping
   ecosystem_session_mapping: EcosystemSessionMapping;
 }
 
 // V0 encapsulation patterns for integration
 export interface EncapsulationPattern {
-  pattern_type: 'functional_component' | 'custom_hook' | 'context_provider' | 'higher_order_component';
-  scope_isolation: boolean;                    // Component scope isolation
+  pattern_type:
+    | 'functional_component'
+    | 'custom_hook'
+    | 'context_provider'
+    | 'higher_order_component';
+  scope_isolation: boolean; // Component scope isolation
   state_management: 'local' | 'context' | 'external'; // State encapsulation
-  props_interface: Record<string, any>;       // Component API definition
-  side_effect_management: string[];           // Hook and effect patterns
+  props_interface: Record<string, any>; // Component API definition
+  side_effect_management: string[]; // Hook and effect patterns
   constraint_enforcement: UnifiedConstraint[]; // Pattern-specific constraints
 }
 
@@ -353,21 +363,21 @@ export interface EncapsulationPattern {
 // Unified performance metrics for both domains
 export interface ComponentCognitiveMetrics {
   component_generation: {
-    generation_speed: number;                  // Components per second
-    constraint_satisfaction: number;          // Constraint compliance percentage
-    accessibility_score: number;              // WCAG compliance score
-    reusability_index: number;                // Component reuse potential
+    generation_speed: number; // Components per second
+    constraint_satisfaction: number; // Constraint compliance percentage
+    accessibility_score: number; // WCAG compliance score
+    reusability_index: number; // Component reuse potential
   };
   cognitive_orchestration: {
-    reasoning_effectiveness: number;           // Manus reasoning effectiveness
-    phase_transition_efficiency: number;      // Phase completion speed
-    task_completion_rate: number;             // Task success percentage
-    fractal_orchestration_depth: number;      // Nested Task() agent levels
+    reasoning_effectiveness: number; // Manus reasoning effectiveness
+    phase_transition_efficiency: number; // Phase completion speed
+    task_completion_rate: number; // Task success percentage
+    fractal_orchestration_depth: number; // Nested Task() agent levels
   };
   duality_synergy: {
-    integration_coherence: number;            // System coherence score
-    constraint_unification: number;          // Unified constraint effectiveness
-    cross_domain_efficiency: number;         // Inter-domain operation efficiency
-    architectural_elegance: number;          // Overall system design quality
+    integration_coherence: number; // System coherence score
+    constraint_unification: number; // Unified constraint effectiveness
+    cross_domain_efficiency: number; // Inter-domain operation efficiency
+    architectural_elegance: number; // Overall system design quality
   };
 }

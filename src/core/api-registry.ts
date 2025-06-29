@@ -73,7 +73,7 @@ export const ROLE_API_MAPPING: Record<Role, string[]> = {
   critic: ['testing', 'validation', 'security', 'quality', 'monitoring', 'analysis'],
 
   // Integration and optimization roles
-  synthesizer: ['integration', 'optimization', 'data', 'transformation', 'workflow', 'automation']
+  synthesizer: ['integration', 'optimization', 'data', 'transformation', 'workflow', 'automation'],
 };
 
 /**
@@ -93,7 +93,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Dog API',
@@ -105,7 +105,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.95,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Random Fox API',
@@ -117,7 +117,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'HTTPCat API',
@@ -129,7 +129,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Anime - No Auth Required
@@ -143,7 +143,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Studio Ghibli API',
@@ -155,7 +155,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Books and Education
@@ -169,7 +169,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 1000, timeWindow: '1h' }
+    rate_limits: { requests: 1000, timeWindow: '1h' },
   },
 
   // Business - No Auth Required
@@ -183,7 +183,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Calendar - No Auth Required
@@ -197,7 +197,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Cryptocurrency - No Auth Required
@@ -211,7 +211,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.95,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   {
@@ -224,7 +224,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.91,
-    rate_limits: { requests: 50, timeWindow: '1m' }
+    rate_limits: { requests: 50, timeWindow: '1m' },
   },
 
   // Dictionaries - No Auth Required
@@ -238,7 +238,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Entertainment - No Auth Required
@@ -252,7 +252,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'JokeAPI',
@@ -264,7 +264,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Chuck Norris Jokes API',
@@ -276,7 +276,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Official Joke API',
@@ -288,7 +288,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Food & Drink - No Auth Required
@@ -302,7 +302,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'TheCocktailDB API',
@@ -314,7 +314,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Games & Comics - No Auth Required
@@ -328,7 +328,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Pokemon API',
@@ -340,7 +340,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.95,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Rick and Morty API',
@@ -352,7 +352,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Open Trivia Database',
@@ -364,7 +364,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Art and Design - No Auth Required
@@ -378,7 +378,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Colormind API',
@@ -390,7 +390,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: false,
     cors: true,
     reliability_score: 0.75,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Geocoding - No Auth Required
@@ -404,7 +404,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.95,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'IP-API',
@@ -416,7 +416,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: false,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 45, timeWindow: '1m' }
+    rate_limits: { requests: 45, timeWindow: '1m' },
   },
   {
     name: 'ipapi.co',
@@ -428,7 +428,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 1000, timeWindow: '1d' }
+    rate_limits: { requests: 1000, timeWindow: '1d' },
   },
   {
     name: 'GeoJS',
@@ -440,7 +440,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Development and Tools - No Auth Required
@@ -454,7 +454,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.89,
-    rate_limits: { requests: 300, timeWindow: '1d' }
+    rate_limits: { requests: 300, timeWindow: '1d' },
   },
   {
     name: 'JSONPlaceholder API',
@@ -466,7 +466,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1m' }
+    rate_limits: { requests: 100, timeWindow: '1m' },
   },
 
   // Science and Data - No Auth Required
@@ -480,7 +480,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Numbers API',
@@ -492,7 +492,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: false,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Open Notify ISS API',
@@ -504,7 +504,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: false,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Health - No Auth Required
@@ -518,7 +518,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Random Data - No Auth Required
@@ -532,7 +532,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Lorem Ipsum API',
@@ -544,7 +544,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Weather - No Auth Required (free tier)
@@ -558,7 +558,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 60, timeWindow: '1m' }
+    rate_limits: { requests: 60, timeWindow: '1m' },
   },
 
   // Government - No Auth Required
@@ -572,7 +572,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Sports - No Auth Required
@@ -586,7 +586,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Transportation - No Auth Required
@@ -600,7 +600,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // URL Shorteners - No Auth Required
@@ -614,7 +614,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // QR Code - No Auth Required
@@ -628,7 +628,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Music - No Auth Required
@@ -642,7 +642,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Quote APIs - No Auth Required
@@ -656,7 +656,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Gaming - 3D & Enhanced Gaming APIs
@@ -674,9 +674,9 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     endpoint_patterns: [
       'https://pokemon-3d-api.onrender.com/v1/pokemon',
       'https://pokemon-3d-api.onrender.com/pokemon',
-      'https://pokemon-3d-api.onrender.com/api/v1/pokemon'
+      'https://pokemon-3d-api.onrender.com/api/v1/pokemon',
     ],
-    documentation_url: 'https://documenter.getpostman.com/view/29725199/2sAYX8KMU8'
+    documentation_url: 'https://documenter.getpostman.com/view/29725199/2sAYX8KMU8',
   },
   {
     name: 'Pokemon TCG API',
@@ -688,7 +688,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'AmiiboAPI',
@@ -700,7 +700,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Animal Crossing API',
@@ -712,7 +712,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: false,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Age of Empires II API',
@@ -724,7 +724,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.75,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Animals - Extended Collection
@@ -738,7 +738,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Cataas API',
@@ -750,7 +750,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'HTTP Dogs API',
@@ -762,7 +762,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'MeowFacts API',
@@ -774,7 +774,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Shibe Online API',
@@ -786,7 +786,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: false,
     cors: true,
     reliability_score: 0.75,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Entertainment - Extended Collection
@@ -800,7 +800,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: false,
     cors: true,
     reliability_score: 0.75,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Imgflip API',
@@ -812,7 +812,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Meme Maker API',
@@ -824,7 +824,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Development Tools - Extended Collection
@@ -838,7 +838,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.85,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Ciprand API',
@@ -850,7 +850,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'ExtendsClass JSON Storage',
@@ -862,7 +862,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.8,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
 
   // Art & Museums
@@ -876,7 +876,7 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
+    rate_limits: { requests: 100, timeWindow: '1h' },
   },
   {
     name: 'Art Institute of Chicago API',
@@ -888,8 +888,8 @@ export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
     https: true,
     cors: true,
     reliability_score: 0.9,
-    rate_limits: { requests: 100, timeWindow: '1h' }
-  }
+    rate_limits: { requests: 100, timeWindow: '1h' },
+  },
 ];
 
 /**
@@ -906,7 +906,11 @@ export class RateLimiter {
    * @param timeWindowMs - Time window in milliseconds
    * @returns Whether the request can be made
    */
-  canMakeRequest(apiName: string, maxRequests: number = 100, timeWindowMs: number = 60000): boolean {
+  canMakeRequest(
+    apiName: string,
+    maxRequests: number = 100,
+    timeWindowMs: number = 60000
+  ): boolean {
     const now = Date.now();
     let state = this.apiStates.get(apiName);
 
@@ -914,7 +918,7 @@ export class RateLimiter {
       state = {
         tokens: maxRequests,
         lastRefill: now,
-        requestCount: 0
+        requestCount: 0,
       };
       this.apiStates.set(apiName, state);
     }
@@ -944,7 +948,11 @@ export class RateLimiter {
    * @param apiName - Name of the API endpoint
    * @returns Current rate limit state
    */
-  getRateLimitStatus(apiName: string): { tokens: number; requestCount: number; lastRefill: number } {
+  getRateLimitStatus(apiName: string): {
+    tokens: number;
+    requestCount: number;
+    lastRefill: number;
+  } {
     const state = this.apiStates.get(apiName);
     if (!state) {
       return { tokens: 0, requestCount: 0, lastRefill: 0 };
@@ -1033,7 +1041,10 @@ export function parseMarkdownAPITable(markdownContent: string): APIEndpoint[] {
 function parseMarkdownTableRow(row: string): APIEndpoint | null {
   try {
     // Split by pipe and clean up
-    const columns = row.split('|').map(col => col.trim()).filter(col => col);
+    const columns = row
+      .split('|')
+      .map(col => col.trim())
+      .filter(col => col);
 
     if (columns.length < 4) {
       return null;
@@ -1057,7 +1068,7 @@ function parseMarkdownTableRow(row: string): APIEndpoint | null {
       hasHttps: httpsEnabled,
       hasCors: corsEnabled,
       authType,
-      urlValidity: isValidUrl(url)
+      urlValidity: isValidUrl(url),
     });
 
     return {
@@ -1070,7 +1081,7 @@ function parseMarkdownTableRow(row: string): APIEndpoint | null {
       https: httpsEnabled,
       cors: corsEnabled,
       reliability_score: reliabilityScore,
-      rate_limits: generateDefaultRateLimits(authType)
+      rate_limits: generateDefaultRateLimits(authType),
     };
   } catch (error) {
     console.error('Error parsing markdown table row:', error);
@@ -1084,9 +1095,24 @@ function parseMarkdownTableRow(row: string): APIEndpoint | null {
  * @returns Array of relevant keywords
  */
 function extractKeywordsFromText(text: string): string[] {
-  const commonWords = new Set(['api', 'the', 'and', 'or', 'but', 'for', 'with', 'to', 'of', 'in', 'on', 'at', 'by']);
+  const commonWords = new Set([
+    'api',
+    'the',
+    'and',
+    'or',
+    'but',
+    'for',
+    'with',
+    'to',
+    'of',
+    'in',
+    'on',
+    'at',
+    'by',
+  ]);
 
-  return text.toLowerCase()
+  return text
+    .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
     .filter(word => word.length > 2 && !commonWords.has(word))
@@ -1165,7 +1191,10 @@ function calculateReliabilityScore(factors: {
  * @param authType - Authentication type
  * @returns Default rate limit configuration
  */
-function generateDefaultRateLimits(authType: 'None' | 'API Key' | 'OAuth'): { requests: number; timeWindow: string } {
+function generateDefaultRateLimits(authType: 'None' | 'API Key' | 'OAuth'): {
+  requests: number;
+  timeWindow: string;
+} {
   switch (authType) {
     case 'OAuth':
       return { requests: 5000, timeWindow: '1h' };
@@ -1202,7 +1231,7 @@ export function selectRelevantAPIs(
       api,
       relevance_score: score.total,
       matching_keywords: score.matchingKeywords,
-      role_preference_bonus: score.roleBonus
+      role_preference_bonus: score.roleBonus,
     };
   });
 
@@ -1251,14 +1280,17 @@ export function generateAPISelectionPrompt(
   detectedRole: Role,
   apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY
 ): string {
-  const apiList = apiRegistry.map((api, index) =>
-    `${index + 1}. **${api.name}** (${api.category})
+  const apiList = apiRegistry
+    .map(
+      (api, index) =>
+        `${index + 1}. **${api.name}** (${api.category})
    - Description: ${api.description}
    - URL: ${api.url}
    - Auth: ${api.auth_type}
    - Reliability: ${(api.reliability_score * 100).toFixed(0)}%
    - Keywords: ${api.keywords.join(', ')}`
-  ).join('\n\n');
+    )
+    .join('\n\n');
 
   return `# API Selection for Knowledge Gathering
 
@@ -1330,7 +1362,7 @@ export function parseClaudeAPISelection(
           api,
           relevance_score: selection.relevance_score || 0.8,
           matching_keywords: [selection.selection_reason || 'Claude selected'],
-          role_preference_bonus: 0.1
+          role_preference_bonus: 0.1,
         });
       }
     }
@@ -1386,7 +1418,7 @@ function calculateAPIRelevanceScore(
   return {
     total: Math.min(1.0, score),
     matchingKeywords: Array.from(new Set(matchingKeywords)), // Remove duplicates
-    roleBonus
+    roleBonus,
   };
 }
 
@@ -1396,10 +1428,11 @@ function calculateAPIRelevanceScore(
  * @param apiRegistry - Array of available APIs
  * @returns Found API endpoint or null
  */
-export function getAPIByName(name: string, apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY): APIEndpoint | null {
-  return apiRegistry.find(api =>
-    api.name.toLowerCase() === name.toLowerCase()
-  ) || null;
+export function getAPIByName(
+  name: string,
+  apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY
+): APIEndpoint | null {
+  return apiRegistry.find(api => api.name.toLowerCase() === name.toLowerCase()) || null;
 }
 
 /**
@@ -1408,10 +1441,11 @@ export function getAPIByName(name: string, apiRegistry: APIEndpoint[] = SAMPLE_A
  * @param apiRegistry - Array of available APIs
  * @returns Array of APIs in the specified category
  */
-export function getAPIsByCategory(category: string, apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY): APIEndpoint[] {
-  return apiRegistry.filter(api =>
-    api.category.toLowerCase() === category.toLowerCase()
-  );
+export function getAPIsByCategory(
+  category: string,
+  apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY
+): APIEndpoint[] {
+  return apiRegistry.filter(api => api.category.toLowerCase() === category.toLowerCase());
 }
 
 /**
@@ -1442,7 +1476,10 @@ export function getHighReliabilityAPIs(
  * @param apiRegistry - Array of available APIs
  * @returns Whether the API can be used now
  */
-export function canUseAPI(apiName: string, apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY): boolean {
+export function canUseAPI(
+  apiName: string,
+  apiRegistry: APIEndpoint[] = SAMPLE_API_REGISTRY
+): boolean {
   const api = getAPIByName(apiName, apiRegistry);
   if (!api || !api.rate_limits) {
     return true; // No rate limits defined
@@ -1467,11 +1504,16 @@ function parseTimeWindow(timeWindow: string): number {
   const num = parseInt(amount, 10);
 
   switch (unit) {
-    case 's': return num * 1000;
-    case 'm': return num * 60 * 1000;
-    case 'h': return num * 60 * 60 * 1000;
-    case 'd': return num * 24 * 60 * 60 * 1000;
-    default: return 60000;
+    case 's':
+      return num * 1000;
+    case 'm':
+      return num * 60 * 1000;
+    case 'h':
+      return num * 60 * 60 * 1000;
+    case 'd':
+      return num * 24 * 60 * 60 * 1000;
+    default:
+      return 60000;
   }
 }
 
@@ -1494,7 +1536,7 @@ export function getAPIRegistryStats(apiRegistry: APIEndpoint[] = SAMPLE_API_REGI
     byAuthType: {} as Record<string, number>,
     avgReliability: 0,
     httpsPercentage: 0,
-    corsPercentage: 0
+    corsPercentage: 0,
   };
 
   let totalReliability = 0;
@@ -1535,5 +1577,5 @@ export default {
   getPublicAPIs,
   getHighReliabilityAPIs,
   canUseAPI,
-  getAPIRegistryStats
+  getAPIRegistryStats,
 };

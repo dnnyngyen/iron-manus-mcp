@@ -1,15 +1,15 @@
 // Phase-specific prompts that replace Manus's Planner/Knowledge/Datasource modules
 // Role-aware, cognitively enhanced prompts with fractal orchestration capability
 
-import { 
-  Phase, 
-  Role, 
-  RoleConfig, 
-  MetaPrompt, 
+import {
+  Phase,
+  Role,
+  RoleConfig,
+  MetaPrompt,
   ComponentCognitiveDuality,
   UnifiedConstraint,
   EncapsulationPattern,
-  CognitiveContext 
+  CognitiveContext,
 } from './types.js';
 // UI agent role functions will be implemented when needed
 
@@ -23,11 +23,11 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
     validationRules: ['has_objectives', 'has_timeline', 'has_dependencies'],
     thinkingMethodology: [
       'Break down into components and identify dependencies',
-      'Assess risks and plan contingencies for failure modes', 
+      'Assess risks and plan contingencies for failure modes',
       'Sequence tasks based on dependencies and estimate realistic timeframes',
-      'Consider all stakeholders and their constraints'
+      'Consider all stakeholders and their constraints',
     ],
-    authorityLevel: 'STRATEGIZE_AND_COORDINATE'
+    authorityLevel: 'STRATEGIZE_AND_COORDINATE',
   },
   coder: {
     defaultOutput: 'implementation_with_tests',
@@ -39,9 +39,9 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Define expected behavior and write tests before implementation',
       'Design for single responsibility, loose coupling, high cohesion',
       'Consider error handling, input validation, and graceful degradation',
-      'Analyze performance implications and optimization opportunities'
+      'Analyze performance implications and optimization opportunities',
     ],
-    authorityLevel: 'IMPLEMENT_AND_VALIDATE'
+    authorityLevel: 'IMPLEMENT_AND_VALIDATE',
   },
   critic: {
     defaultOutput: 'comprehensive_assessment',
@@ -53,9 +53,9 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Analyze attack vectors, input validation, and privilege escalation risks',
       'Verify compliance with standards, regulations, and best practices',
       'Consider edge cases, boundary conditions, and unexpected inputs',
-      'Evaluate maintainability, performance, and reliability trade-offs'
+      'Evaluate maintainability, performance, and reliability trade-offs',
     ],
-    authorityLevel: 'EVALUATE_AND_REFINE'
+    authorityLevel: 'EVALUATE_AND_REFINE',
   },
   researcher: {
     defaultOutput: 'comprehensive_research',
@@ -67,9 +67,9 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Validate source credibility, recency, and relevance',
       'Cross-reference multiple sources to triangulate findings',
       'Identify knowledge gaps and research limitations',
-      'Assess research methodology quality and potential biases'
+      'Assess research methodology quality and potential biases',
     ],
-    authorityLevel: 'INVESTIGATE_AND_SYNTHESIZE'
+    authorityLevel: 'INVESTIGATE_AND_SYNTHESIZE',
   },
   analyzer: {
     defaultOutput: 'analytical_insights',
@@ -81,9 +81,9 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Validate data quality, completeness, and accuracy',
       'Look for patterns, trends, anomalies, and correlations',
       'Consider statistical significance and avoid false conclusions',
-      'Question assumptions and consider alternative explanations'
+      'Question assumptions and consider alternative explanations',
     ],
-    authorityLevel: 'ANALYZE_AND_REPORT'
+    authorityLevel: 'ANALYZE_AND_REPORT',
   },
   synthesizer: {
     defaultOutput: 'integrated_solution',
@@ -95,9 +95,9 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Consider how components work together and interact',
       'Balance competing requirements and analyze trade-offs',
       'Find efficient solutions that optimize multiple constraints',
-      'Ensure coherent, maintainable, and scalable results'
+      'Ensure coherent, maintainable, and scalable results',
     ],
-    authorityLevel: 'INTEGRATE_AND_OPTIMIZE'
+    authorityLevel: 'INTEGRATE_AND_OPTIMIZE',
   },
   // V0-Style UI Agent Roles - Convert UIRoleConfig to RoleConfig for compatibility
   ui_architect: {
@@ -105,14 +105,18 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
     focus: 'ui_system_design',
     complexityLevel: 'complex',
     suggestedFrameworks: ['V0', 'component_hierarchy', 'design_systems'],
-    validationRules: ['has_component_structure', 'follows_design_system', 'accessibility_compliant'],
+    validationRules: [
+      'has_component_structure',
+      'follows_design_system',
+      'accessibility_compliant',
+    ],
     thinkingMethodology: [
       'Consider user needs, workflows, and accessibility requirements first',
       'Design reusable, composable component hierarchies',
       'Plan for scalability, maintainability, and future growth',
-      'Ensure accessibility standards and diverse user abilities'
+      'Ensure accessibility standards and diverse user abilities',
     ],
-    authorityLevel: 'DESIGN_AND_ARCHITECT'
+    authorityLevel: 'DESIGN_AND_ARCHITECT',
   },
   ui_implementer: {
     defaultOutput: 'working_components',
@@ -124,9 +128,9 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Use established, proven implementation patterns',
       'Consider cross-browser compatibility and platform requirements',
       'Optimize for performance: bundle size, rendering, memory usage',
-      'Write maintainable, readable, and well-documented code'
+      'Write maintainable, readable, and well-documented code',
     ],
-    authorityLevel: 'IMPLEMENT_AND_RENDER'
+    authorityLevel: 'IMPLEMENT_AND_RENDER',
   },
   ui_refiner: {
     defaultOutput: 'polished_ui',
@@ -138,10 +142,10 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
       'Evaluate usability, accessibility, and performance systematically',
       'Consider real user interactions and feedback patterns',
       'Make incremental, measurable improvements with clear goals',
-      'Ensure compliance with accessibility and web standards'
+      'Ensure compliance with accessibility and web standards',
     ],
-    authorityLevel: 'REFINE_AND_POLISH'
-  }
+    authorityLevel: 'REFINE_AND_POLISH',
+  },
 };
 
 /**
@@ -155,56 +159,59 @@ export function generateRoleSelectionPrompt(objective: string): string {
     {
       name: 'planner',
       description: 'Strategic planning, architecture design, system planning, project management',
-      best_for: 'Breaking down complex goals, creating strategies, designing system architecture'
+      best_for: 'Breaking down complex goals, creating strategies, designing system architecture',
     },
     {
-      name: 'coder', 
+      name: 'coder',
       description: 'Implementation, programming, development, building applications',
-      best_for: 'Writing code, implementing features, building applications, technical execution'
+      best_for: 'Writing code, implementing features, building applications, technical execution',
     },
     {
       name: 'critic',
       description: 'Quality assessment, security review, code review, validation',
-      best_for: 'Security analysis, code review, quality assurance, validation tasks'
+      best_for: 'Security analysis, code review, quality assurance, validation tasks',
     },
     {
       name: 'researcher',
       description: 'Information gathering, knowledge synthesis, documentation research',
-      best_for: 'Research tasks, information gathering, documentation, knowledge work'
+      best_for: 'Research tasks, information gathering, documentation, knowledge work',
     },
     {
       name: 'analyzer',
       description: 'Data analysis, metrics analysis, performance analysis, insights',
-      best_for: 'Data analysis, performance metrics, statistical analysis, insights generation'
+      best_for: 'Data analysis, performance metrics, statistical analysis, insights generation',
     },
     {
       name: 'synthesizer',
       description: 'Integration, optimization, combining systems, workflow coordination',
-      best_for: 'Integration tasks, optimization, combining multiple systems, workflow design'
+      best_for: 'Integration tasks, optimization, combining multiple systems, workflow design',
     },
     {
       name: 'ui_architect',
       description: 'UI architecture, design systems, component architecture, interface design',
-      best_for: 'UI/UX architecture, design systems, component planning, interface design'
+      best_for: 'UI/UX architecture, design systems, component planning, interface design',
     },
     {
       name: 'ui_implementer',
       description: 'UI implementation, component building, frontend development',
- 
-      best_for: 'Frontend development, UI component implementation, interface building'
+
+      best_for: 'Frontend development, UI component implementation, interface building',
     },
     {
       name: 'ui_refiner',
       description: 'UI refinement, styling, aesthetics, polish, optimization',
-      best_for: 'UI polish, styling refinement, aesthetic improvements, UX optimization'
-    }
+      best_for: 'UI polish, styling refinement, aesthetic improvements, UX optimization',
+    },
   ];
 
-  const roleList = availableRoles.map((role, index) => 
-    `${index + 1}. **${role.name}**
+  const roleList = availableRoles
+    .map(
+      (role, index) =>
+        `${index + 1}. **${role.name}**
    - Description: ${role.description}
    - Best for: ${role.best_for}`
-  ).join('\n\n');
+    )
+    .join('\n\n');
 
   return `# Role Selection for Task Execution
 
@@ -257,7 +264,7 @@ export function parseClaudeRoleSelection(claudeResponse: string, objective: stri
     }
 
     const selection = JSON.parse(jsonMatch[1]);
-    
+
     if (!selection.selected_role) {
       console.warn('No selected_role in Claude response, falling back');
       return detectRole(objective);
@@ -265,8 +272,15 @@ export function parseClaudeRoleSelection(claudeResponse: string, objective: stri
 
     // Validate the selected role
     const validRoles: Role[] = [
-      'planner', 'coder', 'critic', 'researcher', 'analyzer', 'synthesizer',
-      'ui_architect', 'ui_implementer', 'ui_refiner'
+      'planner',
+      'coder',
+      'critic',
+      'researcher',
+      'analyzer',
+      'synthesizer',
+      'ui_architect',
+      'ui_implementer',
+      'ui_refiner',
     ];
 
     if (validRoles.includes(selection.selected_role as Role)) {
@@ -284,43 +298,63 @@ export function parseClaudeRoleSelection(claudeResponse: string, objective: stri
 // Enhanced role detection including UI roles (LEGACY METHOD - replicates Manus's module selection)
 export function detectRole(objective: string): Role {
   const lowerObjective = objective.toLowerCase();
-  
+
   // Check for UI context patterns FIRST - these should override generic roles
   const uiContextPatterns = [
-    'modern_web_ui_design', 'ui_design', 'component_design', 'frontend_development',
-    'web_ui', 'interface_design', 'ui_implementation', 'ui_architecture'
+    'modern_web_ui_design',
+    'ui_design',
+    'component_design',
+    'frontend_development',
+    'web_ui',
+    'interface_design',
+    'ui_implementation',
+    'ui_architecture',
   ];
-  
+
   const contextMatch = objective.match(/\(CONTEXT:\s*([^)]+)\)/i);
-  const hasUIContext = contextMatch && uiContextPatterns.some(pattern => 
-    contextMatch[1].toLowerCase().includes(pattern)
-  );
-  
+  const hasUIContext =
+    contextMatch &&
+    uiContextPatterns.some(pattern => contextMatch[1].toLowerCase().includes(pattern));
+
   // If we have UI context, override any generic roles with UI-specific ones
   if (hasUIContext) {
     // Check refiner patterns first (most specific)
-    if (lowerObjective.includes('refine') || lowerObjective.includes('polish') || lowerObjective.includes('optimize') || lowerObjective.includes('styling')) {
+    if (
+      lowerObjective.includes('refine') ||
+      lowerObjective.includes('polish') ||
+      lowerObjective.includes('optimize') ||
+      lowerObjective.includes('styling')
+    ) {
       return 'ui_refiner';
     }
     // Then architect patterns
-    if (lowerObjective.includes('architect') || lowerObjective.includes('design system') || lowerObjective.includes('plan')) {
+    if (
+      lowerObjective.includes('architect') ||
+      lowerObjective.includes('design system') ||
+      lowerObjective.includes('plan')
+    ) {
       return 'ui_architect';
     }
     // Then implementer patterns
-    if (lowerObjective.includes('implement') || lowerObjective.includes('code') || lowerObjective.includes('build')) {
+    if (
+      lowerObjective.includes('implement') ||
+      lowerObjective.includes('code') ||
+      lowerObjective.includes('build')
+    ) {
       return 'ui_implementer';
     }
     // Default to ui_implementer for UI context with generic roles
     return 'ui_implementer';
   }
-  
+
   // Check for meta-prompt ROLE syntax for non-UI contexts
   const metaRoleMatch = objective.match(/\(ROLE:\s*([^)]+)\)/i);
   if (metaRoleMatch) {
     const explicitRole = metaRoleMatch[1].trim().toLowerCase();
     // Map explicit meta-prompt roles
     if (explicitRole === 'ui_architect' || explicitRole === 'ui-architect') return 'ui_architect';
-    if (explicitRole === 'ui_implementer' || explicitRole === 'ui-implementer') return 'ui_implementer';  
+    if (explicitRole === 'ui_implementer' || explicitRole === 'ui-implementer')
+      return 'ui_implementer';
     if (explicitRole === 'ui_refiner' || explicitRole === 'ui-refiner') return 'ui_refiner';
     if (explicitRole === 'planner') return 'planner';
     if (explicitRole === 'coder') return 'coder';
@@ -329,50 +363,79 @@ export function detectRole(objective: string): Role {
     if (explicitRole === 'analyzer') return 'analyzer';
     if (explicitRole === 'synthesizer') return 'synthesizer';
   }
-  
+
   // First check for UI-specific roles in content
-  if (lowerObjective.includes('ui') && (lowerObjective.includes('architect') || lowerObjective.includes('design system'))) {
+  if (
+    lowerObjective.includes('ui') &&
+    (lowerObjective.includes('architect') || lowerObjective.includes('design system'))
+  ) {
     return 'ui_architect';
   }
-  if (lowerObjective.includes('ui') && (lowerObjective.includes('implement') || lowerObjective.includes('component'))) {
+  if (
+    lowerObjective.includes('ui') &&
+    (lowerObjective.includes('implement') || lowerObjective.includes('component'))
+  ) {
     return 'ui_implementer';
   }
-  if (lowerObjective.includes('ui') && (lowerObjective.includes('refine') || lowerObjective.includes('polish'))) {
+  if (
+    lowerObjective.includes('ui') &&
+    (lowerObjective.includes('refine') || lowerObjective.includes('polish'))
+  ) {
     return 'ui_refiner';
   }
-  
+
   // Planner keywords
-  if (lowerObjective.includes('plan') || lowerObjective.includes('strategy') || 
-      lowerObjective.includes('design') || lowerObjective.includes('architect')) {
+  if (
+    lowerObjective.includes('plan') ||
+    lowerObjective.includes('strategy') ||
+    lowerObjective.includes('design') ||
+    lowerObjective.includes('architect')
+  ) {
     return 'planner';
   }
-  
+
   // Coder keywords
-  if (lowerObjective.includes('implement') || lowerObjective.includes('code') || 
-      lowerObjective.includes('build') || lowerObjective.includes('develop') || 
-      lowerObjective.includes('program')) {
+  if (
+    lowerObjective.includes('implement') ||
+    lowerObjective.includes('code') ||
+    lowerObjective.includes('build') ||
+    lowerObjective.includes('develop') ||
+    lowerObjective.includes('program')
+  ) {
     return 'coder';
   }
-  
+
   // Critic keywords
-  if (lowerObjective.includes('review') || lowerObjective.includes('analyze') || 
-      lowerObjective.includes('security') || lowerObjective.includes('audit') || 
-      lowerObjective.includes('validate')) {
+  if (
+    lowerObjective.includes('review') ||
+    lowerObjective.includes('analyze') ||
+    lowerObjective.includes('security') ||
+    lowerObjective.includes('audit') ||
+    lowerObjective.includes('validate')
+  ) {
     return 'critic';
   }
-  
+
   // Analyzer keywords
-  if (lowerObjective.includes('analyze') || lowerObjective.includes('data') || 
-      lowerObjective.includes('metrics') || lowerObjective.includes('statistics')) {
+  if (
+    lowerObjective.includes('analyze') ||
+    lowerObjective.includes('data') ||
+    lowerObjective.includes('metrics') ||
+    lowerObjective.includes('statistics')
+  ) {
     return 'analyzer';
   }
-  
+
   // Synthesizer keywords
-  if (lowerObjective.includes('integrate') || lowerObjective.includes('combine') || 
-      lowerObjective.includes('merge') || lowerObjective.includes('optimize')) {
+  if (
+    lowerObjective.includes('integrate') ||
+    lowerObjective.includes('combine') ||
+    lowerObjective.includes('merge') ||
+    lowerObjective.includes('optimize')
+  ) {
     return 'synthesizer';
   }
-  
+
   // Default to researcher (like Manus Knowledge Module)
   return 'researcher';
 }
@@ -381,11 +444,11 @@ export function detectRole(objective: string): Role {
 export function generateRoleEnhancedPrompt(phase: Phase, role: Role, objective: string): string {
   // UI role support will be added in future enhancement
   // For now, treat UI roles as standard roles with enhanced focus
-  
+
   const config = ROLE_CONFIG[role];
   let basePrompt = BASE_PHASE_PROMPTS[phase];
   let toolGuidance = PHASE_TOOL_GUIDANCE[phase];
-  
+
   // Special handling for KNOWLEDGE phase to inject role-specific API guidance
   if (phase === 'KNOWLEDGE') {
     const roleAPIGuidance = getRoleSpecificAPIGuidance(role);
@@ -396,15 +459,16 @@ export function generateRoleEnhancedPrompt(phase: Phase, role: Role, objective: 
 ${roleAPIGuidance}`
     );
   }
-  
+
   // Add Python execution guidance if beneficial for this role and objective
   if (requiresPythonExecution(objective, role) && phase === 'EXECUTE') {
-    const pythonGuidance = role === 'analyzer' 
-      ? ' **Python Analysis Recommended**: Use mcp__ide__executeCode for statistical analysis, data processing, and metrics calculation.'
-      : ' **Python Computation Recommended**: Use mcp__ide__executeCode for complex algorithms, calculations, or code generation.';
+    const pythonGuidance =
+      role === 'analyzer'
+        ? ' **Python Analysis Recommended**: Use mcp__ide__executeCode for statistical analysis, data processing, and metrics calculation.'
+        : ' **Python Computation Recommended**: Use mcp__ide__executeCode for complex algorithms, calculations, or code generation.';
     toolGuidance += pythonGuidance;
   }
-  
+
   const thinkingMethodology = `
 
 THINKING METHODOLOGY FOR ${role.toUpperCase()}:
@@ -416,14 +480,14 @@ FRAMEWORKS: ${config.suggestedFrameworks.join(', ')}
 **🛠️ TOOL GUIDANCE:** ${toolGuidance}
 
 Apply these thinking steps systematically to improve reasoning quality and thoroughness.`;
-  
+
   return basePrompt + thinkingMethodology;
 }
 
 // Base phase prompts (enhanced for fractal orchestration)
 const BASE_PHASE_PROMPTS: Record<Phase, string> = {
   INIT: `You are initializing a new task. This should not be reached - call JARVIS immediately.`,
-  
+
   QUERY: `You are in the QUERY phase (Manus: "Analyze Events"). Your task:
 
 Think through your analysis approach before proceeding. Consider:
@@ -603,18 +667,22 @@ After thorough quality assessment, proceed with:
 
 Apply rigorous quality assessment with your specialized validation expertise.`,
 
-  DONE: `Task completed successfully. Entering standby mode (Manus: "Enter Standby").`
+  DONE: `Task completed successfully. Entering standby mode (Manus: "Enter Standby").`,
 };
 
 // Meta-prompt generation for Task() agent spawning with Think tool integration
-export function generateMetaPrompt(todoContent: string, role: Role, context: Record<string, any>): MetaPrompt {
+export function generateMetaPrompt(
+  todoContent: string,
+  role: Role,
+  context: Record<string, any>
+): MetaPrompt {
   // UI roles are handled the same as standard roles now
-  
+
   const config = ROLE_CONFIG[role];
-  
+
   // Generate role-specific Think tool guidance
   const thinkGuidance = generateRoleSpecificThinkGuidance(role, config);
-  
+
   return {
     role_specification: `(ROLE: ${role})`,
     context_parameters: {
@@ -622,7 +690,7 @@ export function generateMetaPrompt(todoContent: string, role: Role, context: Rec
       complexity_level: config.complexityLevel,
       frameworks: config.suggestedFrameworks,
       cognitive_frameworks: config.cognitiveFrameworks || config.suggestedFrameworks,
-      ...context
+      ...context,
     },
     instruction_block: `(PROMPT: "${todoContent}
 
@@ -638,9 +706,8 @@ EXECUTION APPROACH:
 7. Think critically about work quality against ${config.authorityLevel} standards before completion
 8. Report completion with detailed deliverables
 
-COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced through systematic thinking and role-specific frameworks.")`
-    ,
-    output_requirements: `(OUTPUT: ${config.defaultOutput})`
+COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced through systematic thinking and role-specific frameworks.")`,
+    output_requirements: `(OUTPUT: ${config.defaultOutput})`,
   };
 }
 
@@ -650,45 +717,49 @@ COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced through systemat
 // ============================================================================
 
 export function generateComponentCognitiveDualityPrompt(
-  todoContent: string, 
-  role: Role, 
+  todoContent: string,
+  role: Role,
   context: Record<string, any>,
   duality: ComponentCognitiveDuality,
   constraints: UnifiedConstraint[]
 ): MetaPrompt {
   const config = ROLE_CONFIG[role];
   const cognitiveContext = duality.ecosystem_session_mapping.cognitive_context;
-  
+
   // Generate component-cognitive duality guidance based on reasoning mode
   const dualityGuidance = generateComponentCognitiveDualityGuidance(
-    cognitiveContext.reasoning_mode, 
-    role, 
-    config, 
+    cognitiveContext.reasoning_mode,
+    role,
+    config,
     constraints
   );
-  
+
   // Generate constraint-aware execution framework
   const constraintFramework = generateConstraintAwareFramework(constraints, role);
-  
+
   // Generate encapsulation pattern integration
   const encapsulationGuidance = generateEncapsulationPatternGuidance(
     duality.ecosystem_session_mapping.encapsulation_patterns,
     role
   );
-  
+
   return {
     role_specification: `(ROLE: ${role} with Component-Cognitive Duality Enhancement)`,
     context_parameters: {
       domain_info: context.domain || 'component_cognitive_hybrid',
       complexity_level: config.complexityLevel,
-      frameworks: [...config.suggestedFrameworks, 'V0_Component_Generation', 'Unified_Constraint_System'],
+      frameworks: [
+        ...config.suggestedFrameworks,
+        'V0_Component_Generation',
+        'Unified_Constraint_System',
+      ],
       cognitive_frameworks: config.cognitiveFrameworks || config.suggestedFrameworks,
       reasoning_mode: cognitiveContext.reasoning_mode,
       duality_effectiveness: cognitiveContext.duality_effectiveness,
       constraint_count: constraints.length,
       encapsulation_patterns: duality.ecosystem_session_mapping.encapsulation_patterns.length,
       orchestration_mode: duality.project_phase_mapping.orchestration_mode,
-      ...context
+      ...context,
     },
     instruction_block: `(PROMPT: "${todoContent}
 
@@ -709,9 +780,8 @@ COMPONENT-COGNITIVE EXECUTION APPROACH:
 8. Think critically about work quality against ${config.authorityLevel} + Component-Cognitive Duality standards
 9. Report completion with detailed deliverables including constraint satisfaction metrics
 
-COMPONENT-COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced through systematic thinking, role-specific frameworks, and unified constraint-driven component generation.")`
-    ,
-    output_requirements: `(OUTPUT: ${config.defaultOutput} + Component-Cognitive Duality Metrics)`
+COMPONENT-COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced through systematic thinking, role-specific frameworks, and unified constraint-driven component generation.")`,
+    output_requirements: `(OUTPUT: ${config.defaultOutput} + Component-Cognitive Duality Metrics)`,
   };
 }
 
@@ -732,11 +802,11 @@ function generateComponentCognitiveDualityGuidance(
 - Performance optimization and bundle size considerations`,
 
     cognitive_orchestration: `COGNITIVE ORCHESTRATION REASONING: Think strategically about Manus FSM orchestration:`,
-    
+
     unified: `UNIFIED REASONING: Think holistically combining both approaches:`,
-    
+
     component_focused: `COMPONENT-FOCUSED REASONING: Focus on component generation:`,
-    
+
     cognitive_focused: `COGNITIVE-FOCUSED REASONING: Focus on cognitive orchestration:
 - Phase transition logic and state management
 - Task decomposition and fractal orchestration
@@ -751,12 +821,13 @@ function generateComponentCognitiveDualityGuidance(
 - Encapsulation pattern integration with cognitive orchestration
 - Performance synergy between component generation and cognitive reasoning
 - Cross-domain optimization and architectural elegance
-- Duality effectiveness metrics and continuous improvement`
+- Duality effectiveness metrics and continuous improvement`,
   };
 
-  const constraintGuidance = constraints.length > 0 
-    ? `\n- Active unified constraints: ${constraints.map(c => `${c.type}(${c.scope})`).join(', ')}`
-    : '';
+  const constraintGuidance =
+    constraints.length > 0
+      ? `\n- Active unified constraints: ${constraints.map(c => `${c.type}(${c.scope})`).join(', ')}`
+      : '';
 
   return modeSpecificGuidance[reasoningMode] + constraintGuidance;
 }
@@ -767,14 +838,17 @@ function generateConstraintAwareFramework(constraints: UnifiedConstraint[], role
     return '**🔒 CONSTRAINT FRAMEWORK:** No active constraints - use default role frameworks.';
   }
 
-  const constraintsByScope = constraints.reduce((acc, constraint) => {
-    if (!acc[constraint.scope]) acc[constraint.scope] = [];
-    acc[constraint.scope].push(constraint);
-    return acc;
-  }, {} as Record<string, UnifiedConstraint[]>);
+  const constraintsByScope = constraints.reduce(
+    (acc, constraint) => {
+      if (!acc[constraint.scope]) acc[constraint.scope] = [];
+      acc[constraint.scope].push(constraint);
+      return acc;
+    },
+    {} as Record<string, UnifiedConstraint[]>
+  );
 
   let framework = '**🔒 UNIFIED CONSTRAINT FRAMEWORK:**\n';
-  
+
   if (constraintsByScope.component) {
     framework += `- **Component-level constraints:** ${constraintsByScope.component.map(c => c.type).join(', ')}\n`;
   }
@@ -791,14 +865,17 @@ function generateConstraintAwareFramework(constraints: UnifiedConstraint[], role
 }
 
 // Generate encapsulation pattern integration guidance
-function generateEncapsulationPatternGuidance(patterns: EncapsulationPattern[], role: Role): string {
+function generateEncapsulationPatternGuidance(
+  patterns: EncapsulationPattern[],
+  role: Role
+): string {
   if (patterns.length === 0) {
     return '**🏗️ ENCAPSULATION PATTERNS:** No active patterns - use default architectural approaches.';
   }
 
   const patternTypes = patterns.map(p => p.pattern_type).join(', ');
   const stateManagement = [...new Set(patterns.map(p => p.state_management))].join(', ');
-  
+
   return `**🏗️ V0 ENCAPSULATION PATTERN INTEGRATION:**
 - **Active patterns:** ${patternTypes}
 - **State management:** ${stateManagement}
@@ -810,27 +887,47 @@ function generateEncapsulationPatternGuidance(patterns: EncapsulationPattern[], 
 // Helper function to detect when Python execution would be beneficial
 function requiresPythonExecution(objective: string, role: Role): boolean {
   const lowerObjective = objective.toLowerCase();
-  
+
   // Python indicators for analyzer role
   const analysisIndicators = [
-    'analyze', 'statistics', 'metrics', 'performance', 'data', 'calculate',
-    'measure', 'benchmark', 'correlation', 'pattern', 'trend', 'visualization'
+    'analyze',
+    'statistics',
+    'metrics',
+    'performance',
+    'data',
+    'calculate',
+    'measure',
+    'benchmark',
+    'correlation',
+    'pattern',
+    'trend',
+    'visualization',
   ];
-  
+
   // Python indicators for coder role
   const codingIndicators = [
-    'algorithm', 'computation', 'complex calculation', 'generate code',
-    'template', 'optimization', 'mathematical', 'numerical', 'processing'
+    'algorithm',
+    'computation',
+    'complex calculation',
+    'generate code',
+    'template',
+    'optimization',
+    'mathematical',
+    'numerical',
+    'processing',
   ];
-  
-  if (role === 'analyzer' && analysisIndicators.some(indicator => lowerObjective.includes(indicator))) {
+
+  if (
+    role === 'analyzer' &&
+    analysisIndicators.some(indicator => lowerObjective.includes(indicator))
+  ) {
     return true;
   }
-  
+
   if (role === 'coder' && codingIndicators.some(indicator => lowerObjective.includes(indicator))) {
     return true;
   }
-  
+
   return false;
 }
 
@@ -897,7 +994,7 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Visual polish and aesthetic improvements
 - User interaction feedback and micro-interactions
 - Cross-browser compatibility and testing
-- Accessibility compliance and usability testing`
+- Accessibility compliance and usability testing`,
   };
 
   return roleSpecificThinking[role];
@@ -909,23 +1006,45 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
   INIT: ['JARVIS'], // Force orchestrator
   QUERY: ['JARVIS'], // Natural thinking + orchestrator
   ENHANCE: ['JARVIS'], // Natural thinking + orchestrator
-  KNOWLEDGE: ['WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'KnowledgeSynthesize', 'mcp__ide__executeCode', 'JARVIS'], // Natural thinking + research tools + API tools + data processing
+  KNOWLEDGE: [
+    'WebSearch',
+    'WebFetch',
+    'APISearch',
+    'MultiAPIFetch',
+    'KnowledgeSynthesize',
+    'mcp__ide__executeCode',
+    'JARVIS',
+  ], // Natural thinking + research tools + API tools + data processing
   PLAN: ['TodoWrite'], // Natural thinking + planning tools
-  EXECUTE: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode'], // Natural thinking + execution tools + Python execution
+  EXECUTE: [
+    'TodoRead',
+    'TodoWrite',
+    'Task',
+    'Bash',
+    'Read',
+    'Write',
+    'Edit',
+    'Browser',
+    'mcp__ide__executeCode',
+  ], // Natural thinking + execution tools + Python execution
   VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode'], // Natural thinking + verification tools + analysis
-  DONE: [] // No tools needed
+  DONE: [], // No tools needed
 };
 
 // For phases where Claude should choose, we specify the choice in the prompt
 export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
   INIT: 'Call JARVIS to begin',
   QUERY: 'Think through the goal analysis, then call JARVIS with phase_completed: "QUERY"',
-  ENHANCE: 'Think through enhancement opportunities, then call JARVIS with phase_completed: "ENHANCE"',
-  KNOWLEDGE: 'Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), JARVIS (skip research)',
+  ENHANCE:
+    'Think through enhancement opportunities, then call JARVIS with phase_completed: "ENHANCE"',
+  KNOWLEDGE:
+    'Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), JARVIS (skip research)',
   PLAN: 'Think through strategic planning, then use TodoWrite to create todos, then call JARVIS with phase_completed: "PLAN"',
-  EXECUTE: 'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), mcp__ide__executeCode (Python analysis/computation)',
-  VERIFY: 'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), mcp__ide__executeCode (analytical verification)',
-  DONE: 'No action needed'
+  EXECUTE:
+    'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), mcp__ide__executeCode (Python analysis/computation)',
+  VERIFY:
+    'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), mcp__ide__executeCode (analytical verification)',
+  DONE: 'No action needed',
 };
 
 // Role-specific API guidance generation for KNOWLEDGE phase
@@ -1010,7 +1129,7 @@ UI ARCHITECT API PREFERENCES:
 - **Key APIs**: Data transformation services, workflow platforms, integration frameworks
 - **Confidence Threshold**: 0.7+ (balance integration complexity with reliability)
 - **Synthesis Mode**: 'weighted' for integration patterns, 'consensus' for compatibility standards
-- **Evidence Standards**: Tested integration patterns, compatibility matrices, performance benchmarks`
+- **Evidence Standards**: Tested integration patterns, compatibility matrices, performance benchmarks`,
   };
 
   return roleGuidance[role] || roleGuidance.researcher; // Default to researcher if role not found

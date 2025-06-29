@@ -29,20 +29,20 @@ export interface ValidationResult {
 export class APIValidatorTool extends BaseTool {
   readonly name = 'APIValidator';
   readonly description = 'Validates API endpoints and suggests corrections for failed requests';
-  
+
   readonly inputSchema: ToolSchema = {
     type: 'object',
     properties: {
       api_endpoint: {
         type: 'object',
-        description: 'API endpoint to validate'
+        description: 'API endpoint to validate',
       },
       auto_correct: {
         type: 'boolean',
-        description: 'Attempt to auto-correct failed endpoints (default: true)'
-      }
+        description: 'Attempt to auto-correct failed endpoints (default: true)',
+      },
     },
-    required: ['api_endpoint']
+    required: ['api_endpoint'],
   };
 
   /**
@@ -51,41 +51,44 @@ export class APIValidatorTool extends BaseTool {
   async handle(args: APIValidatorArgs): Promise<ToolResult> {
     try {
       this.validateArgs(args);
-      
+
       const endpoint = args.api_endpoint;
       const autoCorrect = args.auto_correct ?? true;
-      
+
       // Test the primary endpoint
       const primaryResult = await this.testEndpoint(endpoint.url);
-      
+
       if (primaryResult.working) {
         return this.createResponse(this.formatSuccessResponse(endpoint.url, primaryResult));
       }
-      
+
       // If primary failed and auto-correct is enabled, try alternatives
       if (autoCorrect && endpoint.endpoint_patterns) {
         for (const pattern of endpoint.endpoint_patterns) {
           const result = await this.testEndpoint(pattern);
           if (result.working) {
-            return this.createResponse(this.formatCorrectedResponse(
-              endpoint.url, 
-              pattern, 
-              primaryResult, 
-              result,
-              endpoint.documentation_url
-            ));
+            return this.createResponse(
+              this.formatCorrectedResponse(
+                endpoint.url,
+                pattern,
+                primaryResult,
+                result,
+                endpoint.documentation_url
+              )
+            );
           }
         }
       }
-      
+
       // All attempts failed
-      return this.createResponse(this.formatFailureResponse(
-        endpoint.url,
-        primaryResult,
-        endpoint.endpoint_patterns || [],
-        endpoint.documentation_url
-      ));
-      
+      return this.createResponse(
+        this.formatFailureResponse(
+          endpoint.url,
+          primaryResult,
+          endpoint.endpoint_patterns || [],
+          endpoint.documentation_url
+        )
+      );
     } catch (error) {
       console.error('API Validator Error:', error);
       return this.createErrorResponse(error instanceof Error ? error : String(error));
@@ -95,24 +98,26 @@ export class APIValidatorTool extends BaseTool {
   /**
    * Test a single endpoint
    */
-  private async testEndpoint(url: string): Promise<{working: boolean, code?: number, error?: string}> {
+  private async testEndpoint(
+    url: string
+  ): Promise<{ working: boolean; code?: number; error?: string }> {
     try {
       const response = await axios.get(url, {
         timeout: 5000,
         headers: {
-          'User-Agent': 'Iron-Manus-API-Validator/1.0.0'
-        }
+          'User-Agent': 'Iron-Manus-API-Validator/1.0.0',
+        },
       });
-      
+
       return {
         working: true,
-        code: response.status
+        code: response.status,
       };
     } catch (error: any) {
       return {
         working: false,
         code: error.response?.status,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -135,9 +140,9 @@ This endpoint is validated and ready for use in MultiAPIFetch.`;
    * Format corrected response
    */
   private formatCorrectedResponse(
-    originalUrl: string, 
-    workingUrl: string, 
-    originalResult: any, 
+    originalUrl: string,
+    workingUrl: string,
+    originalResult: any,
     workingResult: any,
     docUrl?: string
   ): string {
@@ -153,8 +158,12 @@ This endpoint is validated and ready for use in MultiAPIFetch.`;
 ## Recommendation
 Use the corrected URL: \`${workingUrl}\`
 
-${docUrl ? `## 📚 Documentation
-Verify endpoint structure at: ${docUrl}` : ''}
+${
+  docUrl
+    ? `## 📚 Documentation
+Verify endpoint structure at: ${docUrl}`
+    : ''
+}
 
 ## 🔄 Auto-Update
 The API registry should be updated with the working endpoint.`;
@@ -169,11 +178,12 @@ The API registry should be updated with the working endpoint.`;
     patterns: string[],
     docUrl?: string
   ): string {
-    const alternatives = patterns.length > 0 ? 
-      `\n## 🔍 Attempted Alternatives\n${patterns.map(p => `- ${p} (failed)`).join('\n')}` : '';
-    
-    const documentation = docUrl ? 
-      `\n## 📚 Check Documentation\n${docUrl}` : '';
+    const alternatives =
+      patterns.length > 0
+        ? `\n## 🔍 Attempted Alternatives\n${patterns.map(p => `- ${p} (failed)`).join('\n')}`
+        : '';
+
+    const documentation = docUrl ? `\n## 📚 Check Documentation\n${docUrl}` : '';
 
     return `# ERROR API Validation Failed
 

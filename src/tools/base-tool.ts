@@ -40,7 +40,7 @@ export abstract class BaseTool {
     return {
       name: this.name,
       description: this.description,
-      inputSchema: this.inputSchema
+      inputSchema: this.inputSchema,
     };
   }
 
@@ -72,11 +72,13 @@ export abstract class BaseTool {
    */
   protected createResponse(text: string): ToolResult {
     return {
-      content: [{
-        type: 'text',
-        text
-      }],
-      isError: false
+      content: [
+        {
+          type: 'text',
+          text,
+        },
+      ],
+      isError: false,
     };
   }
 
@@ -86,11 +88,13 @@ export abstract class BaseTool {
   protected createErrorResponse(error: string | Error): ToolResult {
     const errorMessage = error instanceof Error ? error.message : error;
     return {
-      content: [{
-        type: 'text',
-        text: `ERROR Tool Error: ${errorMessage}`
-      }],
-      isError: true
+      content: [
+        {
+          type: 'text',
+          text: `ERROR Tool Error: ${errorMessage}`,
+        },
+      ],
+      isError: true,
     };
   }
 }

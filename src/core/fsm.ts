@@ -1,43 +1,43 @@
 // Core FSM logic - implements the 6-step agent loop with auto-connection capabilities
 // Features: API discovery, automatic fetching, knowledge synthesis, and role-based orchestration
-import { 
-  MessageJARVIS, 
-  FromJARVIS, 
-  Phase, 
-  Role, 
-  TodoItem, 
-  MetaPrompt, 
+import {
+  MessageJARVIS,
+  FromJARVIS,
+  Phase,
+  Role,
+  TodoItem,
+  MetaPrompt,
   VerificationResult,
   CognitiveContext,
-  APIUsageMetrics
+  APIUsageMetrics,
 } from './types.js';
-import { 
-  generateRoleEnhancedPrompt, 
+import {
+  generateRoleEnhancedPrompt,
   detectRole,
   generateRoleSelectionPrompt,
   parseClaudeRoleSelection,
-  PHASE_ALLOWED_TOOLS
+  PHASE_ALLOWED_TOOLS,
 } from './prompts.js';
 import { stateManager } from './state.js';
-import { 
-  selectRelevantAPIs, 
+import {
+  selectRelevantAPIs,
   generateAPISelectionPrompt,
   parseClaudeAPISelection,
   APISelectionResult,
   rateLimiter,
-  SAMPLE_API_REGISTRY
+  SAMPLE_API_REGISTRY,
 } from './api-registry.js';
 import axios, { AxiosError } from 'axios';
 // Cognitive module imports - disabled pending integration
-// import { 
-//   extractEnhancedMetaPrompt, 
+// import {
+//   extractEnhancedMetaPrompt,
 //   extractEnhancedMetaPrompts,
 //   detectEnhancedRole,
 //   generateEnhancedRoleConfig,
 //   getExtractionPerformanceMetrics,
 //   EnhancedMetaPrompt
 // } from './cognitive/cognitive-ast-integration.js';
-// import { 
+// import {
 //   reasoningRulesEngine,
 //   ValidationContext,
 //   ValidationSeverity
@@ -78,32 +78,32 @@ enum ValidationSeverity {
   CRITICAL = 'CRITICAL',
   ERROR = 'ERROR',
   WARNING = 'WARNING',
-  INFO = 'INFO'
+  INFO = 'INFO',
 }
 
 // Default implementations for cognitive features
 const reasoningRulesEngine = {
-  validateReasoning: (context: ValidationContext) => ({ 
-    isValid: true, 
+  validateReasoning: (context: ValidationContext) => ({
+    isValid: true,
     issues: [],
     confidence: 0.8,
-    violations: []
-  })
+    violations: [],
+  }),
 };
 
 const cognitiveFrameworkManager = {
   injectCognitiveFramework: (role: Role, phase: Phase, prompt: string, context: any) => ({
     enhancedReasoning: prompt,
     injectedFrameworks: [],
-    appliedPatterns: []
-  })
+    appliedPatterns: [],
+  }),
 };
 
 function getExtractionPerformanceMetrics() {
   return {
     parseTime: 10,
     cacheHitRate: 0.8,
-    successRate: 0.95
+    successRate: 0.95,
   };
 }
 
@@ -113,7 +113,7 @@ export const AUTO_CONNECTION_CONFIG = {
   timeout_ms: 4000, // Conservative timeout for auto-mode
   max_concurrent: 2, // Conservative concurrency limit
   confidence_threshold: 0.4, // Minimum confidence to include responses
-  max_response_size: 5000 // Maximum response size in characters
+  max_response_size: 5000, // Maximum response size in characters
 };
 
 // Internal auto-connection functions for KNOWLEDGE phase
@@ -126,18 +126,19 @@ export const AUTO_CONNECTION_CONFIG = {
  * @returns Array of API responses with metadata
  */
 async function autoFetchAPIs(
-  apiUrls: string[], 
-  maxConcurrent: number = 3, 
+  apiUrls: string[],
+  maxConcurrent: number = 3,
   timeoutMs: number = 5000
-): Promise<Array<{
-  source: string;
-  data: string;
-  confidence: number;
-  success: boolean;
-  duration: number;
-  error?: string;
-}>> {
-  
+): Promise<
+  Array<{
+    source: string;
+    data: string;
+    confidence: number;
+    success: boolean;
+    duration: number;
+    error?: string;
+  }>
+> {
   const results: Array<{
     source: string;
     data: string;
@@ -146,92 +147,94 @@ async function autoFetchAPIs(
     duration: number;
     error?: string;
   }> = [];
-  
+
   // Create axios instance with secure defaults
   const axiosInstance = axios.create({
     timeout: timeoutMs,
     headers: {
       'User-Agent': 'Iron-Manus-MCP/1.0.0-AutoFetch',
-      'Accept': 'application/json, text/plain, */*'
+      Accept: 'application/json, text/plain, */*',
     },
     maxContentLength: 1024 * 1024 * 2, // 2MB limit for auto-fetch
-    maxBodyLength: 1024 * 1024 * 2
+    maxBodyLength: 1024 * 1024 * 2,
   });
-  
+
   // Process APIs with concurrency limiting
-  const semaphore = { 
-    count: maxConcurrent, 
+  const semaphore = {
+    count: maxConcurrent,
     acquire: async () => {
       while (semaphore.count <= 0) {
         await new Promise(resolve => setTimeout(resolve, 10));
       }
       semaphore.count--;
     },
-    release: () => { semaphore.count++; }
+    release: () => {
+      semaphore.count++;
+    },
   };
-  
+
   const fetchPromises = apiUrls.slice(0, 5).map(async (url, index) => {
     await semaphore.acquire();
-    
+
     try {
       const startTime = Date.now();
       const hostname = new URL(url).hostname;
-      
+
       // Check rate limiting
       if (!rateLimiter.canMakeRequest(hostname, 5, 60000)) {
         throw new Error('Rate limit exceeded');
       }
-      
+
       const response = await axiosInstance.get(url);
       const duration = Date.now() - startTime;
-      
+
       // Sanitize and truncate response data
       let sanitizedData = response.data;
       if (typeof sanitizedData === 'string') {
         sanitizedData = sanitizedData.substring(0, AUTO_CONNECTION_CONFIG.max_response_size);
       } else if (typeof sanitizedData === 'object') {
-        sanitizedData = JSON.stringify(sanitizedData).substring(0, AUTO_CONNECTION_CONFIG.max_response_size);
+        sanitizedData = JSON.stringify(sanitizedData).substring(
+          0,
+          AUTO_CONNECTION_CONFIG.max_response_size
+        );
       }
-      
+
       // Calculate confidence based on response quality
       const confidence = calculateResponseConfidence(response.status, sanitizedData, duration);
-      
-      
+
       return {
         source: hostname,
         data: sanitizedData,
         confidence,
         success: true,
-        duration
+        duration,
       };
-      
     } catch (error) {
       const duration = Date.now() - Date.now();
       const hostname = new URL(url).hostname;
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
-      
+
       return {
         source: hostname,
         data: '',
         confidence: 0.0,
         success: false,
         duration,
-        error: errorMessage
+        error: errorMessage,
       };
     } finally {
       semaphore.release();
     }
   });
-  
+
   const allResults = await Promise.allSettled(fetchPromises);
-  
-  allResults.forEach((result) => {
+
+  allResults.forEach(result => {
     if (result.status === 'fulfilled') {
       results.push(result.value);
     }
   });
-  
+
   return results;
 }
 
@@ -244,20 +247,20 @@ async function autoFetchAPIs(
  */
 function calculateResponseConfidence(status: number, data: string, duration: number): number {
   let confidence = 0.5; // Base confidence
-  
+
   // Status code contribution
   if (status === 200) confidence += 0.3;
   else if (status >= 200 && status < 300) confidence += 0.2;
   else confidence -= 0.2;
-  
+
   // Data quality contribution
   if (data && data.length > 100) confidence += 0.2;
   else if (data && data.length > 10) confidence += 0.1;
-  
+
   // Response time contribution (faster is better)
   if (duration < 1000) confidence += 0.1;
   else if (duration > 5000) confidence -= 0.1;
-  
+
   return Math.max(0.0, Math.min(1.0, confidence));
 }
 
@@ -292,52 +295,63 @@ async function autoSynthesize(
   };
 }> {
   const startTime = Date.now();
-  
+
   // Filter successful responses above confidence threshold
-  const validResponses = apiResponses.filter(r => 
-    r.success && r.confidence >= confidenceThreshold && r.data.length > 0
+  const validResponses = apiResponses.filter(
+    r => r.success && r.confidence >= confidenceThreshold && r.data.length > 0
   );
-  
+
   if (validResponses.length === 0) {
     return {
       synthesizedContent: `Unable to gather reliable information from external APIs. All ${apiResponses.length} API calls either failed or returned low-confidence data.`,
       overallConfidence: 0.0,
       sourcesUsed: [],
-      contradictions: [`All ${apiResponses.length} API sources failed or had confidence below ${confidenceThreshold}`],
+      contradictions: [
+        `All ${apiResponses.length} API sources failed or had confidence below ${confidenceThreshold}`,
+      ],
       metadata: {
         totalSources: apiResponses.length,
         successfulSources: 0,
         averageConfidence: 0.0,
-        processingTime: Date.now() - startTime
-      }
+        processingTime: Date.now() - startTime,
+      },
     };
   }
-  
+
   // Simple synthesis strategy: combine information with confidence weighting
   const sourcesUsed = validResponses.map(r => r.source);
   const contentParts: string[] = [];
   const contradictions: string[] = [];
-  
+
   // Create weighted synthesis
   validResponses.forEach((response, index) => {
-    const weight = response.confidence > 0.7 ? 'High' : response.confidence > 0.5 ? 'Medium' : 'Low';
-    contentParts.push(`**${weight} Confidence Source - ${response.source}** (${(response.confidence * 100).toFixed(1)}%):\n${response.data}`);
+    const weight =
+      response.confidence > 0.7 ? 'High' : response.confidence > 0.5 ? 'Medium' : 'Low';
+    contentParts.push(
+      `**${weight} Confidence Source - ${response.source}** (${(response.confidence * 100).toFixed(1)}%):\n${response.data}`
+    );
   });
-  
+
   // Detect potential contradictions (simple keyword comparison)
   for (let i = 0; i < validResponses.length; i++) {
     for (let j = i + 1; j < validResponses.length; j++) {
       const similarity = calculateSimpleSimilarity(validResponses[i].data, validResponses[j].data);
       if (similarity < 0.3) {
-        contradictions.push(`Potential conflict between ${validResponses[i].source} and ${validResponses[j].source}`);
+        contradictions.push(
+          `Potential conflict between ${validResponses[i].source} and ${validResponses[j].source}`
+        );
       }
     }
   }
-  
+
   // Calculate overall confidence
-  const averageConfidence = validResponses.reduce((sum, r) => sum + r.confidence, 0) / validResponses.length;
-  const overallConfidence = Math.min(averageConfidence * (validResponses.length / apiResponses.length), 1.0);
-  
+  const averageConfidence =
+    validResponses.reduce((sum, r) => sum + r.confidence, 0) / validResponses.length;
+  const overallConfidence = Math.min(
+    averageConfidence * (validResponses.length / apiResponses.length),
+    1.0
+  );
+
   // Create synthesized content
   const synthesizedContent = `# Auto-Synthesized Knowledge for: ${objective}
 
@@ -356,7 +370,7 @@ ${contradictions.length > 0 ? `\n## Potential Contradictions\n${contradictions.m
 *Auto-generated by Iron Manus Knowledge Synthesis Engine*`;
 
   const processingTime = Date.now() - startTime;
-  
+
   return {
     synthesizedContent,
     overallConfidence,
@@ -366,23 +380,29 @@ ${contradictions.length > 0 ? `\n## Potential Contradictions\n${contradictions.m
       totalSources: apiResponses.length,
       successfulSources: validResponses.length,
       averageConfidence,
-      processingTime
-    }
+      processingTime,
+    },
   };
 }
 
 /**
  * Calculate simple similarity between two text strings
  * @param text1 - First text
- * @param text2 - Second text  
+ * @param text2 - Second text
  * @returns Similarity score between 0 and 1
  */
 function calculateSimpleSimilarity(text1: string, text2: string): number {
-  const words1 = text1.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-  const words2 = text2.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-  
+  const words1 = text1
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(w => w.length > 3);
+  const words2 = text2
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(w => w.length > 3);
+
   if (words1.length === 0 || words2.length === 0) return 0;
-  
+
   const commonWords = words1.filter(word => words2.includes(word));
   return commonWords.length / Math.max(words1.length, words2.length);
 }
@@ -390,39 +410,39 @@ function calculateSimpleSimilarity(text1: string, text2: string): number {
 export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
   const sessionId = input.session_id;
   const session = stateManager.getSessionState(sessionId);
-  
+
   // Handle initial objective setup with Claude-powered role detection
   if (input.initial_objective) {
     session.initial_objective = input.initial_objective;
-    
+
     // Generate role selection prompt for Claude instead of hardcoded detection
     const roleSelectionPrompt = generateRoleSelectionPrompt(input.initial_objective);
-    
+
     // Set temporary role as fallback, but request Claude selection
     session.detected_role = detectEnhancedRole(input.initial_objective); // Fallback for now
     session.current_phase = 'INIT';
     session.reasoning_effectiveness = 0.8; // Initial effectiveness score
-    
+
     // Initialize payload with execution state and role selection request
     session.payload = {
       current_task_index: 0,
       current_todos: [],
       phase_transition_count: 0,
       role_selection_prompt: roleSelectionPrompt,
-      awaiting_role_selection: true
+      awaiting_role_selection: true,
     };
     stateManager.updateSessionState(sessionId, session);
   }
 
   // Determine next phase based on current phase and completed phase
   let nextPhase: Phase = session.current_phase;
-  
+
   // Phase transition logic - mirrors Manus's 6-step agent loop
   switch (session.current_phase) {
     case 'INIT':
       nextPhase = 'QUERY';
       break;
-      
+
     case 'QUERY':
       if (input.phase_completed === 'QUERY') {
         // Check if Claude provided role selection response
@@ -433,11 +453,11 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
               input.payload.claude_response,
               session.initial_objective || ''
             );
-            
+
             // Update session with Claude's intelligent role selection
             session.detected_role = claudeSelectedRole;
             session.payload.awaiting_role_selection = false;
-            
+
             console.log(`SUCCESS Claude selected role: ${claudeSelectedRole}`);
           } catch (error) {
             console.error('Error processing Claude role selection:', error);
@@ -445,7 +465,7 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
             session.payload.awaiting_role_selection = false;
           }
         }
-        
+
         // Store interpreted goal and move to enhancement
         if (input.payload?.interpreted_goal) {
           session.payload.interpreted_goal = input.payload.interpreted_goal;
@@ -453,7 +473,7 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
         nextPhase = 'ENHANCE';
       }
       break;
-      
+
     case 'ENHANCE':
       if (input.phase_completed === 'ENHANCE') {
         // Store enhanced goal and move to knowledge gathering
@@ -463,7 +483,7 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
         nextPhase = 'KNOWLEDGE';
       }
       break;
-      
+
     case 'KNOWLEDGE':
       if (input.phase_completed === 'KNOWLEDGE') {
         // Check if Claude provided API selection response
@@ -471,31 +491,31 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
           try {
             // Parse Claude's API selection
             const claudeSelectedAPIs = parseClaudeAPISelection(
-              input.payload.claude_response, 
+              input.payload.claude_response,
               SAMPLE_API_REGISTRY
             );
-            
+
             if (claudeSelectedAPIs.length > 0) {
               // Use Claude's intelligent selection for auto-connection
               session.payload.api_discovery_results = claudeSelectedAPIs;
               session.payload.awaiting_api_selection = false;
-              
+
               // Proceed with auto-connection using Claude's selected APIs
               if (AUTO_CONNECTION_CONFIG.enabled) {
                 const topAPIs = claudeSelectedAPIs.slice(0, 3).map(r => r.api.url);
                 const fetchResults = await autoFetchAPIs(
-                  topAPIs, 
-                  AUTO_CONNECTION_CONFIG.max_concurrent, 
+                  topAPIs,
+                  AUTO_CONNECTION_CONFIG.max_concurrent,
                   AUTO_CONNECTION_CONFIG.timeout_ms
                 );
-                
+
                 const objective = session.payload.enhanced_goal || session.initial_objective || '';
                 const synthesisResult = await autoSynthesize(
-                  fetchResults, 
-                  objective, 
+                  fetchResults,
+                  objective,
                   AUTO_CONNECTION_CONFIG.confidence_threshold
                 );
-                
+
                 session.payload.synthesized_knowledge = synthesisResult.synthesizedContent;
                 session.payload.api_fetch_responses = fetchResults;
               }
@@ -506,39 +526,43 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
             session.payload.awaiting_api_selection = false;
           }
         }
-        
+
         // Store gathered knowledge and move to planning
         if (input.payload?.knowledge_gathered) {
           session.payload.knowledge_gathered = input.payload.knowledge_gathered;
         }
-        
+
         // NEW: Claude-powered API discovery and selection workflow
-        if (session.payload.enhanced_goal && session.detected_role && !session.payload.awaiting_api_selection) {
+        if (
+          session.payload.enhanced_goal &&
+          session.detected_role &&
+          !session.payload.awaiting_api_selection
+        ) {
           try {
             const startTime = Date.now();
-            
+
             // Generate API selection prompt for Claude
             const apiSelectionPrompt = generateAPISelectionPrompt(
               session.payload.enhanced_goal,
               session.detected_role,
               SAMPLE_API_REGISTRY
             );
-            
+
             // Store the prompt in session for Claude to process
             session.payload.api_selection_prompt = apiSelectionPrompt;
             session.payload.awaiting_api_selection = true;
-            
+
             // Fallback to hardcoded selection for now (will be replaced by Claude's response)
             const relevantAPIs = selectRelevantAPIs(
-              session.payload.enhanced_goal, 
+              session.payload.enhanced_goal,
               session.detected_role
             );
-            
+
             // Store API discovery results in session payload
             session.payload.api_discovery_results = relevantAPIs;
             session.payload.api_fetch_responses = session.payload.api_fetch_responses || [];
             session.payload.synthesized_knowledge = session.payload.synthesized_knowledge || '';
-            
+
             // Initialize API usage metrics
             const processingTime = Date.now() - startTime;
             const apiUsageMetrics: APIUsageMetrics = {
@@ -548,81 +572,87 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
               processing_time: processingTime,
               discovery_success_rate: relevantAPIs.length > 0 ? 1.0 : 0.0,
               api_response_time: 0,
-              knowledge_synthesis_quality: 0.0
+              knowledge_synthesis_quality: 0.0,
             };
             session.payload.api_usage_metrics = apiUsageMetrics;
-            
-            
+
             if (relevantAPIs.length > 0) {
-              
               // AUTO-CONNECTION: Automatically fetch and synthesize knowledge
               if (AUTO_CONNECTION_CONFIG.enabled) {
                 try {
                   const autoConnectionStartTime = Date.now();
-                  
+
                   // Step 1: Auto-fetch from top APIs
                   const topAPIs = relevantAPIs.slice(0, 3).map(r => r.api.url);
-                  
+
                   const fetchResults = await autoFetchAPIs(
-                    topAPIs, 
-                    AUTO_CONNECTION_CONFIG.max_concurrent, 
+                    topAPIs,
+                    AUTO_CONNECTION_CONFIG.max_concurrent,
                     AUTO_CONNECTION_CONFIG.timeout_ms
                   );
-                
-                // Step 2: Auto-synthesize knowledge
-                const objective = session.payload.enhanced_goal || session.initial_objective || '';
-                
-                const synthesisResult = await autoSynthesize(
-                  fetchResults, 
-                  objective, 
-                  AUTO_CONNECTION_CONFIG.confidence_threshold
-                );
-                
-                // Step 3: Store synthesized knowledge in session
-                session.payload.synthesized_knowledge = synthesisResult.synthesizedContent;
-                session.payload.api_fetch_responses = fetchResults;
-                
-                // Step 4: Update API usage metrics with auto-connection results
-                const autoConnectionTime = Date.now() - autoConnectionStartTime;
-                session.payload.api_usage_metrics.apis_queried = fetchResults.length;
-                session.payload.api_usage_metrics.synthesis_confidence = synthesisResult.overallConfidence;
-                session.payload.api_usage_metrics.api_response_time = autoConnectionTime;
-                session.payload.api_usage_metrics.knowledge_synthesis_quality = synthesisResult.overallConfidence;
-                
-                
-                // Mark auto-connection as successful
-                session.payload.auto_connection_successful = true;
-                session.payload.auto_connection_metadata = {
-                  apis_attempted: topAPIs.length,
-                  apis_successful: synthesisResult.metadata.successfulSources,
-                  synthesis_confidence: synthesisResult.overallConfidence,
-                  total_processing_time: autoConnectionTime,
-                  sources_used: synthesisResult.sourcesUsed,
-                  contradictions_found: synthesisResult.contradictions.length
-                };
-                
-              } catch (autoConnectionError) {
-                console.warn('[FSM-KNOWLEDGE] WARNING Auto-connection failed, falling back to manual mode:', autoConnectionError);
-                
-                // Graceful fallback - mark auto-connection as failed but continue
+
+                  // Step 2: Auto-synthesize knowledge
+                  const objective =
+                    session.payload.enhanced_goal || session.initial_objective || '';
+
+                  const synthesisResult = await autoSynthesize(
+                    fetchResults,
+                    objective,
+                    AUTO_CONNECTION_CONFIG.confidence_threshold
+                  );
+
+                  // Step 3: Store synthesized knowledge in session
+                  session.payload.synthesized_knowledge = synthesisResult.synthesizedContent;
+                  session.payload.api_fetch_responses = fetchResults;
+
+                  // Step 4: Update API usage metrics with auto-connection results
+                  const autoConnectionTime = Date.now() - autoConnectionStartTime;
+                  session.payload.api_usage_metrics.apis_queried = fetchResults.length;
+                  session.payload.api_usage_metrics.synthesis_confidence =
+                    synthesisResult.overallConfidence;
+                  session.payload.api_usage_metrics.api_response_time = autoConnectionTime;
+                  session.payload.api_usage_metrics.knowledge_synthesis_quality =
+                    synthesisResult.overallConfidence;
+
+                  // Mark auto-connection as successful
+                  session.payload.auto_connection_successful = true;
+                  session.payload.auto_connection_metadata = {
+                    apis_attempted: topAPIs.length,
+                    apis_successful: synthesisResult.metadata.successfulSources,
+                    synthesis_confidence: synthesisResult.overallConfidence,
+                    total_processing_time: autoConnectionTime,
+                    sources_used: synthesisResult.sourcesUsed,
+                    contradictions_found: synthesisResult.contradictions.length,
+                  };
+                } catch (autoConnectionError) {
+                  console.warn(
+                    '[FSM-KNOWLEDGE] WARNING Auto-connection failed, falling back to manual mode:',
+                    autoConnectionError
+                  );
+
+                  // Graceful fallback - mark auto-connection as failed but continue
+                  session.payload.auto_connection_successful = false;
+                  session.payload.synthesized_knowledge = `Auto-connection failed: ${autoConnectionError instanceof Error ? autoConnectionError.message : 'Unknown error'}. Manual API tools are still available.`;
+
+                  // Keep original metrics if auto-connection fails
+                  session.payload.api_usage_metrics.knowledge_synthesis_quality = 0.0;
+                }
+              } else {
                 session.payload.auto_connection_successful = false;
-                session.payload.synthesized_knowledge = `Auto-connection failed: ${autoConnectionError instanceof Error ? autoConnectionError.message : 'Unknown error'}. Manual API tools are still available.`;
-                
-                // Keep original metrics if auto-connection fails
-                session.payload.api_usage_metrics.knowledge_synthesis_quality = 0.0;
+                session.payload.synthesized_knowledge =
+                  'Auto-connection is disabled. Use manual API tools: APISearch, MultiAPIFetch, KnowledgeSynthesize.';
               }
             } else {
               session.payload.auto_connection_successful = false;
-              session.payload.synthesized_knowledge = 'Auto-connection is disabled. Use manual API tools: APISearch, MultiAPIFetch, KnowledgeSynthesize.';
+              session.payload.synthesized_knowledge =
+                'No relevant APIs discovered for automatic knowledge gathering. Consider using manual research tools.';
             }
-            } else {
-              session.payload.auto_connection_successful = false;
-              session.payload.synthesized_knowledge = 'No relevant APIs discovered for automatic knowledge gathering. Consider using manual research tools.';
-            }
-            
           } catch (error) {
-            console.warn('[FSM-KNOWLEDGE] API discovery failed, continuing with traditional knowledge gathering:', error);
-            
+            console.warn(
+              '[FSM-KNOWLEDGE] API discovery failed, continuing with traditional knowledge gathering:',
+              error
+            );
+
             // Initialize empty API metrics on failure
             session.payload.api_discovery_results = [];
             session.payload.api_fetch_responses = [];
@@ -634,11 +664,10 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
               processing_time: 0,
               discovery_success_rate: 0.0,
               api_response_time: 0,
-              knowledge_synthesis_quality: 0.0
+              knowledge_synthesis_quality: 0.0,
             };
           }
         } else {
-          
           // Initialize empty API fields for backward compatibility
           session.payload.api_discovery_results = session.payload.api_discovery_results || [];
           session.payload.api_fetch_responses = session.payload.api_fetch_responses || [];
@@ -650,14 +679,14 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
             processing_time: 0,
             discovery_success_rate: 0.0,
             api_response_time: 0,
-            knowledge_synthesis_quality: 0.0
+            knowledge_synthesis_quality: 0.0,
           };
         }
-        
+
         nextPhase = 'PLAN';
       }
       break;
-      
+
     case 'PLAN':
       if (input.phase_completed === 'PLAN') {
         // Confirm plan created and move to execution
@@ -671,13 +700,15 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
               enableCaching: true,
               enableOptimization: true,
               maxComplexity: 'EXPERT' as any,
-              timeoutMs: 5000
+              timeoutMs: 5000,
             });
-            
+
             // Store enhanced todos and performance metrics
             session.payload.current_todos = enhancedResults.map(result => result.todo);
             session.payload.ast_performance_metrics = getExtractionPerformanceMetrics();
-            session.payload.enhanced_extraction_count = enhancedResults.filter(r => r.metaPrompt).length;
+            session.payload.enhanced_extraction_count = enhancedResults.filter(
+              r => r.metaPrompt
+            ).length;
           } else {
             session.payload.current_todos = [];
           }
@@ -686,24 +717,24 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
         nextPhase = 'EXECUTE';
       }
       break;
-      
+
     case 'EXECUTE':
       if (input.phase_completed === 'EXECUTE') {
         // Store execution results and continue or move to verification
         if (input.payload) {
           Object.assign(session.payload, input.payload);
-          
+
           // Update reasoning effectiveness based on execution success
           if (input.payload.execution_success) {
             session.reasoning_effectiveness = Math.min(1.0, session.reasoning_effectiveness + 0.1);
           } else {
             session.reasoning_effectiveness = Math.max(0.3, session.reasoning_effectiveness - 0.1);
           }
-          
+
           // Check if there are more tasks to execute (fractal iteration)
           const currentTaskIndex = session.payload.current_task_index || 0;
           const totalTasks = (session.payload.current_todos || []).length;
-          
+
           if (input.payload.more_tasks_pending || currentTaskIndex < totalTasks - 1) {
             session.payload.current_task_index = currentTaskIndex + 1;
             nextPhase = 'EXECUTE'; // Continue in EXECUTE phase
@@ -715,23 +746,23 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
         }
       }
       break;
-      
+
     case 'VERIFY':
       if (input.phase_completed === 'VERIFY') {
         // Enhanced verification with strict completion percentage validation
         const verificationResult = validateTaskCompletion(session, input.payload);
-        
+
         if (verificationResult.isValid && input.payload?.verification_passed === true) {
           nextPhase = 'DONE';
         } else {
           // Log validation failure details
           console.warn(`Verification failed: ${verificationResult.reason}`);
           console.warn(`Completion percentage: ${verificationResult.completionPercentage}%`);
-          
+
           // Store verification failure context for rollback
           session.payload.verification_failure_reason = verificationResult.reason;
           session.payload.last_completion_percentage = verificationResult.completionPercentage;
-          
+
           // Rollback logic based on completion percentage
           if (verificationResult.completionPercentage < 50) {
             // Severe incompletion - restart from planning
@@ -751,12 +782,12 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
         }
       }
       break;
-      
+
     case 'DONE':
       // Stay in DONE state
       nextPhase = 'DONE';
       break;
-      
+
     default:
       // Fallback to QUERY if unknown state
       nextPhase = 'QUERY';
@@ -767,18 +798,22 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
   stateManager.updateSessionState(sessionId, session);
 
   // Generate role-enhanced system prompt with cognitive amplification
-  const roleEnhancedPrompt = generateRoleEnhancedPrompt(nextPhase, session.detected_role, session.initial_objective);
+  const roleEnhancedPrompt = generateRoleEnhancedPrompt(
+    nextPhase,
+    session.detected_role,
+    session.initial_objective
+  );
   const allowedTools = PHASE_ALLOWED_TOOLS[nextPhase];
-  
+
   // Apply reasoning rules engine validation and enhancement
   const validationContext = createValidationContext(session, nextPhase, roleEnhancedPrompt, input);
   const reasoningValidation = reasoningRulesEngine.validateReasoning(validationContext);
-  
+
   // Apply cognitive framework injection for enhanced reasoning
   const cognitiveEnhancement = cognitiveFrameworkManager.injectCognitiveFramework(
     session.detected_role,
     nextPhase,
-    roleEnhancedPrompt, 
+    roleEnhancedPrompt,
     validationContext
   );
 
@@ -791,13 +826,13 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
 
   // Start with enhanced reasoning or original prompt
   let augmentedPrompt = cognitiveEnhancement.enhancedReasoning || roleEnhancedPrompt;
-  
+
   // Note: Reasoning validation feedback available when reasoning rules engine is enabled
   // if (!reasoningValidation.isValid) {
-  //   const criticalViolations = reasoningValidation.violations.filter(v => 
+  //   const criticalViolations = reasoningValidation.violations.filter(v =>
   //     v.severity === ValidationSeverity.CRITICAL || v.severity === ValidationSeverity.ERROR
   //   );
-  //   
+  //
   //   if (criticalViolations.length > 0) {
   //     augmentedPrompt += `\n\n**🚨 REASONING VALIDATION ALERTS:**\n`;
   //     criticalViolations.forEach(violation => {
@@ -808,7 +843,7 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
   // }
 
   // Cognitive enhancement is handled through role-specific thinking methodologies in prompts
-  
+
   if (nextPhase === 'ENHANCE' && session.payload.interpreted_goal) {
     augmentedPrompt += `\n\n**📋 CONTEXT:** ${session.payload.interpreted_goal}`;
   } else if (nextPhase === 'KNOWLEDGE') {
@@ -839,26 +874,26 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
     const currentTaskIndex = session.payload.current_task_index || 0;
     const currentTodos = session.payload.current_todos || [];
     const currentTodo = currentTodos[currentTaskIndex];
-    
+
     augmentedPrompt += `\n\nEXECUTION CONTEXT:\n- Current Task Index: ${currentTaskIndex}\n- Total Tasks: ${currentTodos.length}\n- Current Task: ${currentTodo || 'None'}\n- Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Objective: ${session.initial_objective}`;
-    
+
     // Add fractal execution guidance
     augmentedPrompt += `\n\nFRACTAL EXECUTION PROTOCOL:\n1. Check current todo (index ${currentTaskIndex}) for meta-prompt patterns\n2. If todo contains (ROLE:...) pattern, use Task() tool to spawn specialized agent\n3. If todo is direct execution, use appropriate tools (Bash/Browser/etc.)\n4. After each action, report results back\n\nSINGLE TOOL PER ITERATION: Choose ONE tool call per turn (Manus requirement).`;
   } else if (nextPhase === 'VERIFY') {
     const todos = session.payload.current_todos || [];
     const taskBreakdown = calculateTaskBreakdown(todos);
     const completionPercentage = calculateCompletionPercentage(taskBreakdown);
-    const criticalTasks = todos.filter((todo: any) => 
-      todo.priority === 'high' || 
-      todo.type === 'TaskAgent' || 
-      todo.meta_prompt
+    const criticalTasks = todos.filter(
+      (todo: any) => todo.priority === 'high' || todo.type === 'TaskAgent' || todo.meta_prompt
     );
-    const criticalTasksCompleted = criticalTasks.filter((todo: any) => todo.status === 'completed').length;
-    
+    const criticalTasksCompleted = criticalTasks.filter(
+      (todo: any) => todo.status === 'completed'
+    ).length;
+
     augmentedPrompt += `\n\nVERIFICATION CONTEXT:\n- Original Objective: ${session.initial_objective}\n- Final Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Role Applied: ${session.detected_role}`;
     augmentedPrompt += `\n\nCOMPLETION METRICS:\n- Overall Completion: ${completionPercentage}% (${taskBreakdown.completed}/${taskBreakdown.total} tasks)\n- Critical Tasks Completed: ${criticalTasksCompleted}/${criticalTasks.length}\n- Tasks Breakdown: ${taskBreakdown.completed} completed, ${taskBreakdown.in_progress} in-progress, ${taskBreakdown.pending} pending`;
     augmentedPrompt += `\n\nVERIFICATION REQUIREMENTS:\n- Critical tasks must be 100% complete\n- Overall completion must be >=95%\n- No high-priority tasks can remain pending\n- No tasks can remain in-progress\n- Execution success rate must be >=70%\n- verification_passed=true requires backing metrics`;
-    
+
     if (session.payload.verification_failure_reason) {
       augmentedPrompt += `\n\n**🚨 PREVIOUS VERIFICATION FAILURE:**\n${session.payload.verification_failure_reason}\nLast Completion: ${session.payload.last_completion_percentage}%`;
     }
@@ -877,9 +912,9 @@ export async function processState(input: MessageJARVIS): Promise<FromJARVIS> {
       detected_role: session.detected_role,
       reasoning_effectiveness: session.reasoning_effectiveness,
       phase_transition_count: (session.payload.phase_transition_count || 0) + 1,
-      ...session.payload
+      ...session.payload,
     },
-    status
+    status,
   };
 
   return output;
@@ -893,36 +928,36 @@ export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | nul
       enableSecurity: false, // Keep disabled for backward compatibility
       enableCaching: true,
       enableOptimization: false,
-      timeoutMs: 1000 // Short timeout for compatibility
+      timeoutMs: 1000, // Short timeout for compatibility
     });
-    
+
     if (enhanced) {
       return {
         role_specification: enhanced.role_specification,
         context_parameters: enhanced.context_parameters,
         instruction_block: enhanced.instruction_block,
-        output_requirements: enhanced.output_requirements
+        output_requirements: enhanced.output_requirements,
       };
     }
   } catch (error) {
     console.warn('Enhanced extraction failed, falling back to regex:', error);
   }
-  
+
   // Fallback to original regex-based extraction
   const roleMatch = todoContent.match(/\(ROLE:\s*([^)]+)\)/i);
   const contextMatch = todoContent.match(/\(CONTEXT:\s*([^)]+)\)/i);
   const promptMatch = todoContent.match(/\(PROMPT:\s*([^)]+)\)/i);
   const outputMatch = todoContent.match(/\(OUTPUT:\s*([^)]+)\)/i);
-  
+
   if (roleMatch && promptMatch) {
     return {
       role_specification: roleMatch[1].trim(),
       context_parameters: contextMatch ? { domain: contextMatch[1].trim() } : {},
       instruction_block: promptMatch[1].trim(),
-      output_requirements: outputMatch ? outputMatch[1].trim() : 'comprehensive_deliverable'
+      output_requirements: outputMatch ? outputMatch[1].trim() : 'comprehensive_deliverable',
     };
   }
-  
+
   return null;
 }
 
@@ -932,21 +967,25 @@ export function extractEnhancedMetaPromptFromTodo(todoContent: string): Enhanced
     enableSecurity: true,
     enableCaching: true,
     enableOptimization: true,
-    timeoutMs: 5000
+    timeoutMs: 5000,
   });
 }
 
 // Performance tracking for reasoning effectiveness
-export function updateReasoningEffectiveness(sessionId: string, success: boolean, taskComplexity: 'simple' | 'complex' = 'simple'): void {
+export function updateReasoningEffectiveness(
+  sessionId: string,
+  success: boolean,
+  taskComplexity: 'simple' | 'complex' = 'simple'
+): void {
   const session = stateManager.getSessionState(sessionId);
   const multiplier = taskComplexity === 'complex' ? 0.15 : 0.1;
-  
+
   if (success) {
     session.reasoning_effectiveness = Math.min(1.0, session.reasoning_effectiveness + multiplier);
   } else {
     session.reasoning_effectiveness = Math.max(0.3, session.reasoning_effectiveness - multiplier);
   }
-  
+
   stateManager.updateSessionState(sessionId, session);
 }
 
@@ -955,19 +994,19 @@ export function updateReasoningEffectiveness(sessionId: string, success: boolean
 export function validateTaskCompletion(session: any, verificationPayload: any): VerificationResult {
   const todos = session.payload.current_todos || [];
   const currentTaskIndex = session.payload.current_task_index || 0;
-  
+
   // Calculate task completion metrics
   const taskBreakdown = calculateTaskBreakdown(todos);
   const completionPercentage = calculateCompletionPercentage(taskBreakdown);
-  
+
   // Identify critical tasks (high priority or meta-prompt tasks)
-  const criticalTasks = todos.filter((todo: any) => 
-    todo.priority === 'high' || 
-    todo.type === 'TaskAgent' || 
-    todo.meta_prompt
+  const criticalTasks = todos.filter(
+    (todo: any) => todo.priority === 'high' || todo.type === 'TaskAgent' || todo.meta_prompt
   );
-  const criticalTasksCompleted = criticalTasks.filter((todo: any) => todo.status === 'completed').length;
-  
+  const criticalTasksCompleted = criticalTasks.filter(
+    (todo: any) => todo.status === 'completed'
+  ).length;
+
   // Strict validation rules
   const result: VerificationResult = {
     isValid: false,
@@ -975,44 +1014,44 @@ export function validateTaskCompletion(session: any, verificationPayload: any): 
     reason: '',
     criticalTasksCompleted,
     totalCriticalTasks: criticalTasks.length,
-    taskBreakdown
+    taskBreakdown,
   };
-  
+
   // Rule 1: 100% critical task completion required
   if (criticalTasks.length > 0 && criticalTasksCompleted < criticalTasks.length) {
     result.reason = `Critical tasks incomplete: ${criticalTasksCompleted}/${criticalTasks.length} completed. 100% critical task completion required.`;
     return result;
   }
-  
+
   // Rule 2: Minimum 95% overall completion for non-critical scenarios
   if (completionPercentage < 95) {
     result.reason = `Overall completion ${completionPercentage}% below required threshold of 95%.`;
     return result;
   }
-  
+
   // Rule 3: No pending high-priority tasks
-  const pendingHighPriority = todos.filter((todo: any) => 
-    todo.status === 'pending' && todo.priority === 'high'
+  const pendingHighPriority = todos.filter(
+    (todo: any) => todo.status === 'pending' && todo.priority === 'high'
   );
   if (pendingHighPriority.length > 0) {
     result.reason = `${pendingHighPriority.length} high-priority tasks still pending.`;
     return result;
   }
-  
+
   // Rule 4: All in-progress tasks must be resolved
   const inProgressTasks = todos.filter((todo: any) => todo.status === 'in_progress');
   if (inProgressTasks.length > 0) {
     result.reason = `${inProgressTasks.length} tasks still in progress. All tasks must be completed or explicitly marked as pending.`;
     return result;
   }
-  
+
   // Rule 5: Verify execution success rate
   const executionSuccessRate = session.reasoning_effectiveness || 0;
   if (executionSuccessRate < 0.7) {
     result.reason = `Execution success rate ${(executionSuccessRate * 100).toFixed(1)}% below required threshold of 70%.`;
     return result;
   }
-  
+
   // Rule 6: Validate verification payload consistency
   if (verificationPayload?.verification_passed === true) {
     // Additional validation: ensure verification_passed claim is backed by actual metrics
@@ -1021,22 +1060,27 @@ export function validateTaskCompletion(session: any, verificationPayload: any): 
       return result;
     }
   }
-  
+
   // All validation rules passed
   result.isValid = true;
   result.reason = `Validation passed: ${completionPercentage}% completion, ${criticalTasksCompleted}/${criticalTasks.length} critical tasks completed.`;
-  
+
   return result;
 }
 
-function calculateTaskBreakdown(todos: any[]): { completed: number; in_progress: number; pending: number; total: number } {
+function calculateTaskBreakdown(todos: any[]): {
+  completed: number;
+  in_progress: number;
+  pending: number;
+  total: number;
+} {
   const breakdown = {
     completed: 0,
     in_progress: 0,
     pending: 0,
-    total: todos.length
+    total: todos.length,
   };
-  
+
   todos.forEach(todo => {
     switch (todo.status) {
       case 'completed':
@@ -1050,7 +1094,7 @@ function calculateTaskBreakdown(todos: any[]): { completed: number; in_progress:
         break;
     }
   });
-  
+
   return breakdown;
 }
 
@@ -1060,12 +1104,17 @@ function calculateCompletionPercentage(breakdown: { completed: number; total: nu
 }
 
 // Helper function to create validation context for reasoning rules engine
-function createValidationContext(session: any, phase: Phase, reasoning: string, input: MessageJARVIS): ValidationContext {
+function createValidationContext(
+  session: any,
+  phase: Phase,
+  reasoning: string,
+  input: MessageJARVIS
+): ValidationContext {
   // Determine objective complexity based on task count and reasoning length
   let objectiveComplexity: ComplexityLevel = ComplexityLevel.SIMPLE;
   const taskCount = (session.payload.current_todos || []).length;
   const reasoningLength = reasoning.length;
-  
+
   if (taskCount > 5 || reasoningLength > 1000) {
     objectiveComplexity = ComplexityLevel.COMPLEX;
   } else if (taskCount > 2 || reasoningLength > 500) {
@@ -1090,7 +1139,6 @@ function createValidationContext(session: any, phase: Phase, reasoning: string, 
     role: session.detected_role,
     phase: phase,
     objective: session.initial_objective || '',
-    reasoning: reasoning
+    reasoning: reasoning,
   };
 }
-
