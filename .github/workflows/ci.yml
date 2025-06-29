@@ -46,12 +46,8 @@ jobs:
     - name: Create coverage directory
       run: mkdir -p coverage
 
-    - name: Debug test environment
-      run: |
-        echo "Testing basic vitest execution..."
-        npx vitest --version
-        echo "Testing simple vitest run..."
-        npx vitest run --reporter=basic --no-coverage || echo "Vitest failed, trying alternative..."
+    - name: Run unit tests
+      run: npm run test -- --run --reporter verbose
       env:
         MIN_COMPLETION_PERCENT: 70
         CI: true
