@@ -66,21 +66,27 @@ export async function autoFetchAPIs(
   // Use p-limit for better concurrency control
   const limit = pLimit(maxConcurrent);
 
-  const fetchPromises = apiUrls.slice(0, 5).map((url, index) => 
+  const fetchPromises = apiUrls.slice(0, 5).map((url, index) =>
     limit(async () => {
       try {
         const startTime = Date.now();
-        
+
         // SSRF protection - validate URL before making request
         const sanitizedUrl = validateAndSanitizeURL(url);
         if (!sanitizedUrl) {
           throw new Error('URL blocked by SSRF protection');
         }
-        
+
         const hostname = new URL(sanitizedUrl).hostname;
 
         // Check rate limiting using config
-        if (!rateLimiter.canMakeRequest(hostname, CONFIG.RATE_LIMIT_REQUESTS_PER_MINUTE, CONFIG.RATE_LIMIT_WINDOW_MS)) {
+        if (
+          !rateLimiter.canMakeRequest(
+            hostname,
+            CONFIG.RATE_LIMIT_REQUESTS_PER_MINUTE,
+            CONFIG.RATE_LIMIT_WINDOW_MS
+          )
+        ) {
           throw new Error('Rate limit exceeded');
         }
 
@@ -111,13 +117,13 @@ export async function autoFetchAPIs(
       } catch (error) {
         const duration = Date.now() - Date.now();
         let hostname = 'unknown';
-        
+
         try {
           hostname = new URL(url).hostname;
         } catch {
           // URL parsing failed, keep 'unknown'
         }
-        
+
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
         return {
@@ -299,7 +305,9 @@ function calculateSimpleSimilarity(text1: string, text2: string): number {
  * @param query - The query/objective to research
  * @returns Promise<KnowledgePhaseResult>
  */
-export async function autoConnection(query: string): Promise<{ answer: string; contradictions: string[]; confidence: number }> {
+export async function autoConnection(
+  query: string
+): Promise<{ answer: string; contradictions: string[]; confidence: number }> {
   try {
     // Use a subset of sample APIs for demonstration
     const sampleUrls = [

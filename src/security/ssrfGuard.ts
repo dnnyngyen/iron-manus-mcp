@@ -11,27 +11,27 @@ export function ssrfGuard(url: string, allowedHosts?: string[]): boolean {
   if (!CONFIG.ENABLE_SSRF_PROTECTION) {
     return true; // SSRF protection disabled
   }
-  
+
   const hosts = allowedHosts || CONFIG.ALLOWED_HOSTS;
-  
+
   try {
     const urlObj = new URL(url);
-    
+
     // Block non-HTTP(S) protocols
     if (!['http:', 'https:'].includes(urlObj.protocol)) {
       return false;
     }
-    
+
     // Block private/local IP ranges
     if (isPrivateIP(urlObj.hostname)) {
       return false;
     }
-    
+
     // Block localhost variants
     if (isLocalhost(urlObj.hostname)) {
       return false;
     }
-    
+
     // If allowed hosts are specified, only allow those
     if (hosts.length > 0) {
       return hosts.some(allowedHost => {
@@ -43,7 +43,7 @@ export function ssrfGuard(url: string, allowedHosts?: string[]): boolean {
         return urlObj.hostname === allowedHost;
       });
     }
-    
+
     // If no allowed hosts specified, allow all public hosts
     return true;
   } catch (error) {
@@ -58,36 +58,36 @@ export function ssrfGuard(url: string, allowedHosts?: string[]): boolean {
 function isPrivateIP(hostname: string): boolean {
   // IPv4 private ranges
   const ipv4PrivateRanges = [
-    /^10\./,                    // 10.0.0.0/8
+    /^10\./, // 10.0.0.0/8
     /^172\.(1[6-9]|2[0-9]|3[01])\./, // 172.16.0.0/12
-    /^192\.168\./,              // 192.168.0.0/16
-    /^127\./,                   // 127.0.0.0/8 (loopback)
-    /^169\.254\./,              // 169.254.0.0/16 (link-local)
+    /^192\.168\./, // 192.168.0.0/16
+    /^127\./, // 127.0.0.0/8 (loopback)
+    /^169\.254\./, // 169.254.0.0/16 (link-local)
   ];
-  
+
   // IPv6 private ranges (simplified)
   const ipv6PrivateRanges = [
-    /^::1$/,                    // loopback
-    /^::$/,                     // unspecified
-    /^fe80:/,                   // link-local
-    /^fc00:/,                   // unique local
-    /^fd00:/,                   // unique local
+    /^::1$/, // loopback
+    /^::$/, // unspecified
+    /^fe80:/, // link-local
+    /^fc00:/, // unique local
+    /^fd00:/, // unique local
   ];
-  
+
   // Check IPv4 private ranges
   for (const range of ipv4PrivateRanges) {
     if (range.test(hostname)) {
       return true;
     }
   }
-  
+
   // Check IPv6 private ranges
   for (const range of ipv6PrivateRanges) {
     if (range.test(hostname)) {
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -95,14 +95,8 @@ function isPrivateIP(hostname: string): boolean {
  * Check if hostname is localhost variant
  */
 function isLocalhost(hostname: string): boolean {
-  const localhostVariants = [
-    'localhost',
-    '0.0.0.0',
-    '127.0.0.1',
-    '::1',
-    '::',
-  ];
-  
+  const localhostVariants = ['localhost', '0.0.0.0', '127.0.0.1', '::1', '::'];
+
   return localhostVariants.includes(hostname.toLowerCase());
 }
 
@@ -116,22 +110,22 @@ export function validateAndSanitizeURL(url: string, allowedHosts?: string[]): st
   if (!ssrfGuard(url, allowedHosts)) {
     return null;
   }
-  
+
   try {
     const urlObj = new URL(url);
-    
+
     // Remove potentially dangerous query parameters
     const dangerousParams = ['callback', 'jsonp', '__proto__', 'constructor'];
     dangerousParams.forEach(param => {
       urlObj.searchParams.delete(param);
     });
-    
+
     // Ensure HTTPS for sensitive operations (optional)
     if (urlObj.protocol === 'http:' && CONFIG.ALLOWED_HOSTS.length > 0) {
       // If we have an allow list, prefer HTTPS
       urlObj.protocol = 'https:';
     }
-    
+
     return urlObj.toString();
   } catch (error) {
     return null;

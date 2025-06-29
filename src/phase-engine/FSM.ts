@@ -16,7 +16,7 @@ import {
   recordCognitiveLoad,
   KnowledgePhaseResult,
   AutoConnectionDeps,
-} from "./helpers.js";
+} from './helpers.js';
 import {
   generateRoleEnhancedPrompt,
   detectRole,
@@ -31,8 +31,16 @@ import {
   parseClaudeAPISelection,
   SAMPLE_API_REGISTRY,
 } from '../core/api-registry.js';
-import { autoFetchAPIs, autoSynthesize, AUTO_CONNECTION_CONFIG } from '../knowledge/autoConnection.js';
-import { validateTaskCompletion, calculateTaskBreakdown, calculateCompletionPercentage } from '../verification/metrics.js';
+import {
+  autoFetchAPIs,
+  autoSynthesize,
+  AUTO_CONNECTION_CONFIG,
+} from '../knowledge/autoConnection.js';
+import {
+  validateTaskCompletion,
+  calculateTaskBreakdown,
+  calculateCompletionPercentage,
+} from '../verification/metrics.js';
 import { CONFIG } from '../config.js';
 
 // Core FSM implementation using basic, proven functionality
@@ -46,7 +54,10 @@ export function createFSM(deps: AutoConnectionDeps) {
   };
 }
 
-export async function processState(input: MessageJARVIS, deps: AutoConnectionDeps): Promise<FromJARVIS> {
+export async function processState(
+  input: MessageJARVIS,
+  deps: AutoConnectionDeps
+): Promise<FromJARVIS> {
   const sessionId = input.session_id;
   const session = stateManager.getSessionState(sessionId);
 
@@ -219,7 +230,7 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
         // Proceed with auto-connection using Claude's selected APIs
         const objective = session.payload.enhanced_goal || session.initial_objective || '';
         const result: KnowledgePhaseResult = await deps.autoConnection(objective);
-        
+
         session.payload.synthesized_knowledge = result.answer;
         session.payload.knowledge_contradictions = result.contradictions;
         session.payload.knowledge_confidence = result.confidence;
@@ -265,10 +276,7 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
     session.payload.awaiting_api_selection = true;
 
     // Fallback to hardcoded selection
-    const relevantAPIs = selectRelevantAPIs(
-      session.payload.enhanced_goal,
-      session.detected_role
-    );
+    const relevantAPIs = selectRelevantAPIs(session.payload.enhanced_goal, session.detected_role);
 
     // Store API discovery results in session payload
     session.payload.api_discovery_results = relevantAPIs;
@@ -293,9 +301,9 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
       try {
         const autoConnectionStartTime = Date.now();
         const objective = session.payload.enhanced_goal || session.initial_objective || '';
-        
+
         const result: KnowledgePhaseResult = await deps.autoConnection(objective);
-        
+
         // Store synthesized knowledge in session
         session.payload.synthesized_knowledge = result.answer;
         session.payload.knowledge_contradictions = result.contradictions;

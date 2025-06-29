@@ -4,26 +4,26 @@ import { z } from 'zod';
 // Phase enum validation
 export const PhaseSchema = z.enum([
   'INIT',
-  'QUERY', 
+  'QUERY',
   'ENHANCE',
   'KNOWLEDGE',
   'PLAN',
-  'EXECUTE', 
+  'EXECUTE',
   'VERIFY',
-  'DONE'
+  'DONE',
 ]);
 
 // Role enum validation
 export const RoleSchema = z.enum([
   'planner',
-  'coder', 
+  'coder',
   'critic',
   'researcher',
   'analyzer',
   'synthesizer',
   'ui_architect',
-  'ui_implementer', 
-  'ui_refiner'
+  'ui_implementer',
+  'ui_refiner',
 ]);
 
 // Message JARVIS input validation
@@ -31,7 +31,7 @@ export const MessageJARVISSchema = z.object({
   session_id: z.string().min(1),
   phase_completed: PhaseSchema.optional(),
   initial_objective: z.string().optional(),
-  payload: z.record(z.any()).optional()
+  payload: z.record(z.any()).optional(),
 });
 
 // From JARVIS output validation
@@ -40,7 +40,7 @@ export const FromJARVISSchema = z.object({
   system_prompt: z.string().min(1),
   allowed_next_tools: z.array(z.string()),
   payload: z.record(z.any()).optional(),
-  status: z.enum(['IN_PROGRESS', 'DONE', 'ERROR'])
+  status: z.enum(['IN_PROGRESS', 'DONE', 'ERROR']),
 });
 
 // Meta-prompt validation
@@ -48,7 +48,7 @@ export const MetaPromptSchema = z.object({
   role_specification: z.string().min(1),
   context_parameters: z.record(z.any()),
   instruction_block: z.string().min(1),
-  output_requirements: z.string().min(1)
+  output_requirements: z.string().min(1),
 });
 
 // API fetch result validation
@@ -58,7 +58,7 @@ export const APIFetchResultSchema = z.object({
   confidence: z.number().min(0).max(1),
   success: z.boolean(),
   duration: z.number().min(0),
-  error: z.string().optional()
+  error: z.string().optional(),
 });
 
 // Verification result validation
@@ -72,8 +72,8 @@ export const VerificationResultSchema = z.object({
     completed: z.number().min(0),
     in_progress: z.number().min(0),
     pending: z.number().min(0),
-    total: z.number().min(0)
-  })
+    total: z.number().min(0),
+  }),
 });
 
 // URL validation for SSRF protection
@@ -97,7 +97,7 @@ export const ConfigSchema = z.object({
   MAX_REASONING_EFFECTIVENESS: z.number().min(0).max(1),
   ALLOWED_HOSTS: z.array(z.string()),
   ENABLE_SSRF_PROTECTION: z.boolean(),
-  USER_AGENT: z.string().min(1)
+  USER_AGENT: z.string().min(1),
 });
 
 // Type exports for use in other modules

@@ -1,5 +1,5 @@
 // src/phase-engine/helpers.ts
-import type { Role } from "../core/types.js";
+import type { Role } from '../core/types.js';
 
 // Type alias for compatibility
 export type RoleName = Role;
@@ -14,9 +14,7 @@ export function detectEnhancedRole(text: string): RoleName | null {
 }
 
 export function extractEnhancedMetaPrompts(text: string): string[] {
-  return Array.from(text.matchAll(/\((?:FOCUS|OUTPUT):\s*([^)\n]+)\)/gi)).map(
-    ([, p]) => p.trim()
-  );
+  return Array.from(text.matchAll(/\((?:FOCUS|OUTPUT):\s*([^)\n]+)\)/gi)).map(([, p]) => p.trim());
 }
 
 /** crude token estimator ~4 chars = 1 token */

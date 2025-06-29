@@ -131,8 +131,14 @@ export function updateReasoningEffectiveness(
   const multiplier = taskComplexity === 'complex' ? 0.15 : 0.1;
 
   if (success) {
-    session.reasoning_effectiveness = Math.min(CONFIG.MAX_REASONING_EFFECTIVENESS, session.reasoning_effectiveness + multiplier);
+    session.reasoning_effectiveness = Math.min(
+      CONFIG.MAX_REASONING_EFFECTIVENESS,
+      session.reasoning_effectiveness + multiplier
+    );
   } else {
-    session.reasoning_effectiveness = Math.max(CONFIG.MIN_REASONING_EFFECTIVENESS, session.reasoning_effectiveness - multiplier);
+    session.reasoning_effectiveness = Math.max(
+      CONFIG.MIN_REASONING_EFFECTIVENESS,
+      session.reasoning_effectiveness - multiplier
+    );
   }
 }
