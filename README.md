@@ -8,7 +8,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Fit over 350k+ tokens in one session!
+## Fit over 300k+ tokens in one session!
 
 ### 📹 Live Demo GIF
 ![Iron Manus MCP Demo](./demo.gif)
