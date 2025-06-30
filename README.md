@@ -11,7 +11,7 @@
 ## Fit over 300k+ tokens in one session!
 
 ### 📹 Live Demo GIF
-![Iron Manus MCP Demo](./demo.gif)
+![Iron Manus MCP Demo](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWpiYWd4eWx6bWlwcHA5Z3QxOGR1Nzh6aWcyY3hzMGlpaGpqYm12ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7fqy8AAeJusLTkSGzF/giphy.gif)
 
 ### 🎥 Full Video Tutorial
 [![Iron Manus MCP Demo](https://img.youtube.com/vi/CWuQ_PvZkOs/mqdefault.jpg)](https://www.youtube.com/watch?v=CWuQ_PvZkOs)
