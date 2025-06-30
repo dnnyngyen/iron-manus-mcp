@@ -1,6 +1,6 @@
 # 🦾 Iron Manus MCP (J.A.R.V.I.S.)
 
-> **Claude-code MCP server that spawns agents as tools** - A comprehensive agent orchestration system that lets Claude autonomously break down complex workflows through structured phases and 65+ API registry integration.
+> **Claude-code MCP server that spawns agents as tools** - A comprehensive agent orchestration system that lets Claude autonomously break down complex workflows through structured delegation phases and 65+ API registry integration.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
 [![Tests](https://img.shields.io/badge/tests-107%2F107-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
