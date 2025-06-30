@@ -8,11 +8,15 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🎬 Demo Video
+## 🎬 Demo
 
+### 📹 Live Demo GIF
+![Iron Manus MCP Demo](./demo.gif)
+
+### 🎥 Full Video Tutorial
 [![Iron Manus MCP Demo](https://img.youtube.com/vi/CWuQ_PvZkOs/mqdefault.jpg)](https://www.youtube.com/watch?v=CWuQ_PvZkOs)
 
-**🎥 [Watch Iron Manus MCP in Action](https://www.youtube.com/watch?v=CWuQ_PvZkOs)** - See the 6-phase workflow orchestration in real-time
+**[Watch the complete walkthrough](https://www.youtube.com/watch?v=CWuQ_PvZkOs)** - See the 6-phase workflow orchestration in real-time
 
 ## What It Does
 
