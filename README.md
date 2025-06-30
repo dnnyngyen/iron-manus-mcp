@@ -1,6 +1,6 @@
 # 🦾 Iron Manus MCP v0.2.0
 
-> **Claude-code MCP server that uses THoT meta orchestration for fractal agent spawning** - A comprehensive tool orchestration system that manages complex workflows through structured phases and 65+ API registry integration.
+> **Claude-code MCP server that spawns agents as tools** - A comprehensive agent orchestration system that lets Claude autonomously break down complex workflows through structured phases and 65+ API registry integration.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
 [![Tests](https://img.shields.io/badge/tests-107%2F107-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
