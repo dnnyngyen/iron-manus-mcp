@@ -1,4 +1,4 @@
-# 🦾 Iron Manus MCP v0.2.0
+# 🦾 Iron Manus MCP (J.A.R.V.I.S.)
 
 > **Claude-code MCP server that spawns agents as tools** - A comprehensive agent orchestration system that lets Claude autonomously break down complex workflows through structured phases and 65+ API registry integration.
 
