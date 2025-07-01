@@ -60,10 +60,40 @@ npm start
 ```
 
 **For MCP Integration:**
-Add to your MCP client configuration or register with Claude Code:
+
+Local installation with Claude Code:
 ```bash
+# From the project directory after building
 claude mcp add iron-manus-mcp node dist/index.js
 ```
+
+**Note:** The `claude mcp add` command doesn't support complex Docker arguments. To use Iron Manus MCP with Docker in Claude Code, you need to manually add it to your configuration file.
+
+Edit your Claude Code configuration file (typically `~/.config/claude/claude_config.json` or `~/Library/Application Support/Claude/claude_config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "iron-manus-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "ALLOWED_HOSTS=api.github.com,httpbin.org",
+        "iron-manus-mcp:local"
+      ]
+    }
+  }
+}
+```
+
+**Note:** Replace `iron-manus-mcp:local` with:
+- `iron-manus-mcp:local` - if you built it locally with `docker build -t iron-manus-mcp:local .`
+- `dnnyngyen/iron-manus-mcp:latest` - once the image is published to Docker Hub
+
+After adding this configuration, restart Claude Code for the changes to take effect.
 
 ## Example Usage
 
@@ -94,6 +124,68 @@ await mcp.callTool({
 - `KnowledgeSynthesize` - Cross-validation with conflict resolution
 - `APIValidator` - Response validation and confidence scoring
 
+## Docker Usage
+
+### Quick Start with Docker
+
+```bash
+# Using pre-built image from Docker Hub
+docker run -i --rm \
+  -e ALLOWED_HOSTS="api.github.com,httpbin.org" \
+  dnnyngyen/iron-manus-mcp:latest
+```
+
+### MCP Integration with Docker
+
+Add to your `.mcp.json` configuration:
+```json
+{
+  "mcpServers": {
+    "iron-manus": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-e", "ALLOWED_HOSTS=api.github.com,httpbin.org",
+        "-e", "KNOWLEDGE_MAX_CONCURRENCY=3",
+        "dnnyngyen/iron-manus-mcp:latest"
+      ]
+    }
+  }
+}
+```
+
+### Building and Running Locally
+
+```bash
+# Build the Docker image
+docker build -t iron-manus-mcp:local .
+
+# Run with docker-compose (recommended)
+docker-compose up
+
+# Or run directly with Docker
+docker run -i --rm \
+  -e ALLOWED_HOSTS="api.github.com,httpbin.org,api.openai.com" \
+  -e KNOWLEDGE_MAX_CONCURRENCY=2 \
+  -e ENABLE_SSRF_PROTECTION=true \
+  iron-manus-mcp:local
+```
+
+### Configuration with Docker
+
+All environment variables can be passed using `-e` flags or configured in `docker-compose.yml`:
+
+```bash
+# Example with multiple configurations
+docker run -i --rm \
+  -e ALLOWED_HOSTS="api.github.com,httpbin.org" \
+  -e KNOWLEDGE_MAX_CONCURRENCY=3 \
+  -e KNOWLEDGE_TIMEOUT_MS=5000 \
+  -e RATE_LIMIT_REQUESTS_PER_MINUTE=10 \
+  -e ENABLE_SSRF_PROTECTION=true \
+  iron-manus-mcp:local
+```
+
 ## Development
 
 **Prerequisites:**
@@ -121,6 +213,8 @@ ALLOWED_HOSTS="api.github.com,httpbin.org"  # SSRF whitelist
 ENABLE_SSRF_PROTECTION=true          # Security toggle
 MIN_COMPLETION_PERCENT=70            # Quality threshold
 ```
+
+See the complete list of configuration options in the [docker-compose.yml](docker-compose.yml) file.
 
 ## Testing
 
