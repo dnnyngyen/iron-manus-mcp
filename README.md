@@ -141,12 +141,24 @@ npm run test:e2e
 
 ## Security
 
-Enterprise-grade SSRF protection built-in:
+### Enhanced Security with Claude Code Hooks Integration
+
+Iron Manus MCP now features comprehensive security validation through [Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks) integration, providing deterministic security enforcement alongside the cognitive FSM layer.
+
+**Built-in Security Features:**
 - Blocks private/localhost IPs (192.168.x.x, 127.x.x.x, etc.)
 - Validates URL schemes (HTTP/HTTPS only)
 - Enforces allowlist when configured
 - Request timeout and size limits
 - Rate limiting per API endpoint
+
+**Claude Code Hooks Security Enhancements:**
+- **Command Validation**: PreToolUse hooks block dangerous bash commands (`rm -rf`, etc.)
+- **Enhanced SSRF Protection**: Additional URL validation with allowlist enforcement
+- **Code Quality Gates**: Output validation prevents security issues in generated code
+- **Session Monitoring**: Comprehensive tracking of FSM progression and security events
+
+See `.claude/HOOKS_INTEGRATION.md` for complete hook configuration and security implementation details.
 
 ## Architecture
 
@@ -163,6 +175,7 @@ MIT - See [LICENSE](LICENSE) file for details.
 
 ## Version History
 
+- **v0.2.1** - Claude Code Hooks integration with enhanced security validation and intelligent feedback loops
 - **v0.2.0** - Complete refactor with Jest→Vitest migration, repository flattening, 6-phase FSM
 - **v0.1.x** - Initial release with 6-phase workflow
 

@@ -22,7 +22,7 @@
     "test:e2e": "vitest run --testNamePattern=e2e",
     "test:performance": "vitest run --testNamePattern=performance",
     "test:ci": "vitest run --coverage",
-    "validate-references": "ts-node scripts/validate-references.ts",
+    "validate-references": "node --loader ts-node/esm scripts/validate-references.ts",
     "update-references": "ts-node scripts/update-references.ts",
     "refs:validate": "npm run validate-references",
     "refs:update": "npm run update-references",

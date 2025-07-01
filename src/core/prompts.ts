@@ -658,6 +658,8 @@ Think critically about the quality and completeness of the work. Evaluate:
 - What are the success criteria and have they been achieved?
 - What is the best approach to verify functionality and quality?
 
+**🔗 HOOK INTEGRATION:** Before making your final decision, review any structured feedback from validation hooks. If a block decision was issued, you must address the reason in your next step.
+
 After thorough quality assessment, proceed with:
 1. Review the original objective against what was delivered
 2. Check if all requirements were met with role-specific quality standards

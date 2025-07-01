@@ -1,0 +1,62 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|mcp__iron-manus-mcp__MultiAPIFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/security-validator.py"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__iron-manus-mcp__MultiAPIFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/api-validator.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/dev-workflow.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__iron-manus-mcp__JARVIS",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/session-tracker.py"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__iron-manus-mcp__MultiAPIFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/api-validator.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Task|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/output-validator.py"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -45,21 +45,34 @@ Add this to your Claude Desktop MCP configuration:
 1. **8-Phase FSM Loop**: INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
 2. **Role-Based Intelligence**: Automatic role detection and cognitive enhancement
 3. **65+ API Registry**: Curated API collection with intelligent selection
-4. **Fractal Orchestration**: Recursive task decomposition and execution
-5. **Single Tool Per Iteration**: Enforced constraint for deterministic behavior
+4. **Claude Code Hooks**: Enhanced security validation and quality assurance
+5. **Fractal Orchestration**: Recursive task decomposition and execution
+6. **Intelligent Validation**: Output quality gates and rollback signaling
 
 ## Development
 
 ```bash
 npm run dev         # Development mode with auto-rebuild
 npm run lint        # Code quality checking  
-npm run test:watch  # Watch mode testing
+npm test            # Full test suite (107 tests)
 ```
 
-## Status: ✅ Ready for Use
+## Claude Code Hooks Integration
 
-- MCP SDK v1.13.0 compatible
+Configure hooks for enhanced security and quality:
+
+```bash
+# Copy hook configuration example
+cp .claude/hooks-example.json ~/.claude/settings.json
+```
+
+See `.claude/HOOKS_INTEGRATION.md` for complete setup instructions.
+
+## Status: ✅ Production Ready
+
+- MCP SDK v1.13.2 compatible
 - All imports working correctly
-- 66/67 tests passing
-- Clean, emoji-free codebase
+- 107/107 tests passing (100% success rate)
+- Claude Code Hooks integrated
+- Enhanced security validation
 - Production ready
