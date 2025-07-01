@@ -22,8 +22,7 @@
 #### Quick Demo
 [![Iron Manus MCP Demo](https://img.youtube.com/vi/CWuQ_PvZkOs/mqdefault.jpg)](https://www.youtube.com/watch?v=CWuQ_PvZkOs)
 
-**[Watch the quick demo](https://www.youtube.com/watch?v=CWuQ_PvZkOs)**  
-See the 6-phase workflow orchestration in real-time
+**[Watch the quick demo](https://www.youtube.com/watch?v=CWuQ_PvZkOs)**
 
 </td>
 <td width="50%">
@@ -31,8 +30,7 @@ See the 6-phase workflow orchestration in real-time
 #### Demo + Explanations
 [![Iron Manus MCP Deep Dive](https://img.youtube.com/vi/EFVQT3pmyTc/mqdefault.jpg)](https://www.youtube.com/watch?v=EFVQT3pmyTc)
 
-**[Watch the detailed walkthrough](https://www.youtube.com/watch?v=EFVQT3pmyTc)**  
-In-depth explanation of architecture and implementation
+**[Watch the detailed walkthrough](https://www.youtube.com/watch?v=EFVQT3pmyTc)**
 
 </td>
 </tr>
