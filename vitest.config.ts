@@ -4,6 +4,8 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     environment: 'node',
+    setupFiles: ['__tests__/setup.ts'],
+    exclude: ['node_modules', '__tests__/setup.ts'],
     coverage: {
       provider: 'v8',
       threads: false, // Disable threading to prevent OOM on CI
