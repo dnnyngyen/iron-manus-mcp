@@ -12,31 +12,19 @@
 
 ## Fit over 300k+ tokens in one session!
 
-### 📹 Live Demo GIF
+<div align="center">
+
+### 📹 Live Demo
 ![Iron Manus MCP Demo](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWpiYWd4eWx6bWlwcHA5Z3QxOGR1Nzh6aWcyY3hzMGlpaGpqYm12ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7fqy8AAeJusLTkSGzF/giphy.gif)
 
 ### 🎥 Video Tutorials
 
-<table>
-<tr>
-<td width="50%">
+| **Quick Demo** | **Demo + Explanations** |
+|:---:|:---:|
+| [![Iron Manus MCP Demo](https://img.youtube.com/vi/CWuQ_PvZkOs/mqdefault.jpg)](https://www.youtube.com/watch?v=CWuQ_PvZkOs) | [![Iron Manus MCP Deep Dive](https://img.youtube.com/vi/EFVQT3pmyTc/mqdefault.jpg)](https://www.youtube.com/watch?v=EFVQT3pmyTc) |
+| **[Watch the quick demo](https://www.youtube.com/watch?v=CWuQ_PvZkOs)** | **[Watch the detailed walkthrough](https://www.youtube.com/watch?v=EFVQT3pmyTc)** |
 
-#### Quick Demo
-[![Iron Manus MCP Demo](https://img.youtube.com/vi/CWuQ_PvZkOs/mqdefault.jpg)](https://www.youtube.com/watch?v=CWuQ_PvZkOs)
-
-**[Watch the quick demo](https://www.youtube.com/watch?v=CWuQ_PvZkOs)**
-
-</td>
-<td width="50%">
-
-#### Demo + Explanations
-[![Iron Manus MCP Deep Dive](https://img.youtube.com/vi/EFVQT3pmyTc/mqdefault.jpg)](https://www.youtube.com/watch?v=EFVQT3pmyTc)
-
-**[Watch the detailed walkthrough](https://www.youtube.com/watch?v=EFVQT3pmyTc)**
-
-</td>
-</tr>
-</table>
+</div>
 
 ## What It Does
 
