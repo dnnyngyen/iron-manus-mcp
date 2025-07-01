@@ -1,9 +1,9 @@
-# Getting Started with Iron Manus MCP v0.2.0
+# Getting Started with Iron Manus MCP v0.2.1
 ## Quick Start Guide
 
 ### What You'll Learn
 - How to use the JARVIS FSM controller
-- Understanding the 6-phase workflow (QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY)
+- Understanding the 8-phase workflow (INIT→QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY→DONE)
 - Tool orchestration and API registry usage
 - Testing and development workflow
 
@@ -50,21 +50,23 @@ I want to create a React todo app with TypeScript
 ```
 
 **What JARVIS Does:**
-1. **QUERY**: "You want a React todo app with TypeScript and standard features"
-2. **ENHANCE**: "Add state management, local storage, responsive design"
-3. **KNOWLEDGE**: Skips research (common project)
-4. **PLAN**: Creates structured task breakdown:
+1. **INIT**: System initialization
+2. **QUERY**: "You want a React todo app with TypeScript and standard features"
+3. **ENHANCE**: "Add state management, local storage, responsive design"
+4. **KNOWLEDGE**: Skips research (common project)
+5. **PLAN**: Creates structured task breakdown:
    ```
    - Set up React TypeScript project structure
    - (ROLE: ui_architect) (CONTEXT: todo_app) (PROMPT: Design component hierarchy) (OUTPUT: architecture_plan)
    - (ROLE: coder) (CONTEXT: react_typescript) (PROMPT: Implement todo CRUD) (OUTPUT: working_components)
    - Add styling and responsive design
    ```
-5. **EXECUTE**: 
+6. **EXECUTE**: 
    - Direct execution for simple tasks
    - Spawns Task(ui_architect) for design
    - Spawns Task(coder) for implementation
-6. **VERIFY**: Checks high completion rate + all critical tasks done
+7. **VERIFY**: Checks high completion rate + all critical tasks done
+8. **DONE**: Task completion and summary
 
 ### Example 2: Analysis Project
 **User Input:**
@@ -73,26 +75,28 @@ Analyze my codebase for performance bottlenecks and suggest optimizations
 ```
 
 **What JARVIS Does:**
-1. **QUERY**: "You want performance analysis and optimization recommendations"
-2. **ENHANCE**: "Include bundle analysis, runtime profiling, memory usage"
-3. **KNOWLEDGE**: Might research latest optimization techniques
-4. **PLAN**: Creates analysis breakdown:
+1. **INIT**: System initialization
+2. **QUERY**: "You want performance analysis and optimization recommendations"
+3. **ENHANCE**: "Include bundle analysis, runtime profiling, memory usage"
+4. **KNOWLEDGE**: Might research latest optimization techniques
+5. **PLAN**: Creates analysis breakdown:
    ```
    - Scan codebase structure and identify key files
    - (ROLE: analyzer) (CONTEXT: performance_audit) (PROMPT: Analyze bundle size and dependencies) (OUTPUT: bundle_analysis)
    - (ROLE: analyzer) (CONTEXT: code_quality) (PROMPT: Find performance anti-patterns) (OUTPUT: code_review)
    - (ROLE: planner) (CONTEXT: optimization) (PROMPT: Create optimization roadmap) (OUTPUT: action_plan)
    ```
-5. **EXECUTE**: Spawns specialized analyzer agents for different aspects
-6. **VERIFY**: Ensures comprehensive analysis completed
+6. **EXECUTE**: Spawns specialized analyzer agents for different aspects
+7. **VERIFY**: Ensures comprehensive analysis completed
+8. **DONE**: Analysis complete with deliverables
 
 ---
 
-## Understanding the 6-Phase Workflow
+## Understanding the 8-Phase Workflow
 
 ### Phase Sequence
 ```
-QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
+INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
 ```
 
 ### What Each Phase Does
@@ -129,6 +133,11 @@ QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 - Mathematical validation (high overall + 100% critical tasks)
 - Intelligent rollback if completion insufficient
 - Quality assessment and final checks
+
+**DONE**:
+- Task completion summary
+- Performance metrics and session data
+- System enters standby mode
 
 ---
 
@@ -179,8 +188,8 @@ QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY
 ## Tips for Best Results
 
 ### 1. Be Specific About Goals
-❌ "Build me an app"
-✅ "Create a React dashboard with user authentication and real-time data visualization"
+Bad: "Build me an app"
+Good: "Create a React dashboard with user authentication and real-time data visualization"
 
 ### 2. Trust the Process
 - Let JARVIS go through all phases

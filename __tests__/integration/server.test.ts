@@ -36,7 +36,7 @@ describe('MCP Server Integration', () => {
       // Test that server has proper MCP configuration
       expect(server).toHaveProperty('_serverInfo');
       expect(server._serverInfo).toHaveProperty('name', 'JARVIS');
-      expect(server._serverInfo).toHaveProperty('version', '1.0.0');
+      expect(server._serverInfo).toHaveProperty('version', '0.2.1');
     });
   });
 

@@ -396,10 +396,10 @@ describe('FSM Core Functionality', () => {
         { phase: 'INIT', expectedTools: ['JARVIS'] },
         { phase: 'QUERY', expectedTools: ['JARVIS'] },
         { phase: 'ENHANCE', expectedTools: ['JARVIS'] },
-        { phase: 'KNOWLEDGE', expectedTools: ['WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'KnowledgeSynthesize', 'mcp__ide__executeCode', 'JARVIS'] },
+        { phase: 'KNOWLEDGE', expectedTools: ['Task', 'WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'PythonExecutor', 'EnhancedPythonDataScience', 'JARVIS'] },
         { phase: 'PLAN', expectedTools: ['TodoWrite'] },
-        { phase: 'EXECUTE', expectedTools: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode'] },
-        { phase: 'VERIFY', expectedTools: ['TodoRead', 'Read', 'mcp__ide__executeCode'] },
+        { phase: 'EXECUTE', expectedTools: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'PythonExecutor', 'EnhancedPythonDataScience'] },
+        { phase: 'VERIFY', expectedTools: ['TodoRead', 'Read', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'EnhancedPythonDataScience'] },
         { phase: 'DONE', expectedTools: [] }
       ];
 

@@ -7,7 +7,7 @@ import { toolRegistry } from './tools/index.js';
 const server = new Server(
   {
     name: 'JARVIS',
-    version: '1.0.0',
+    version: '0.2.1',
   },
   {
     capabilities: {

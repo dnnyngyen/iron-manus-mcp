@@ -105,7 +105,7 @@ export class APIValidatorTool extends BaseTool {
       const response = await axios.get(url, {
         timeout: 5000,
         headers: {
-          'User-Agent': 'Iron-Manus-API-Validator/1.0.0',
+          'User-Agent': 'Iron-Manus-API-Validator/0.2.1',
         },
       });
 

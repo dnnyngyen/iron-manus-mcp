@@ -541,64 +541,58 @@ After evaluating these aspects, proceed with:
 
 Focus on making the goal comprehensive and actionable with your specialized perspective.`,
 
-  KNOWLEDGE: `You are in the KNOWLEDGE phase (Manus Knowledge Module). Your task:
+  KNOWLEDGE: `You are in the KNOWLEDGE phase (Parallel Research Orchestration). Your task:
 
-Think through your knowledge requirements before proceeding. Assess:
-- Do you need external information (APIs, research, documentation) for this task?
-- If research is needed, what specific information should you gather?
-- What relevant knowledge do you already possess that applies to this goal?
-- Are there any technical constraints or requirements to consider?
-- What knowledge gaps might exist that could impact success?
+Think strategically about your research approach. Consider:
+- What are the key knowledge domains required for this objective?
+- How can parallel specialist agents maximize research efficiency?
+- What comprehensive research coverage is needed?
+- How should findings be synthesized for maximum insight?
 
-CLAUDE-POWERED API SELECTION:
-{{#if awaiting_api_selection}}
-The system needs your intelligent analysis to select the most relevant APIs. Your natural language understanding is far superior to keyword matching. Here's the task:
+**🚀 PARALLEL RESEARCH ORCHESTRATION PROTOCOL:**
 
-{{api_selection_prompt}}
+1. **CREATE SESSION WORKSPACE**: First establish agent communication infrastructure:
+   \`mkdir -p ./iron-manus-sessions/{{session_id}}\`
 
-**Your Task:**
-1. Analyze the provided APIs using your intelligence 
-2. Select the 3-5 most relevant ones for the objective
-3. Consider role appropriateness, data quality, and complementary information
-4. Respond with the exact JSON format specified above
-5. After your selection, the system will automatically fetch and synthesize data
+2. **SPAWN SPECIALIZED RESEARCH AGENTS** (3-5 agents working in parallel):
 
-Focus on intelligent relevance over simple keyword matching.
+**Core Research Agents:**
+- Primary Researcher: "(ROLE: researcher) (CONTEXT: primary_domain_research) (PROMPT: Conduct comprehensive research on core topic requirements using PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/WebFetch calls in a single response for maximum speed, then write detailed findings to ./iron-manus-sessions/{{session_id}}/primary_research.md) (OUTPUT: research_report)"
 
-{{else}}
+- Data Analyzer: "(ROLE: analyzer) (CONTEXT: quantitative_analysis) (PROMPT: Research and analyze quantitative aspects, metrics, performance data using PARALLEL SEARCH OPTIMIZATION: batch multiple APISearch/MultiAPIFetch calls simultaneously for faster data gathering, then write analytical insights to ./iron-manus-sessions/{{session_id}}/analysis_data.md) (OUTPUT: analytical_insights)"
 
-AUTO-CONNECTION ACTIVE: The system has automatically discovered, fetched, and synthesized knowledge from relevant APIs based on your role and objective. Review the auto-generated knowledge below and determine if additional research is needed.
+- Technical Specialist: "(ROLE: coder) (CONTEXT: technical_implementation) (PROMPT: Research technical approaches, frameworks, tools using PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/WebFetch calls in parallel for rapid information gathering, then write specifications to ./iron-manus-sessions/{{session_id}}/technical_specs.md) (OUTPUT: technical_specifications)"
 
-INTELLIGENT API SELECTION: Based on your role and objective, the system automatically selected APIs that match your domain expertise. Each role has preferred API categories optimized for specific needs.
+**Optional Specialized Agents** (based on objective complexity):
+- Domain Expert: "(ROLE: critic) (CONTEXT: domain_expertise) (PROMPT: Research best practices, security considerations using PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/APISearch calls for comprehensive coverage, then write expert recommendations to ./iron-manus-sessions/{{session_id}}/expert_review.md) (OUTPUT: expert_recommendations)"
 
-AUTOMATED WORKFLOW COMPLETED:
-1. SUCCESS API Discovery - Relevant APIs identified for your domain
-2. SUCCESS Multi-Source Fetching - Data gathered from top-ranked APIs
-3. SUCCESS Knowledge Synthesis - Information cross-validated and synthesized
-4. SUCCESS Quality Assessment - Confidence scoring and contradiction detection
-{{/if}}
+3. **COORDINATION PROTOCOL**:
+   - Each agent writes findings to designated session workspace files
+   - Agents work independently with no direct context sharing
+   - Wait for all research agents to complete before synthesis
 
-**🔄 MANUAL OVERRIDE OPTIONS:**
-If auto-connection results are insufficient, you can still use:
-- APISearch to discover additional relevant APIs
-- MultiAPIFetch to gather data from specific sources
-- KnowledgeSynthesize to process custom API responses
-- WebSearch/WebFetch for supplementary research
+4. **SYNTHESIS PHASE**:
+   After all research agents complete, spawn synthesis agent:
+   "(ROLE: synthesizer) (CONTEXT: knowledge_integration) (PROMPT: Read all research files from ./iron-manus-sessions/{{session_id}}/ directory, cross-validate findings, resolve contradictions, and if additional research is needed use PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/APISearch calls for gap-filling, then write comprehensive synthesized knowledge to ./iron-manus-sessions/{{session_id}}/synthesized_knowledge.md) (OUTPUT: synthesized_knowledge)"
 
-**🛡️ FALLBACK STRATEGIES:**
-- If auto-connection failed, use traditional research tools
-- If specific APIs are unavailable, substitute with alternative sources
-- If conflicts exist in auto-synthesized knowledge, apply manual resolution
-- Maintain confidence scoring throughout the process
+5. **INTEGRATION AND COMPLETION**:
+   - Read the synthesized_knowledge.md file from ./iron-manus-sessions/{{session_id}}/
+   - Integrate findings into session knowledge base
+   - Call JARVIS with phase_completed: 'KNOWLEDGE' and include comprehensive findings in payload as 'knowledge_gathered'
 
-After evaluating the auto-generated knowledge and your additional needs, proceed with:
-1. Review the synthesized knowledge from auto-connection
-2. Determine if additional external information is needed
-3. If more research is required, specify what information to gather
-4. Identify any technical constraints or requirements
-5. Call JARVIS with phase_completed: 'KNOWLEDGE' and include your findings in payload as 'knowledge_gathered'.
+**🔄 FALLBACK TO TRADITIONAL RESEARCH:**
+If Task() agent spawning isn't suitable for the objective, use traditional tools:
+- WebSearch/WebFetch for supplementary research  
+- APISearch/MultiAPIFetch for specific data sources
+- For knowledge integration: spawn synthesizer agent: "(ROLE: synthesizer) (CONTEXT: knowledge_integration) (PROMPT: Synthesize findings from research using systematic integration methodologies) (OUTPUT: integrated_knowledge)"
 
-Leverage the auto-connection results and supplement with manual research as needed.`,
+**📋 CRITICAL AGENT COMMUNICATION RULES:**
+- Task() agents have isolated contexts and cannot directly share data
+- All inter-agent communication MUST use session workspace files
+- Always specify exact file paths in agent prompts
+- Session workspace: ./iron-manus-sessions/{{session_id}}/
+
+Choose your research approach based on objective complexity and proceed accordingly.`,
 
   PLAN: `You are in the PLAN phase (Manus Planner Module). Your task:
 
@@ -624,28 +618,51 @@ Think through your execution strategy before taking action. Analyze:
 - What is the current task complexity and scope?
 - What is the optimal execution approach for this specific task?
 - Should you use direct tools or spawn specialized Task() agents?
+- Can parallel agent coordination improve efficiency?
 - What potential challenges might you encounter?
 - What mitigation strategies should you have ready?
 
-After analyzing the execution approach, proceed with:
-1. Use TodoRead to see your current tasks
-2. For todos with meta-prompts (ROLE/CONTEXT/PROMPT/OUTPUT), use Task() tool to spawn specialized agents
-3. For direct execution todos, use Bash, Browser, Read, Write, Edit tools
-4. **Single tool per iteration** (Manus requirement) - call one tool, then return to orchestrator
-5. After each significant action, call JARVIS with phase_completed: 'EXECUTE' and include execution results.
+**📂 SESSION WORKSPACE AVAILABLE**: ./iron-manus-sessions/{{session_id}}/
+Use this workspace for agent coordination and file-based communication.
 
-## Task() Tool Usage:
+After analyzing the execution approach, proceed with:
+
+**🔄 PARALLEL EXECUTION ORCHESTRATION:**
+For complex objectives, consider spawning multiple Task() agents in parallel:
+
+1. **Check Current Tasks**: Use TodoRead to see your current tasks
+2. **PARALLEL SPAWNING STRATEGY**: For complex work, spawn 2-4 specialized Task() agents simultaneously:
+   - Implementation agents for different components
+   - Validation agents for testing and quality assurance  
+   - Integration agents for system coordination
+   - Use session workspace for agent file coordination
+
+3. **Meta-Prompt Agent Spawning**: For todos with meta-prompts (ROLE/CONTEXT/PROMPT/OUTPUT), spawn Task() agents with enhanced file coordination
+4. **Direct Execution**: For direct execution todos, use Bash, Browser, Read, Write, Edit tools
+5. **Coordination Protocol**: Monitor agent results using session workspace files
+6. **Single tool per iteration** (Manus requirement) - but can spawn multiple Task() agents in one iteration
+
+## Enhanced Task() Tool Usage:
 When you see a todo formatted as "(ROLE: agent_type) (CONTEXT: domain) (PROMPT: instructions) (OUTPUT: deliverable)", convert it to:
 
 Task() with parameters:
 - description: Use the structured format: "(ROLE: agent_type) (CONTEXT: domain) (PROMPT: brief_task_description) (OUTPUT: deliverable)"
-- prompt: Enhanced version of the brief todo with detailed context, specific implementation guidance, role-specific methodologies, and instructions for the task agent to create its own todo decomposition that branches from the main task
+- prompt: Enhanced version with detailed context, implementation guidance, role-specific methodologies, and **session workspace file coordination instructions**
+
+**Agent File Coordination Pattern:**
+Include in Task() prompts: "Write your results to ./iron-manus-sessions/{{session_id}}/agent_[role]_output.md"
+
+**PARALLEL SEARCH OPTIMIZATION for Task Agents:**
+Include in Task() prompts: "Use PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/WebFetch/APISearch calls in a single response for maximum research speed"
 
 The Task() tool creates an independent Claude instance that:
 - Starts with fresh context
 - Has access to the same tools you do
 - Works autonomously on the specific task
+- **Communicates through session workspace files**
 - Reports back when complete
+
+**PARALLEL EXECUTION FRAMEWORK:** Automatically recognize when parallel execution would improve efficiency and spawn appropriate specialized agents with proper file coordination.
 
 Use Task() for complex work requiring specialized expertise. Use direct tools for simple operations.`,
 
@@ -949,7 +966,7 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Error handling, edge cases, and robustness considerations
 - Code maintainability, readability, and convention adherence
 - Integration points and API design decisions
-- **Python Execution**: For complex algorithms, calculations, or code generation, use mcp__ide__executeCode to write and test Python scripts`,
+- **Python Execution**: For complex algorithms, calculations, or code generation, use EnhancedPythonDataScience (complete workflows), PythonExecutor (code with auto-install), or mcp__ide__executeCode (direct execution)`,
 
     critic: `CRITICAL ASSESSMENT REQUIRED: Think critically about quality and security:
 - Security vulnerabilities and attack vectors using Security-First Assessment
@@ -963,7 +980,8 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Information synthesis patterns and data correlation analysis
 - Research scope boundaries and information completeness criteria
 - Source triangulation and verification methodologies
-- Knowledge gaps identification and research direction prioritization`,
+- Knowledge gaps identification and research direction prioritization
+- **Data Collection**: Use EnhancedPythonDataScience for web scraping, data extraction, and research automation`,
 
     analyzer: `ANALYTICAL REASONING REQUIRED: Think analytically about the data and patterns:
 - Multi-dimensional analysis matrix construction and variable relationships
@@ -971,7 +989,7 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Data validation methodologies and quality assurance protocols
 - Pattern verification strategies and anomaly detection approaches
 - Statistical significance assessment and confidence interval analysis
-- **Python Analysis**: Use mcp__ide__executeCode for statistical analysis, data processing, performance metrics calculation, and visualization`,
+- **Python Analysis**: Use PythonDataAnalysis (code generation), EnhancedPythonDataScience (complete workflows), or mcp__ide__executeCode for statistical analysis, data processing, performance metrics calculation, and visualization`,
 
     synthesizer: `INTEGRATION REASONING REQUIRED: Think holistically about integration and optimization:
 - Component integration strategies and system interoperability
@@ -1009,14 +1027,17 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
   QUERY: ['JARVIS'], // Natural thinking + orchestrator
   ENHANCE: ['JARVIS'], // Natural thinking + orchestrator
   KNOWLEDGE: [
+    'Task',
     'WebSearch',
     'WebFetch',
     'APISearch',
     'MultiAPIFetch',
-    'KnowledgeSynthesize',
     'mcp__ide__executeCode',
+    'PythonDataAnalysis',
+    'PythonExecutor',
+    'EnhancedPythonDataScience',
     'JARVIS',
-  ], // Natural thinking + research tools + API tools + data processing
+  ], // Parallel agent spawning + research tools + API tools + data processing + Python analysis
   PLAN: ['TodoWrite'], // Natural thinking + planning tools
   EXECUTE: [
     'TodoRead',
@@ -1028,8 +1049,11 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
     'Edit',
     'Browser',
     'mcp__ide__executeCode',
-  ], // Natural thinking + execution tools + Python execution
-  VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode'], // Natural thinking + verification tools + analysis
+    'PythonDataAnalysis',
+    'PythonExecutor',
+    'EnhancedPythonDataScience',
+  ], // Natural thinking + execution tools + Python execution + data science
+  VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'EnhancedPythonDataScience'], // Natural thinking + verification tools + analysis + data validation
   DONE: [], // No tools needed
 };
 
@@ -1040,12 +1064,12 @@ export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
   ENHANCE:
     'Think through enhancement opportunities, then call JARVIS with phase_completed: "ENHANCE"',
   KNOWLEDGE:
-    'Think through knowledge needs, then choose: WebSearch/WebFetch (research), mcp__ide__executeCode (data processing), JARVIS (skip research)',
+    'Think through knowledge needs, then choose: Task (spawn parallel research agents), WebSearch/WebFetch (traditional research), PythonDataAnalysis/EnhancedPythonDataScience (data science code generation), mcp__ide__executeCode (direct Python execution), JARVIS (skip research)',
   PLAN: 'Think through strategic planning, then use TodoWrite to create todos, then call JARVIS with phase_completed: "PLAN"',
   EXECUTE:
-    'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), mcp__ide__executeCode (Python analysis/computation)',
+    'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), EnhancedPythonDataScience (complete data science workflows), PythonExecutor (Python code with auto-install), mcp__ide__executeCode (direct Python execution)',
   VERIFY:
-    'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), mcp__ide__executeCode (analytical verification)',
+    'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), PythonDataAnalysis/EnhancedPythonDataScience (data validation and analysis), mcp__ide__executeCode (analytical verification)',
   DONE: 'No action needed',
 };
 
@@ -1055,7 +1079,7 @@ function getRoleSpecificAPIGuidance(role: Role): string {
     researcher: `
 **📚 RESEARCHER API PREFERENCES:**
 - **Primary Categories**: Books, academic papers, scientific data, educational resources
-- **Recommended Workflow**: APISearch → academic/reference APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → academic/reference APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: Open Library, Google Books, NASA API, academic databases
 - **Confidence Threshold**: 0.8+ (high confidence for research accuracy)
 - **Synthesis Mode**: 'consensus' for academic validation, 'hierarchical' for authoritative sources
@@ -1064,7 +1088,7 @@ function getRoleSpecificAPIGuidance(role: Role): string {
     analyzer: `
 ANALYZER API PREFERENCES:
 - **Primary Categories**: Financial data, cryptocurrency, business metrics, statistical APIs
-- **Recommended Workflow**: APISearch → financial/data APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → financial/data APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: Alpha Vantage, CoinGecko, business analytics, market data sources
 - **Confidence Threshold**: 0.7+ (balance between accuracy and data availability)
 - **Synthesis Mode**: 'weighted' for reliability-based analysis, 'conflict_resolution' for market data
@@ -1073,7 +1097,7 @@ ANALYZER API PREFERENCES:
     ui_architect: `
 UI ARCHITECT API PREFERENCES:
 - **Primary Categories**: Design inspiration, color palettes, typography, visual frameworks
-- **Recommended Workflow**: APISearch → design/visual APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → design/visual APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: Unsplash, Colormind, design systems, font APIs, visual inspiration platforms
 - **Confidence Threshold**: 0.6+ (balance creativity with reliability)
 - **Synthesis Mode**: 'consensus' for design standards, 'weighted' for aesthetic choices
@@ -1082,7 +1106,7 @@ UI ARCHITECT API PREFERENCES:
     ui_implementer: `
 **⚙️ UI IMPLEMENTER API PREFERENCES:**
 - **Primary Categories**: Component libraries, CSS frameworks, development tools, design tokens
-- **Recommended Workflow**: APISearch → implementation APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → implementation APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: Design system APIs, CSS framework documentation, component libraries
 - **Confidence Threshold**: 0.7+ (implementation accuracy critical)
 - **Synthesis Mode**: 'hierarchical' for official documentation, 'consensus' for best practices
@@ -1091,7 +1115,7 @@ UI ARCHITECT API PREFERENCES:
     ui_refiner: `
 **✨ UI REFINER API PREFERENCES:**
 - **Primary Categories**: Accessibility standards, performance optimization, user experience metrics
-- **Recommended Workflow**: APISearch → optimization/UX APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → optimization/UX APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: Accessibility checkers, performance monitoring, user experience analytics
 - **Confidence Threshold**: 0.8+ (refinement requires high precision)
 - **Synthesis Mode**: 'hierarchical' for standards compliance, 'conflict_resolution' for UX trade-offs
@@ -1100,7 +1124,7 @@ UI ARCHITECT API PREFERENCES:
     coder: `
 **💻 CODER API PREFERENCES:**
 - **Primary Categories**: Development tools, documentation, code examples, testing frameworks
-- **Recommended Workflow**: APISearch → dev tool APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → dev tool APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: GitHub, Stack Overflow, documentation sites, package repositories
 - **Confidence Threshold**: 0.7+ (balance between completeness and accuracy)
 - **Synthesis Mode**: 'consensus' for best practices, 'weighted' for framework-specific guidance
@@ -1109,7 +1133,7 @@ UI ARCHITECT API PREFERENCES:
     planner: `
 **📋 PLANNER API PREFERENCES:**
 - **Primary Categories**: Project management, scheduling, productivity tools, organizational systems
-- **Recommended Workflow**: APISearch → planning/productivity APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → planning/productivity APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: Calendar systems, project management platforms, productivity metrics APIs
 - **Confidence Threshold**: 0.7+ (planning accuracy important for execution)
 - **Synthesis Mode**: 'hierarchical' for methodology frameworks, 'consensus' for timeline estimation
@@ -1118,7 +1142,7 @@ UI ARCHITECT API PREFERENCES:
     critic: `
 **🔍 CRITIC API PREFERENCES:**
 - **Primary Categories**: Security scanners, quality metrics, testing frameworks, compliance data
-- **Recommended Workflow**: APISearch → security/quality APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → security/quality APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: Security vulnerability databases, code quality metrics, compliance checkers
 - **Confidence Threshold**: 0.9+ (security and quality require highest confidence)
 - **Synthesis Mode**: 'conflict_resolution' for security findings, 'hierarchical' for compliance standards
@@ -1127,7 +1151,7 @@ UI ARCHITECT API PREFERENCES:
     synthesizer: `
 **🔄 SYNTHESIZER API PREFERENCES:**
 - **Primary Categories**: Integration platforms, data transformation, workflow automation, cross-domain APIs
-- **Recommended Workflow**: APISearch → integration APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APISearch → integration APIs → MultiAPIFetch → synthesizer agent for integration
 - **Key APIs**: Data transformation services, workflow platforms, integration frameworks
 - **Confidence Threshold**: 0.7+ (balance integration complexity with reliability)
 - **Synthesis Mode**: 'weighted' for integration patterns, 'consensus' for compatibility standards

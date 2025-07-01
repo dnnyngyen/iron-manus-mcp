@@ -213,6 +213,33 @@ export async function processState(
 }
 
 async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: AutoConnectionDeps) {
+  // Initialize session workspace for agent communication
+  const sessionId = input.session_id;
+  const sessionWorkspace = `./iron-manus-sessions/${sessionId}`;
+  
+  // Store session workspace path in payload for prompt variable substitution
+  session.payload.session_workspace = sessionWorkspace;
+  
+  // Support agent synthesis results - check if synthesized knowledge file exists
+  const synthesisFile = `${sessionWorkspace}/synthesized_knowledge.md`;
+  try {
+    const fs = await import('fs');
+    if (fs.existsSync(synthesisFile)) {
+      const synthesizedContent = fs.readFileSync(synthesisFile, 'utf-8');
+      session.payload.knowledge_gathered = synthesizedContent;
+      session.payload.synthesized_knowledge = synthesizedContent;
+      
+      // Mark agent orchestration as successful
+      session.payload.agent_orchestration_successful = true;
+      session.payload.agent_workspace_used = sessionWorkspace;
+      
+      console.log(`SUCCESS: Agent synthesis completed, knowledge gathered from ${synthesisFile}`);
+      return; // Skip traditional auto-connection if agent synthesis succeeded
+    }
+  } catch (error) {
+    console.log(`No agent synthesis found at ${synthesisFile}, proceeding with traditional research`);
+  }
+
   // Check if Claude provided API selection response
   if (session.payload.awaiting_api_selection && input.payload?.claude_response) {
     try {
@@ -242,19 +269,20 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
     }
   }
 
-  // Store gathered knowledge
+  // Store gathered knowledge from direct Claude input
   if (input.payload?.knowledge_gathered) {
     session.payload.knowledge_gathered = input.payload.knowledge_gathered;
   }
 
-  // Run auto-connection if conditions are met
+  // Run auto-connection if conditions are met and no agent synthesis occurred
   if (
     session.payload.enhanced_goal &&
     session.detected_role &&
-    !session.payload.awaiting_api_selection
+    !session.payload.awaiting_api_selection &&
+    !session.payload.agent_orchestration_successful
   ) {
     await runAutoConnection(session, deps);
-  } else {
+  } else if (!session.payload.agent_orchestration_successful) {
     // Initialize empty API fields for backward compatibility
     initializeEmptyAPIFields(session);
   }
@@ -439,6 +467,10 @@ function generateSystemPrompt(session: any, nextPhase: Phase, input: MessageJARV
 
   // Add phase-specific context
   augmentedPrompt = addPhaseSpecificContext(augmentedPrompt, nextPhase, session);
+
+  // Substitute session variables for agent coordination
+  const sessionId = input.session_id;
+  augmentedPrompt = augmentedPrompt.replace(/\{\{session_id\}\}/g, sessionId);
 
   return augmentedPrompt;
 }

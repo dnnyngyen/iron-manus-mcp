@@ -17,8 +17,18 @@
     session.reasoning_effectiveness = 0.8; // Initial effectiveness score
   }
 
-  What I See: Raw system prompt directing me to QUERY phase
-  What I Do: Automatically transition to QUERY phase per FSM logic
+  What I See: System initialization phase
+  What I Do: Initialize session and automatically transition to QUERY phase per FSM logic
+
+  ---
+  Phase 0: INIT - "System Initialization"
+
+  Natural Language: System automatically initializes the session
+  MCP Server: Sets up session state, detects role, initializes FSM
+  System State: session.current_phase = 'INIT'
+  
+  What I See: Initial system setup with immediate transition directive
+  What I Do: Immediately call JARVIS to transition to QUERY phase
 
   ---
   Phase 1: QUERY - "Analyze Events"
@@ -32,11 +42,11 @@
   - Are there any ambiguities that need clarification?
 
   Cognitive Enhancement (src/core/prompts.ts:184-189):
-  **🧠 COGNITIVE ENHANCEMENT (2.7x effectiveness):**
+  **COGNITIVE ENHANCEMENT (2.7x effectiveness):**
   Strategic Architecture Planning, Hierarchical Decomposition
 
-  **🎯 ROLE-SPECIFIC FOCUS:** systematic_planning
-  **📊 QUALITY THRESHOLD:** STRATEGIZE_AND_COORDINATE
+  **ROLE-SPECIFIC FOCUS:** systematic_planning
+  **QUALITY THRESHOLD:** STRATEGIZE_AND_COORDINATE
 
   Tool Constraint (src/core/prompts.ts:582): QUERY: ['JARVIS']
 
@@ -108,7 +118,7 @@
   Think through strategic planning, then use TodoWrite to create todos, then call JARVIS with phase_completed: "PLAN"
 
   Fractal Orchestration Guidance ():
-  augmentedPrompt += `\n\n**🔄 FRACTAL ORCHESTRATION GUIDE:**\nFor complex sub-tasks that need specialized expertise, create todos with this format:\n"(ROLE: coder) 
+  augmentedPrompt += `\n\n**FRACTAL ORCHESTRATION GUIDE:**\nFor complex sub-tasks that need specialized expertise, create todos with this format:\n"(ROLE: coder) 
   (CONTEXT: authentication_system) (PROMPT: Implement secure JWT authentication with password reset) (OUTPUT: production_ready_code)"\n\nThis enables Task() agent 
   spawning in the EXECUTE phase.`;
 
@@ -149,13 +159,13 @@
   const currentTodos = session.payload.current_todos || [];
   const currentTodo = currentTodos[currentTaskIndex];
 
-  augmentedPrompt += `\n\n**📊 EXECUTION CONTEXT:**\n- Current Task Index: ${currentTaskIndex}\n- Total Tasks: ${currentTodos.length}\n- Current Task: ${currentTodo 
+  augmentedPrompt += `\n\n**EXECUTION CONTEXT:**\n- Current Task Index: ${currentTaskIndex}\n- Total Tasks: ${currentTodos.length}\n- Current Task: ${currentTodo 
   || 'None'}\n- Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%`;
 
   Fractal Execution Protocol ():
-  augmentedPrompt += `\n\n**🔄 FRACTAL EXECUTION PROTOCOL:**\n1. Check current todo (index ${currentTaskIndex}) for meta-prompt patterns\n2. If todo contains 
+  augmentedPrompt += `\n\n**FRACTAL EXECUTION PROTOCOL:**\n1. Check current todo (index ${currentTaskIndex}) for meta-prompt patterns\n2. If todo contains 
   (ROLE:...) pattern, use Task() tool to spawn specialized agent\n3. If todo is direct execution, use appropriate tools (Bash/Browser/etc.)\n4. After each action, 
-  report results back\n\n**⚡ SINGLE TOOL PER ITERATION:** Choose ONE tool call per turn (Manus requirement).`;
+  report results back\n\n**SINGLE TOOL PER ITERATION:** Choose ONE tool call per turn (Manus requirement).`;
 
   What I See: Execution context showing current task index, fractal execution protocol, single-tool constraint
   What I Do:
@@ -194,10 +204,10 @@
   const taskBreakdown = calculateTaskBreakdown(todos);
   const completionPercentage = calculateCompletionPercentage(taskBreakdown);
 
-  augmentedPrompt += `\n\n**✅ VERIFICATION CONTEXT:**\n- Original Objective: ${session.initial_objective}\n- Final Reasoning Effectiveness: 
+  augmentedPrompt += `\n\n**VERIFICATION CONTEXT:**\n- Original Objective: ${session.initial_objective}\n- Final Reasoning Effectiveness: 
   ${(session.reasoning_effectiveness * 100).toFixed(1)}%`;
-  augmentedPrompt += `\n\n**📊 COMPLETION METRICS:**\n- Overall Completion: ${completionPercentage}% (${taskBreakdown.completed}/${taskBreakdown.total} tasks)`;
-  augmentedPrompt += `\n\n**⚠️ VERIFICATION REQUIREMENTS:**\n- Critical tasks must be 100% complete\n- Overall completion must be ≥95%\n- No high-priority tasks can 
+  augmentedPrompt += `\n\n**COMPLETION METRICS:**\n- Overall Completion: ${completionPercentage}% (${taskBreakdown.completed}/${taskBreakdown.total} tasks)`;
+  augmentedPrompt += `\n\n**VERIFICATION REQUIREMENTS:**\n- Critical tasks must be 100% complete\n- Overall completion must be ≥95%\n- No high-priority tasks can 
   remain pending`;
 
   What I See: Verification context with completion metrics and strict requirements
@@ -243,10 +253,10 @@
 
   Final Response (src/index.ts:80-87):
   if (output.status === 'DONE') {
-    responseText += `## ✅ **MISSION ACCOMPLISHED!**\n\n`;
-    responseText += `**🎯 Objective**: ${output.payload?.current_objective}\n`;
-    responseText += `**🤖 Role Applied**: ${output.payload?.detected_role}\n`;
-    responseText += `**📊 Final Effectiveness**: ${((output.payload?.reasoning_effectiveness || 0.8) * 100).toFixed(1)}%\n`;
+    responseText += `## MISSION ACCOMPLISHED!\n\n`;
+    responseText += `**Objective**: ${output.payload?.current_objective}\n`;
+    responseText += `**Role Applied**: ${output.payload?.detected_role}\n`;
+    responseText += `**Final Effectiveness**: ${((output.payload?.reasoning_effectiveness || 0.8) * 100).toFixed(1)}%\n`;
   }
 
   What I See: Mission accomplished status with performance summary

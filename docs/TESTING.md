@@ -4,11 +4,11 @@ This document describes the testing infrastructure and guidelines for the Iron M
 
 ## Overview
 
-The project uses Jest with TypeScript and ES modules for comprehensive testing. Our test suite covers:
+The project uses Vitest with TypeScript and ES modules for comprehensive testing. Our test suite covers:
 
 - **Unit Tests**: FSM core functionality, API registry, and individual tools
 - **Integration Tests**: MCP server startup and tool interactions  
-- **67 Total Tests**: 64 passing with excellent coverage of all core functionality
+- **67 Total Tests**: 66 passing with excellent coverage of all core functionality
 
 ## Test Structure
 
@@ -61,27 +61,25 @@ npm test -- --testNamePattern="Phase Transitions"
 NODE_ENV=test npm test
 ```
 
-## Jest Configuration
+## Vitest Configuration
 
-Our Jest setup includes:
+Our Vitest setup includes:
 
-- **ES Module Support**: Uses `ts-jest` with ESM preset
+- **ES Module Support**: Native ES module support with TypeScript
 - **TypeScript**: Full TypeScript support with type checking
 - **Custom Matchers**: Iron Manus-specific test utilities
 - **Coverage Thresholds**: 70% minimum for all metrics
 - **Parallel Execution**: Fast test runs with proper isolation
 
-Key configuration in `jest.config.js`:
+Key configuration in `vitest.config.ts`:
 
-```javascript
+```typescript
 export default {
-  preset: 'ts-jest/presets/default-esm',
-  testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.ts'],
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1'
-  },
-  setupFilesAfterEnv: ['<rootDir>/__tests__/setup.ts']
+  test: {
+    testEnvironment: 'node',
+    globals: true,
+    setupFiles: ['__tests__/setup.ts']
+  }
 };
 ```
 
@@ -89,7 +87,7 @@ export default {
 
 ### FSM Testing
 
-Tests for the 6-phase finite state machine:
+Tests for the 8-phase finite state machine:
 
 ```typescript
 // Test phase transitions
@@ -211,7 +209,7 @@ coverageThreshold: {
 describe('Feature Name', () => {
   beforeEach(() => {
     // Setup for each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Specific Functionality', () => {

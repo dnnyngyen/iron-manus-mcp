@@ -31,7 +31,7 @@ export const CONFIG = {
   ENABLE_SSRF_PROTECTION: process.env.ENABLE_SSRF_PROTECTION !== 'false',
   
   // User agent
-  USER_AGENT: process.env.USER_AGENT || 'Iron-Manus-MCP/1.0.0-AutoFetch',
+  USER_AGENT: process.env.USER_AGENT || 'Iron-Manus-MCP/0.2.1-AutoFetch',
 } as const;
 
 // Validation function to ensure configuration is valid

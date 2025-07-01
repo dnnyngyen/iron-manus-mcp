@@ -7,8 +7,9 @@ import { BaseTool, ToolDefinition } from './base-tool.js';
 import { JARVISTool } from './jarvis-tool.js';
 import { MultiAPIFetchTool } from './multi-api-fetch.js';
 import { APISearchTool } from './api-search.js';
-import { KnowledgeSynthesisTool } from './knowledge-synthesis.js';
 import { APIValidatorTool } from './api-validator.js';
+import { PythonDataAnalysisTool } from './python-data-analysis.js';
+import { PythonExecutorTool, EnhancedPythonDataScienceTool } from './python-executor.js';
 
 /**
  * Tool Registry Class
@@ -28,8 +29,10 @@ export class ToolRegistry {
     this.registerTool(new JARVISTool());
     this.registerTool(new MultiAPIFetchTool());
     this.registerTool(new APISearchTool());
-    this.registerTool(new KnowledgeSynthesisTool());
     this.registerTool(new APIValidatorTool());
+    this.registerTool(new PythonDataAnalysisTool());
+    this.registerTool(new PythonExecutorTool());
+    this.registerTool(new EnhancedPythonDataScienceTool());
   }
 
   /**
