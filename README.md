@@ -44,8 +44,8 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages c
 
 **Key Features:**
 - 🔄 **6-Phase Orchestraion Loop** - Structured workflow orchestration with INIT/DONE states
-- 🧠 **Optimized Context Management** - Context is appended to each state and managed by subagents to allow conversations to exceed 300k+ tokens
-- 🛠️ **Customizable & Modular Tool Registry** - Extensible architecture with 5+ specialized tools and compatible with other MCP tools
+- 🧠 **Optimized Context Management** - Subagent delegation enables 300k+ token conversations
+- 🛠️ **Modular Tool Registry** - 5+ specialized tools with extensible architecture
 - 📡 **65+ API Registry** - Intelligent API discovery and selection system
 - 🔒 **SSRF Protection** - Enterprise-grade security with allowlist validation
 - ✅ **107/107 Tests Passing** - Comprehensive test coverage with Vitest
