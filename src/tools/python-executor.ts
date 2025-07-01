@@ -24,20 +24,20 @@ export class PythonExecutorTool extends BaseTool {
     properties: {
       code: {
         type: 'string',
-        description: 'Python code to execute'
+        description: 'Python code to execute',
       },
       setup_libraries: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Libraries to install/import before execution'
+        description: 'Libraries to install/import before execution',
       },
       description: {
         type: 'string',
-        description: 'Description of what the code does'
-      }
+        description: 'Description of what the code does',
+      },
     },
     required: ['code'],
-    additionalProperties: false
+    additionalProperties: false,
   };
 
   async handle(args: PythonExecutorArgs): Promise<ToolResult> {
@@ -46,18 +46,23 @@ export class PythonExecutorTool extends BaseTool {
 
       // Prepare the full Python code with setup
       const fullCode = this.prepareCode(args);
-      
+
       // NOTE: In actual implementation, this would call the MCP IDE executeCode tool
       // For now, we return the prepared code that should be executed
-      
-      return this.createResponse(JSON.stringify({
-        action: 'execute_python',
-        prepared_code: fullCode,
-        description: args.description || 'Python data science execution',
-        next_step: 'Use mcp__ide__executeCode tool with this prepared code',
-        libraries_to_check: args.setup_libraries || []
-      }, null, 2));
 
+      return this.createResponse(
+        JSON.stringify(
+          {
+            action: 'execute_python',
+            prepared_code: fullCode,
+            description: args.description || 'Python data science execution',
+            next_step: 'Use mcp__ide__executeCode tool with this prepared code',
+            libraries_to_check: args.setup_libraries || [],
+          },
+          null,
+          2
+        )
+      );
     } catch (error) {
       return this.createErrorResponse(error instanceof Error ? error : new Error(String(error)));
     }
@@ -65,32 +70,33 @@ export class PythonExecutorTool extends BaseTool {
 
   private prepareCode(args: PythonExecutorArgs): string {
     const { code, setup_libraries } = args;
-    
+
     let fullCode = '';
-    
+
     // Add library installation/import if needed
     if (setup_libraries && setup_libraries.length > 0) {
       fullCode += this.generateLibrarySetup(setup_libraries);
       fullCode += '\n\n';
     }
-    
+
     // Add the main code
     fullCode += code;
-    
+
     return fullCode;
   }
 
   private generateLibrarySetup(libraries: string[]): string {
-    const installCode = libraries.map(lib => {
-      // Common library installation patterns
-      const installMap: Record<string, string> = {
-        'bs4': 'beautifulsoup4',
-        'sklearn': 'scikit-learn',
-        'cv2': 'opencv-python'
-      };
-      
-      const packageName = installMap[lib] || lib;
-      return `
+    const installCode = libraries
+      .map(lib => {
+        // Common library installation patterns
+        const installMap: Record<string, string> = {
+          bs4: 'beautifulsoup4',
+          sklearn: 'scikit-learn',
+          cv2: 'opencv-python',
+        };
+
+        const packageName = installMap[lib] || lib;
+        return `
 try:
     import ${lib}
 except ImportError:
@@ -98,7 +104,8 @@ except ImportError:
     import sys
     subprocess.check_call([sys.executable, "-m", "pip", "install", "${packageName}"])
     import ${lib}`;
-    }).join('\n');
+      })
+      .join('\n');
 
     return `# Auto-install and import required libraries
 ${installCode}
@@ -121,23 +128,23 @@ export class EnhancedPythonDataScienceTool extends BaseTool {
       operation: {
         type: 'string',
         enum: ['web_scraping', 'data_analysis', 'visualization', 'machine_learning', 'custom'],
-        description: 'Type of data science operation'
+        description: 'Type of data science operation',
       },
       input_data: {
         type: 'string',
-        description: 'Input data (URL, CSV, JSON, HTML, etc.)'
+        description: 'Input data (URL, CSV, JSON, HTML, etc.)',
       },
       parameters: {
         type: 'object',
-        description: 'Operation-specific parameters'
+        description: 'Operation-specific parameters',
       },
       custom_code: {
         type: 'string',
-        description: 'Custom Python code for custom operations'
-      }
+        description: 'Custom Python code for custom operations',
+      },
     },
     required: ['operation'],
-    additionalProperties: false
+    additionalProperties: false,
   };
 
   async handle(args: any): Promise<ToolResult> {
@@ -145,10 +152,15 @@ export class EnhancedPythonDataScienceTool extends BaseTool {
       this.validateArgs(args);
 
       const { operation, input_data, parameters, custom_code } = args;
-      
+
       // Generate operation-specific code
-      const generatedCode = this.generateOperationCode(operation, input_data, parameters, custom_code);
-      
+      const generatedCode = this.generateOperationCode(
+        operation,
+        input_data,
+        parameters,
+        custom_code
+      );
+
       // Prepare execution instructions
       const result = {
         operation,
@@ -157,19 +169,23 @@ export class EnhancedPythonDataScienceTool extends BaseTool {
         instructions: [
           '1. Use mcp__ide__executeCode tool with the generated_code',
           '2. Libraries will be auto-installed if missing',
-          '3. Results will be displayed in the Jupyter kernel'
+          '3. Results will be displayed in the Jupyter kernel',
         ],
-        required_libraries: this.getRequiredLibraries(operation)
+        required_libraries: this.getRequiredLibraries(operation),
       };
 
       return this.createResponse(JSON.stringify(result, null, 2));
-
     } catch (error) {
       return this.createErrorResponse(error instanceof Error ? error : new Error(String(error)));
     }
   }
 
-  private generateOperationCode(operation: string, inputData?: string, parameters?: any, customCode?: string): string {
+  private generateOperationCode(
+    operation: string,
+    inputData?: string,
+    parameters?: any,
+    customCode?: string
+  ): string {
     if (operation === 'custom' && customCode) {
       return this.wrapWithLibrarySetup(customCode, ['pandas', 'numpy']);
     }
@@ -177,23 +193,24 @@ export class EnhancedPythonDataScienceTool extends BaseTool {
     switch (operation) {
       case 'web_scraping':
         return this.generateWebScrapingCode(inputData, parameters);
-      
+
       case 'data_analysis':
         return this.generateDataAnalysisCode(inputData, parameters);
-      
+
       case 'visualization':
         return this.generateVisualizationCode(inputData, parameters);
-      
+
       case 'machine_learning':
         return this.generateMLCode(inputData, parameters);
-      
+
       default:
         throw new Error(`Unknown operation: ${operation}`);
     }
   }
 
   private generateWebScrapingCode(url?: string, params?: any): string {
-    return this.wrapWithLibrarySetup(`
+    return this.wrapWithLibrarySetup(
+      `
 # Web scraping with BeautifulSoup and requests
 import requests
 from bs4 import BeautifulSoup
@@ -231,18 +248,23 @@ try:
     
 except Exception as e:
     print(f"❌ Error scraping {url}: {e}")
-`, ['requests', 'bs4', 'pandas']);
+`,
+      ['requests', 'bs4', 'pandas']
+    );
   }
 
   private generateDataAnalysisCode(data?: string, params?: any): string {
-    return this.wrapWithLibrarySetup(`
+    return this.wrapWithLibrarySetup(
+      `
 # Data analysis with pandas and numpy
 import pandas as pd
 import numpy as np
 from io import StringIO
 
 # Sample or provided data
-${data ? `
+${
+  data
+    ? `
 # Using provided data
 data_str = """${data}"""
 try:
@@ -258,7 +280,8 @@ except:
         'D': np.random.choice(['X', 'Y', 'Z'], 100)
     })
     print("⚠️ Using sample data (CSV parsing failed)")
-` : `
+`
+    : `
 # Sample dataset
 df = pd.DataFrame({
     'sales': np.random.randint(100, 1000, 100),
@@ -267,7 +290,8 @@ df = pd.DataFrame({
     'product': np.random.choice(['A', 'B', 'C'], 100)
 })
 print("✅ Sample dataset created")
-`}
+`
+}
 
 # Comprehensive analysis
 print("\\n📊 DATASET OVERVIEW")
@@ -296,11 +320,14 @@ if len(numeric_cols) > 1:
     print(correlation_matrix)
 
 print("\\n✅ Data analysis completed successfully")
-`, ['pandas', 'numpy']);
+`,
+      ['pandas', 'numpy']
+    );
   }
 
   private generateVisualizationCode(data?: string, params?: any): string {
-    return this.wrapWithLibrarySetup(`
+    return this.wrapWithLibrarySetup(
+      `
 # Data visualization with matplotlib and seaborn
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -312,7 +339,9 @@ plt.style.use('default')
 sns.set_palette("husl")
 
 # Sample or provided data
-${data ? `
+${
+  data
+    ? `
 # Using provided data
 from io import StringIO
 try:
@@ -325,7 +354,8 @@ except:
         'category': np.random.choice(['A', 'B', 'C'], 100)
     })
     print("⚠️ Using sample data for visualization")
-` : `
+`
+    : `
 # Sample dataset
 df = pd.DataFrame({
     'sales': np.random.randint(100, 1000, 100),
@@ -334,7 +364,8 @@ df = pd.DataFrame({
     'product': np.random.choice(['A', 'B', 'C'], 100)
 })
 print("✅ Sample dataset created for visualization")
-`}
+`
+}
 
 # Create comprehensive visualization
 fig, axes = plt.subplots(2, 2, figsize=(15, 12))
@@ -383,11 +414,14 @@ print("\\n📊 Visualization completed successfully!")
 print(f"Dataset shape: {df.shape}")
 print(f"Numeric columns: {list(numeric_cols)}")
 print(f"Categorical columns: {list(categorical_cols)}")
-`, ['matplotlib', 'seaborn', 'pandas', 'numpy']);
+`,
+      ['matplotlib', 'seaborn', 'pandas', 'numpy']
+    );
   }
 
   private generateMLCode(data?: string, params?: any): string {
-    return this.wrapWithLibrarySetup(`
+    return this.wrapWithLibrarySetup(
+      `
 # Machine Learning Analysis
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
@@ -397,7 +431,9 @@ import pandas as pd
 import numpy as np
 
 # Sample or provided data
-${data ? `
+${
+  data
+    ? `
 # Using provided data
 from io import StringIO
 try:
@@ -410,14 +446,16 @@ except:
     df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(X.shape[1])])
     df['target'] = y
     print("⚠️ Using sample classification data")
-` : `
+`
+    : `
 # Sample dataset
 from sklearn.datasets import make_classification
 X, y = make_classification(n_samples=1000, n_features=10, n_classes=2, random_state=42)
 df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(X.shape[1])])
 df['target'] = y
 print("✅ Sample classification dataset created")
-`}
+`
+}
 
 print("\\n🤖 MACHINE LEARNING ANALYSIS")
 print("=" * 50)
@@ -487,19 +525,22 @@ print("=" * 35)
 print(feature_importance.head(10))
 
 print("\\n✅ Machine Learning analysis completed successfully!")
-`, ['sklearn', 'pandas', 'numpy']);
+`,
+      ['sklearn', 'pandas', 'numpy']
+    );
   }
 
   private wrapWithLibrarySetup(code: string, libraries: string[]): string {
-    const setupCode = libraries.map(lib => {
-      const installMap: Record<string, string> = {
-        'bs4': 'beautifulsoup4',
-        'sklearn': 'scikit-learn',
-        'cv2': 'opencv-python'
-      };
-      
-      const packageName = installMap[lib] || lib;
-      return `
+    const setupCode = libraries
+      .map(lib => {
+        const installMap: Record<string, string> = {
+          bs4: 'beautifulsoup4',
+          sklearn: 'scikit-learn',
+          cv2: 'opencv-python',
+        };
+
+        const packageName = installMap[lib] || lib;
+        return `
 try:
     import ${lib}
 except ImportError:
@@ -509,7 +550,8 @@ except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "${packageName}"])
     import ${lib}
     print(f"✅ {packageName} installed successfully")`;
-    }).join('\n');
+      })
+      .join('\n');
 
     return `# Auto-install required libraries
 ${setupCode}
@@ -519,11 +561,11 @@ ${code}`;
 
   private getRequiredLibraries(operation: string): string[] {
     const libraryMap: Record<string, string[]> = {
-      'web_scraping': ['requests', 'beautifulsoup4', 'pandas'],
-      'data_analysis': ['pandas', 'numpy'],
-      'visualization': ['matplotlib', 'seaborn', 'pandas', 'numpy'],
-      'machine_learning': ['scikit-learn', 'pandas', 'numpy'],
-      'custom': ['pandas', 'numpy']
+      web_scraping: ['requests', 'beautifulsoup4', 'pandas'],
+      data_analysis: ['pandas', 'numpy'],
+      visualization: ['matplotlib', 'seaborn', 'pandas', 'numpy'],
+      machine_learning: ['scikit-learn', 'pandas', 'numpy'],
+      custom: ['pandas', 'numpy'],
     };
 
     return libraryMap[operation] || [];

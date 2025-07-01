@@ -19,7 +19,8 @@ export interface PythonDataAnalysisArgs {
  */
 export class PythonDataAnalysisTool extends BaseTool {
   readonly name = 'PythonDataAnalysis';
-  readonly description = 'Execute Python data science operations using BeautifulSoup4, pandas, numpy, scipy, scikit-learn, matplotlib through MCP IDE';
+  readonly description =
+    'Execute Python data science operations using BeautifulSoup4, pandas, numpy, scipy, scikit-learn, matplotlib through MCP IDE';
 
   readonly inputSchema: ToolSchema = {
     type: 'object',
@@ -27,29 +28,30 @@ export class PythonDataAnalysisTool extends BaseTool {
       operation: {
         type: 'string',
         enum: ['parse_html', 'parse_xml', 'data_analysis', 'visualization', 'ml_analysis'],
-        description: 'Type of data science operation to perform'
+        description: 'Type of data science operation to perform',
       },
       code: {
         type: 'string',
-        description: 'Custom Python code to execute (optional)'
+        description: 'Custom Python code to execute (optional)',
       },
       data: {
         type: 'string',
-        description: 'Input data as string (HTML, XML, CSV, JSON, etc.)'
+        description: 'Input data as string (HTML, XML, CSV, JSON, etc.)',
       },
       libraries: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Python libraries to import (bs4, pandas, numpy, scipy, sklearn, matplotlib, etc.)'
+        description:
+          'Python libraries to import (bs4, pandas, numpy, scipy, sklearn, matplotlib, etc.)',
       },
       output_format: {
         type: 'string',
         enum: ['text', 'json', 'csv', 'plot'],
-        description: 'Desired output format'
-      }
+        description: 'Desired output format',
+      },
     },
     required: ['operation'],
-    additionalProperties: false
+    additionalProperties: false,
   };
 
   async handle(args: PythonDataAnalysisArgs): Promise<ToolResult> {
@@ -58,17 +60,22 @@ export class PythonDataAnalysisTool extends BaseTool {
 
       // Generate Python code based on operation
       const pythonCode = this.generatePythonCode(args);
-      
+
       // Execute through MCP IDE (this would need to be available in the MCP context)
       // For now, we'll return the generated code that could be executed
-      
-      return this.createResponse(JSON.stringify({
-        operation: args.operation,
-        generated_code: pythonCode,
-        instructions: 'Execute this Python code using the MCP IDE executeCode tool',
-        libraries_needed: this.getRequiredLibraries(args.operation, args.libraries)
-      }, null, 2));
 
+      return this.createResponse(
+        JSON.stringify(
+          {
+            operation: args.operation,
+            generated_code: pythonCode,
+            instructions: 'Execute this Python code using the MCP IDE executeCode tool',
+            libraries_needed: this.getRequiredLibraries(args.operation, args.libraries),
+          },
+          null,
+          2
+        )
+      );
     } catch (error) {
       return this.createErrorResponse(error instanceof Error ? error : new Error(String(error)));
     }
@@ -76,7 +83,7 @@ export class PythonDataAnalysisTool extends BaseTool {
 
   private generatePythonCode(args: PythonDataAnalysisArgs): string {
     const { operation, data, libraries, output_format, code } = args;
-    
+
     // If custom code provided, use it with imports
     if (code) {
       const imports = this.generateImports(libraries || this.getRequiredLibraries(operation));
@@ -87,19 +94,19 @@ export class PythonDataAnalysisTool extends BaseTool {
     switch (operation) {
       case 'parse_html':
         return this.generateHtmlParsingCode(data, output_format);
-      
+
       case 'parse_xml':
         return this.generateXmlParsingCode(data, output_format);
-      
+
       case 'data_analysis':
         return this.generateDataAnalysisCode(data, output_format);
-      
+
       case 'visualization':
         return this.generateVisualizationCode(data, output_format);
-      
+
       case 'ml_analysis':
         return this.generateMLAnalysisCode(data, output_format);
-      
+
       default:
         throw new Error(`Unknown operation: ${operation}`);
     }
@@ -107,19 +114,17 @@ export class PythonDataAnalysisTool extends BaseTool {
 
   private generateImports(libraries: string[]): string {
     const importMap: Record<string, string> = {
-      'bs4': 'from bs4 import BeautifulSoup',
-      'lxml': 'import lxml',
-      'pandas': 'import pandas as pd',
-      'numpy': 'import numpy as np',
-      'scipy': 'import scipy',
-      'sklearn': 'import sklearn',
-      'matplotlib': 'import matplotlib.pyplot as plt',
-      'seaborn': 'import seaborn as sns'
+      bs4: 'from bs4 import BeautifulSoup',
+      lxml: 'import lxml',
+      pandas: 'import pandas as pd',
+      numpy: 'import numpy as np',
+      scipy: 'import scipy',
+      sklearn: 'import sklearn',
+      matplotlib: 'import matplotlib.pyplot as plt',
+      seaborn: 'import seaborn as sns',
     };
 
-    return libraries
-      .map(lib => importMap[lib] || `import ${lib}`)
-      .join('\n');
+    return libraries.map(lib => importMap[lib] || `import ${lib}`).join('\n');
   }
 
   private generateHtmlParsingCode(data?: string, outputFormat?: string): string {
@@ -174,11 +179,15 @@ import pandas as pd
 import numpy as np
 
 # Sample data or load from input
-${data ? `data = """${data}"""` : `data = pd.DataFrame({
+${
+  data
+    ? `data = """${data}"""`
+    : `data = pd.DataFrame({
     'A': np.random.randn(100),
     'B': np.random.randn(100),
     'C': np.random.randint(1, 5, 100)
-})`}
+})`
+}
 
 # Basic analysis
 if isinstance(data, str):
@@ -209,11 +218,15 @@ import pandas as pd
 import numpy as np
 
 # Sample data
-${data ? `# Using provided data` : `data = pd.DataFrame({
+${
+  data
+    ? `# Using provided data`
+    : `data = pd.DataFrame({
     'x': np.random.randn(100),
     'y': np.random.randn(100),
     'category': np.random.choice(['A', 'B', 'C'], 100)
-})`}
+})`
+}
 
 # Create visualization
 plt.figure(figsize=(10, 6))
@@ -238,8 +251,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score
 
 # Sample data
-${data ? `# Using provided data` : `from sklearn.datasets import make_classification
-X, y = make_classification(n_samples=1000, n_features=10, n_classes=2, random_state=42)`}
+${
+  data
+    ? `# Using provided data`
+    : `from sklearn.datasets import make_classification
+X, y = make_classification(n_samples=1000, n_features=10, n_classes=2, random_state=42)`
+}
 
 # Split data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -270,11 +287,11 @@ ${outputFormat === 'json' ? 'import json; print(json.dumps(results, indent=2, de
     if (customLibraries) return customLibraries;
 
     const libraryMap: Record<string, string[]> = {
-      'parse_html': ['bs4'],
-      'parse_xml': ['lxml'],
-      'data_analysis': ['pandas', 'numpy'],
-      'visualization': ['matplotlib', 'pandas', 'numpy'],
-      'ml_analysis': ['sklearn', 'pandas', 'numpy']
+      parse_html: ['bs4'],
+      parse_xml: ['lxml'],
+      data_analysis: ['pandas', 'numpy'],
+      visualization: ['matplotlib', 'pandas', 'numpy'],
+      ml_analysis: ['sklearn', 'pandas', 'numpy'],
     };
 
     return libraryMap[operation] || [];

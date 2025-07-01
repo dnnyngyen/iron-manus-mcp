@@ -216,10 +216,10 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
   // Initialize session workspace for agent communication
   const sessionId = input.session_id;
   const sessionWorkspace = `./iron-manus-sessions/${sessionId}`;
-  
+
   // Store session workspace path in payload for prompt variable substitution
   session.payload.session_workspace = sessionWorkspace;
-  
+
   // Support agent synthesis results - check if synthesized knowledge file exists
   const synthesisFile = `${sessionWorkspace}/synthesized_knowledge.md`;
   try {
@@ -228,16 +228,18 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
       const synthesizedContent = fs.readFileSync(synthesisFile, 'utf-8');
       session.payload.knowledge_gathered = synthesizedContent;
       session.payload.synthesized_knowledge = synthesizedContent;
-      
+
       // Mark agent orchestration as successful
       session.payload.agent_orchestration_successful = true;
       session.payload.agent_workspace_used = sessionWorkspace;
-      
+
       console.log(`SUCCESS: Agent synthesis completed, knowledge gathered from ${synthesisFile}`);
       return; // Skip traditional auto-connection if agent synthesis succeeded
     }
   } catch (error) {
-    console.log(`No agent synthesis found at ${synthesisFile}, proceeding with traditional research`);
+    console.log(
+      `No agent synthesis found at ${synthesisFile}, proceeding with traditional research`
+    );
   }
 
   // Check if Claude provided API selection response

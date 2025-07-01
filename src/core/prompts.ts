@@ -1053,7 +1053,13 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
     'PythonExecutor',
     'EnhancedPythonDataScience',
   ], // Natural thinking + execution tools + Python execution + data science
-  VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'EnhancedPythonDataScience'], // Natural thinking + verification tools + analysis + data validation
+  VERIFY: [
+    'TodoRead',
+    'Read',
+    'mcp__ide__executeCode',
+    'PythonDataAnalysis',
+    'EnhancedPythonDataScience',
+  ], // Natural thinking + verification tools + analysis + data validation
   DONE: [], // No tools needed
 };
 
