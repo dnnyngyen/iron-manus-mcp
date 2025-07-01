@@ -13,10 +13,17 @@
 ### 📹 Live Demo GIF
 ![Iron Manus MCP Demo](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWpiYWd4eWx6bWlwcHA5Z3QxOGR1Nzh6aWcyY3hzMGlpaGpqYm12ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7fqy8AAeJusLTkSGzF/giphy.gif)
 
-### 🎥 Full Video Tutorial
+### 🎥 Video Tutorials
+
+#### Quick Demo
 [![Iron Manus MCP Demo](https://img.youtube.com/vi/CWuQ_PvZkOs/mqdefault.jpg)](https://www.youtube.com/watch?v=CWuQ_PvZkOs)
 
-**[Watch the complete walkthrough](https://www.youtube.com/watch?v=CWuQ_PvZkOs)** - See the 6-phase workflow orchestration in real-time
+**[Watch the quick demo](https://www.youtube.com/watch?v=CWuQ_PvZkOs)** - See the 6-phase workflow orchestration in real-time
+
+#### Demo + Explanations
+[![Iron Manus MCP Deep Dive](https://img.youtube.com/vi/EFVQT3pmyTc/mqdefault.jpg)](https://www.youtube.com/watch?v=EFVQT3pmyTc)
+
+**[Watch the detailed walkthrough](https://www.youtube.com/watch?v=EFVQT3pmyTc)** - In-depth explanation of architecture and implementation
 
 ## What It Does
 
