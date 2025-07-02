@@ -26,10 +26,12 @@ export class GraphStateAdapter {
     try {
       // Load from knowledge graph
       const graph = await stateGraphManager.readSessionGraph(sessionId);
-      
+
       // Find session entity
-      const sessionEntity = graph.entities.find(e => e.name === sessionId && e.entityType === 'session');
-      
+      const sessionEntity = graph.entities.find(
+        e => e.name === sessionId && e.entityType === 'session'
+      );
+
       if (!sessionEntity) {
         // Create new session
         const newSession: SessionState = {
@@ -43,7 +45,7 @@ export class GraphStateAdapter {
           reasoning_effectiveness: 0.8,
           last_activity: Date.now(),
         };
-        
+
         this.sessionCache.set(sessionId, newSession);
         return newSession;
       }
@@ -52,10 +54,9 @@ export class GraphStateAdapter {
       const session = this.entitiesToSessionState(sessionId, graph.entities, graph.relations);
       this.sessionCache.set(sessionId, session);
       return session;
-      
     } catch (error) {
       console.warn(`Failed to load session ${sessionId} from graph, creating new:`, error);
-      
+
       // Fallback to new session
       const newSession: SessionState = {
         current_phase: 'INIT',
@@ -68,7 +69,7 @@ export class GraphStateAdapter {
         reasoning_effectiveness: 0.8,
         last_activity: Date.now(),
       };
-      
+
       this.sessionCache.set(sessionId, newSession);
       return newSession;
     }
@@ -81,13 +82,13 @@ export class GraphStateAdapter {
   async updateSessionState(sessionId: string, updates: Partial<SessionState>): Promise<void> {
     // Get current session
     const currentSession = await this.getSessionState(sessionId);
-    
+
     // Apply updates
     const updatedSession = { ...currentSession, ...updates, last_activity: Date.now() };
-    
+
     // Cache the updated session
     this.sessionCache.set(sessionId, updatedSession);
-    
+
     // Convert to graph operations
     await this.sessionStateToEntities(sessionId, updatedSession);
   }
@@ -95,9 +96,13 @@ export class GraphStateAdapter {
   /**
    * Convert knowledge graph entities back to SessionState format
    */
-  private entitiesToSessionState(sessionId: string, entities: any[], relations: any[]): SessionState {
+  private entitiesToSessionState(
+    sessionId: string,
+    entities: any[],
+    relations: any[]
+  ): SessionState {
     const sessionEntity = entities.find(e => e.name === sessionId && e.entityType === 'session');
-    
+
     if (!sessionEntity) {
       throw new Error(`Session entity not found for ${sessionId}`);
     }
@@ -108,18 +113,30 @@ export class GraphStateAdapter {
       current_phase: this.extractObservation(observations, 'current_phase', 'INIT') as Phase,
       initial_objective: this.extractObservation(observations, 'objective', ''),
       detected_role: this.extractObservation(observations, 'detected_role', 'researcher') as Role,
-      reasoning_effectiveness: parseFloat(this.extractObservation(observations, 'reasoning_effectiveness', '0.8')),
-      last_activity: parseInt(this.extractObservation(observations, 'last_activity', Date.now().toString())),
+      reasoning_effectiveness: parseFloat(
+        this.extractObservation(observations, 'reasoning_effectiveness', '0.8')
+      ),
+      last_activity: parseInt(
+        this.extractObservation(observations, 'last_activity', Date.now().toString())
+      ),
       payload: this.extractPayload(observations),
     };
 
     // Extract tasks from task entities
-    const taskEntities = entities.filter(e => e.entityType === 'task' && e.name.startsWith(`${sessionId}_task_`));
+    const taskEntities = entities.filter(
+      e => e.entityType === 'task' && e.name.startsWith(`${sessionId}_task_`)
+    );
     session.payload.current_todos = taskEntities.map(task => ({
       id: task.name.replace(`${sessionId}_task_`, ''),
       content: this.extractObservation(task.observations, 'content', ''),
-      status: this.extractObservation(task.observations, 'status', 'pending') as 'pending' | 'in_progress' | 'completed',
-      priority: this.extractObservation(task.observations, 'priority', 'medium') as 'high' | 'medium' | 'low',
+      status: this.extractObservation(task.observations, 'status', 'pending') as
+        | 'pending'
+        | 'in_progress'
+        | 'completed',
+      priority: this.extractObservation(task.observations, 'priority', 'medium') as
+        | 'high'
+        | 'medium'
+        | 'low',
     }));
 
     return session;
@@ -133,7 +150,7 @@ export class GraphStateAdapter {
     if (process.env.NODE_ENV === 'test') {
       return;
     }
-    
+
     // Create or update session entity
     const sessionObservations = [
       `current_phase: ${session.current_phase}`,
@@ -145,20 +162,26 @@ export class GraphStateAdapter {
     ];
 
     // Initialize session if it doesn't exist
-    await stateGraphManager.initializeSession(sessionId, session.initial_objective, session.detected_role);
-    
+    await stateGraphManager.initializeSession(
+      sessionId,
+      session.initial_objective,
+      session.detected_role
+    );
+
     // Update session observations
-    await stateGraphManager.addSessionObservations(sessionId, [{
-      entityName: sessionId,
-      contents: sessionObservations
-    }]);
+    await stateGraphManager.addSessionObservations(sessionId, [
+      {
+        entityName: sessionId,
+        contents: sessionObservations,
+      },
+    ]);
 
     // Update tasks
     if (session.payload.current_todos) {
       for (const todo of session.payload.current_todos) {
         const taskId = todo.id || `task_${Date.now()}`;
         await stateGraphManager.recordTaskCreation(sessionId, taskId, todo.content, todo.priority);
-        
+
         if (todo.status !== 'pending') {
           await stateGraphManager.updateTaskStatus(sessionId, taskId, todo.status);
         }
@@ -187,7 +210,7 @@ export class GraphStateAdapter {
       if (obs.startsWith('payload_')) {
         const [key, ...valueParts] = obs.replace('payload_', '').split(':');
         const value = valueParts.join(':').trim();
-        
+
         try {
           // Try to parse as JSON
           payload[key] = JSON.parse(value);
@@ -206,13 +229,13 @@ export class GraphStateAdapter {
    */
   private payloadToObservations(payload: Record<string, any>): string[] {
     const observations: string[] = [];
-    
+
     Object.entries(payload).forEach(([key, value]) => {
       if (key === 'current_todos') {
         // Skip todos - handled separately
         return;
       }
-      
+
       try {
         observations.push(`payload_${key}: ${JSON.stringify(value)}`);
       } catch {
@@ -228,11 +251,11 @@ export class GraphStateAdapter {
    */
   async getSessionPerformanceMetrics(sessionId: string): Promise<Record<string, any>> {
     const session = await this.getSessionState(sessionId);
-    
+
     // Search for performance-related entities
     const graph = await stateGraphManager.searchSessionNodes(sessionId, 'performance');
     const phaseEntities = graph.entities.filter(e => e.entityType === 'phase');
-    
+
     return {
       session_id: sessionId,
       detected_role: session.detected_role,
@@ -263,7 +286,7 @@ export class GraphStateAdapter {
     // This could be enhanced to move old sessions to archive graphs
     // For now, just clear the cache
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
-    
+
     for (const [sessionId, session] of this.sessionCache) {
       if (session.last_activity < cutoff) {
         this.sessionCache.delete(sessionId);
@@ -282,13 +305,13 @@ class GraphStateManager {
   getSessionState(sessionId: string): SessionState {
     // Use sync fallback with cached state for immediate access
     // Async operations happen in the background
-    
+
     // Check cache first for immediate response
     const cached = this.sessionCache.get(sessionId);
     if (cached) {
       return cached;
     }
-    
+
     // Create new session if not found
     const newSession: SessionState = {
       current_phase: 'INIT',
@@ -298,26 +321,27 @@ class GraphStateManager {
       reasoning_effectiveness: 0.8,
       last_activity: Date.now(),
     };
-    
+
     this.sessionCache.set(sessionId, newSession);
-    
+
     // Trigger async load in background with proper error handling
-    this.adapter.getSessionState(sessionId)
+    this.adapter
+      .getSessionState(sessionId)
       .then(session => {
         this.sessionCache.set(sessionId, session);
       })
       .catch(error => {
         console.error(`Background session load failed for ${sessionId}:`, error);
-        
+
         // Recovery strategy: Mark for retry if not a permanent failure
         if (this.isRetriableError(error)) {
           this.markSessionForRetry(sessionId, 'load', { sessionId });
         }
-        
+
         // Emit error event for monitoring
         this.emitErrorEvent('background_session_load_failed', sessionId, error);
       });
-    
+
     return newSession;
   }
 
@@ -326,14 +350,14 @@ class GraphStateManager {
     const currentSession = this.getSessionState(sessionId);
     const updatedSession = { ...currentSession, ...updates, last_activity: Date.now() };
     this.sessionCache.set(sessionId, updatedSession);
-    
+
     // Proper error handling for graph update with recovery
     this.adapter.updateSessionState(sessionId, updates).catch(error => {
       console.error(`Graph update failed for session ${sessionId}:`, error);
-      
+
       // Recovery strategy: Mark session for retry
       this.markSessionForRetry(sessionId, 'update', { updates });
-      
+
       // Emit error event for monitoring systems
       this.emitErrorEvent('graph_update_failed', sessionId, error);
     });
@@ -358,52 +382,55 @@ class GraphStateManager {
         this.sessionCache.delete(sessionId);
       }
     }
-    
+
     // Proper error handling for async cleanup
     this.adapter.cleanup().catch(error => {
       console.error('Graph cleanup failed:', error);
-      
+
       // Recovery strategy: Schedule retry for next cleanup cycle
       this.scheduleCleanupRetry();
-      
+
       // Emit error event for monitoring
       this.emitErrorEvent('graph_cleanup_failed', 'system', error);
     });
   }
 
   // Add retry tracking for failed operations
-  private retryQueue: Map<string, { operation: string; data: any; attempts: number; nextRetry: number }> = new Map();
+  private retryQueue: Map<
+    string,
+    { operation: string; data: any; attempts: number; nextRetry: number }
+  > = new Map();
   private readonly MAX_RETRY_ATTEMPTS = 3;
   private readonly RETRY_DELAY_MS = 5000;
 
   private markSessionForRetry(sessionId: string, operation: string, data: any): void {
     const key = `${sessionId}_${operation}`;
     const existing = this.retryQueue.get(key);
-    
+
     if (existing && existing.attempts >= this.MAX_RETRY_ATTEMPTS) {
       console.warn(`Max retry attempts reached for session ${sessionId}, operation ${operation}`);
       return;
     }
-    
+
     this.retryQueue.set(key, {
       operation,
       data,
       attempts: (existing?.attempts || 0) + 1,
-      nextRetry: Date.now() + this.RETRY_DELAY_MS
+      nextRetry: Date.now() + this.RETRY_DELAY_MS,
     });
-    
+
     // Schedule retry
     setTimeout(() => this.processRetryQueue(), this.RETRY_DELAY_MS);
   }
 
   private async processRetryQueue(): Promise<void> {
     const now = Date.now();
-    
+
     for (const [key, retryItem] of this.retryQueue) {
       if (retryItem.nextRetry <= now) {
         try {
           const [sessionId] = key.split('_');
-          
+
           if (retryItem.operation === 'update') {
             await this.adapter.updateSessionState(sessionId, retryItem.data.updates);
             this.retryQueue.delete(key); // Success - remove from queue
@@ -414,12 +441,12 @@ class GraphStateManager {
           }
         } catch (error) {
           console.warn(`Retry failed for ${key}, attempt ${retryItem.attempts}:`, error);
-          
+
           if (retryItem.attempts >= this.MAX_RETRY_ATTEMPTS) {
             this.retryQueue.delete(key); // Give up after max attempts
           } else {
             // Exponential backoff
-            retryItem.nextRetry = now + (this.RETRY_DELAY_MS * Math.pow(2, retryItem.attempts));
+            retryItem.nextRetry = now + this.RETRY_DELAY_MS * Math.pow(2, retryItem.attempts);
             retryItem.attempts++;
           }
         }
@@ -431,23 +458,27 @@ class GraphStateManager {
     // Determine if an error is worth retrying
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
-      
+
       // Network/timeout errors are retriable
-      if (message.includes('timeout') || 
-          message.includes('network') || 
-          message.includes('econnreset') ||
-          message.includes('enotfound')) {
+      if (
+        message.includes('timeout') ||
+        message.includes('network') ||
+        message.includes('econnreset') ||
+        message.includes('enotfound')
+      ) {
         return true;
       }
-      
+
       // Permission/auth errors are not retriable
-      if (message.includes('permission') || 
-          message.includes('unauthorized') ||
-          message.includes('forbidden')) {
+      if (
+        message.includes('permission') ||
+        message.includes('unauthorized') ||
+        message.includes('forbidden')
+      ) {
         return false;
       }
     }
-    
+
     // Default: retry temporary-looking errors
     return true;
   }
@@ -470,9 +501,9 @@ class GraphStateManager {
       session_id: sessionId,
       error_message: error instanceof Error ? error.message : String(error),
       error_stack: error instanceof Error ? error.stack : undefined,
-      component: 'GraphStateManager'
+      component: 'GraphStateManager',
     };
-    
+
     // In production, this could send to monitoring systems (DataDog, etc.)
     if (process.env.NODE_ENV === 'production') {
       // Could integrate with monitoring systems here

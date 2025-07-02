@@ -58,7 +58,9 @@ export class JARVISTool extends BaseTool {
       // NOTE: In tests, always provide explicit session_id to avoid directory proliferation
       if (!args.session_id) {
         args.session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        console.warn(`Auto-generated session ID: ${args.session_id}. Consider providing explicit session_id.`);
+        console.warn(
+          `Auto-generated session ID: ${args.session_id}. Consider providing explicit session_id.`
+        );
       }
 
       this.validateArgs(args);

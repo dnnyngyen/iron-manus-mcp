@@ -1,7 +1,13 @@
 // FSM State Consistency Validation System
 // Implements comprehensive state validation and transition logging for the Iron Manus FSM
 
-import { Phase, SessionState, TodoItem, VerificationResult, APIUsageMetrics } from '../core/types.js';
+import {
+  Phase,
+  SessionState,
+  TodoItem,
+  VerificationResult,
+  APIUsageMetrics,
+} from '../core/types.js';
 
 // Validation configuration
 export interface ValidationConfig {
@@ -17,7 +23,7 @@ export const DEFAULT_VALIDATION_CONFIG: ValidationConfig = {
   enableTransitionLogging: true,
   maxTasksPerPhase: 50,
   minReasoningEffectiveness: 0.3,
-  requiredCompletionThreshold: 0.95
+  requiredCompletionThreshold: 0.95,
 };
 
 // Validation result types
@@ -130,7 +136,7 @@ export class FSMStateValidator {
       failedChecks: totalChecks - passedChecks,
       validationTimeMs,
       stateConsistencyScore,
-      transitionIntegrityScore
+      transitionIntegrityScore,
     };
 
     const recommendations = this.generateRecommendations(errors, warnings, sessionState);
@@ -140,7 +146,7 @@ export class FSMStateValidator {
       errors,
       warnings,
       metrics,
-      recommendations
+      recommendations,
     };
   }
 
@@ -164,7 +170,7 @@ export class FSMStateValidator {
       duration,
       payload: { ...payload },
       success: this.isValidTransition(fromPhase, toPhase),
-      errors: this.validateTransition(fromPhase, toPhase, payload)
+      errors: this.validateTransition(fromPhase, toPhase, payload),
     };
 
     let log = this.transitionLogs.get(sessionId);
@@ -174,7 +180,7 @@ export class FSMStateValidator {
         transitions: [],
         totalTransitions: 0,
         successfulTransitions: 0,
-        averageTransitionTime: 0
+        averageTransitionTime: 0,
       };
       this.transitionLogs.set(sessionId, log);
     }
@@ -189,7 +195,9 @@ export class FSMStateValidator {
     const totalTime = log.transitions.reduce((sum, t) => sum + t.duration, 0);
     log.averageTransitionTime = totalTime / log.transitions.length;
 
-    console.log(`[FSM-TRANSITION] ${fromPhase} -> ${toPhase} (${duration}ms) ${transition.success ? 'SUCCESS' : 'FAILED'}`);
+    console.log(
+      `[FSM-TRANSITION] ${fromPhase} -> ${toPhase} (${duration}ms) ${transition.success ? 'SUCCESS' : 'FAILED'}`
+    );
     if (transition.errors && transition.errors.length > 0) {
       console.warn(`[FSM-TRANSITION-ERRORS] ${transition.errors.join(', ')}`);
     }
@@ -217,7 +225,16 @@ export class FSMStateValidator {
     let passedChecks = 0;
 
     // Check if phase is valid
-    const validPhases: Phase[] = ['INIT', 'QUERY', 'ENHANCE', 'KNOWLEDGE', 'PLAN', 'EXECUTE', 'VERIFY', 'DONE'];
+    const validPhases: Phase[] = [
+      'INIT',
+      'QUERY',
+      'ENHANCE',
+      'KNOWLEDGE',
+      'PLAN',
+      'EXECUTE',
+      'VERIFY',
+      'DONE',
+    ];
     if (validPhases.includes(sessionState.current_phase)) {
       passedChecks++;
     } else {
@@ -225,7 +242,7 @@ export class FSMStateValidator {
         code: 'INVALID_PHASE',
         message: `Invalid phase: ${sessionState.current_phase}`,
         severity: 'critical',
-        phase: sessionState.current_phase
+        phase: sessionState.current_phase,
       });
     }
 
@@ -237,7 +254,7 @@ export class FSMStateValidator {
         code: 'MISSING_OBJECTIVE',
         message: 'Initial objective is missing or empty',
         severity: 'high',
-        phase: sessionState.current_phase
+        phase: sessionState.current_phase,
       });
     }
 
@@ -249,7 +266,7 @@ export class FSMStateValidator {
         code: 'INVALID_REASONING_EFFECTIVENESS',
         message: `Reasoning effectiveness out of bounds: ${sessionState.reasoning_effectiveness}`,
         severity: 'medium',
-        phase: sessionState.current_phase
+        phase: sessionState.current_phase,
       });
     }
 
@@ -259,7 +276,7 @@ export class FSMStateValidator {
         code: 'LOW_REASONING_EFFECTIVENESS',
         message: `Reasoning effectiveness is low: ${sessionState.reasoning_effectiveness}`,
         phase: sessionState.current_phase,
-        suggestion: 'Consider task complexity adjustment or performance review'
+        suggestion: 'Consider task complexity adjustment or performance review',
       });
     }
 
@@ -288,7 +305,7 @@ export class FSMStateValidator {
         code: 'MISSING_PAYLOAD',
         message: 'Payload is missing or invalid',
         severity: 'high',
-        phase: sessionState.current_phase
+        phase: sessionState.current_phase,
       });
       return { totalChecks, passedChecks, errors, warnings };
     }
@@ -306,7 +323,7 @@ export class FSMStateValidator {
         message: `Task index out of bounds: ${currentTaskIndex}/${totalTasks}`,
         severity: 'medium',
         phase: sessionState.current_phase,
-        context: { currentTaskIndex, totalTasks }
+        context: { currentTaskIndex, totalTasks },
       });
     } else {
       passedChecks++; // No tasks is valid state
@@ -320,7 +337,7 @@ export class FSMStateValidator {
         code: 'MISSING_TRANSITION_COUNT',
         message: 'Phase transition count is missing or invalid',
         phase: sessionState.current_phase,
-        suggestion: 'Initialize phase_transition_count to 0'
+        suggestion: 'Initialize phase_transition_count to 0',
       });
     }
 
@@ -332,7 +349,7 @@ export class FSMStateValidator {
         code: 'EXCESSIVE_TASK_COUNT',
         message: `High task count: ${totalTasks} (max recommended: ${this.config.maxTasksPerPhase})`,
         phase: sessionState.current_phase,
-        suggestion: 'Consider breaking down complex tasks'
+        suggestion: 'Consider breaking down complex tasks',
       });
     }
 
@@ -370,7 +387,7 @@ export class FSMStateValidator {
           message: `Todo at index ${index} has invalid structure`,
           severity: 'medium',
           phase: sessionState.current_phase,
-          context: { todoIndex: index, todo }
+          context: { todoIndex: index, todo },
         });
       }
 
@@ -384,7 +401,7 @@ export class FSMStateValidator {
           message: `Todo at index ${index} has invalid status: ${todo.status}`,
           severity: 'medium',
           phase: sessionState.current_phase,
-          context: { todoIndex: index, status: todo.status }
+          context: { todoIndex: index, status: todo.status },
         });
       }
 
@@ -398,7 +415,7 @@ export class FSMStateValidator {
           message: `Todo at index ${index} has invalid priority: ${todo.priority}`,
           severity: 'medium',
           phase: sessionState.current_phase,
-          context: { todoIndex: index, priority: todo.priority }
+          context: { todoIndex: index, priority: todo.priority },
         });
       }
     });
@@ -410,7 +427,7 @@ export class FSMStateValidator {
         code: 'MULTIPLE_IN_PROGRESS_TASKS',
         message: `Multiple tasks in progress: ${inProgressTasks.length}`,
         phase: sessionState.current_phase,
-        suggestion: 'Consider focusing on one task at a time'
+        suggestion: 'Consider focusing on one task at a time',
       });
     }
 
@@ -439,7 +456,7 @@ export class FSMStateValidator {
         code: 'MISSING_LAST_ACTIVITY',
         message: 'Last activity timestamp is missing or invalid',
         phase: sessionState.current_phase,
-        suggestion: 'Initialize last_activity timestamp'
+        suggestion: 'Initialize last_activity timestamp',
       });
     }
 
@@ -453,7 +470,7 @@ export class FSMStateValidator {
           code: 'INVALID_API_METRICS',
           message: 'API usage metrics contain invalid values',
           phase: sessionState.current_phase,
-          suggestion: 'Verify API metrics calculation logic'
+          suggestion: 'Verify API metrics calculation logic',
         });
       }
     } else {
@@ -486,14 +503,14 @@ export class FSMStateValidator {
    */
   private isValidTransition(fromPhase: Phase, toPhase: Phase): boolean {
     const validTransitions: Record<Phase, Phase[]> = {
-      'INIT': ['QUERY'],
-      'QUERY': ['ENHANCE'],
-      'ENHANCE': ['KNOWLEDGE'], 
-      'KNOWLEDGE': ['PLAN'],
-      'PLAN': ['EXECUTE'],
-      'EXECUTE': ['EXECUTE', 'VERIFY'], // Can stay in EXECUTE for multiple tasks
-      'VERIFY': ['EXECUTE', 'PLAN', 'DONE'], // Can rollback based on verification
-      'DONE': ['DONE'] // Terminal state
+      INIT: ['QUERY'],
+      QUERY: ['ENHANCE'],
+      ENHANCE: ['KNOWLEDGE'],
+      KNOWLEDGE: ['PLAN'],
+      PLAN: ['EXECUTE'],
+      EXECUTE: ['EXECUTE', 'VERIFY'], // Can stay in EXECUTE for multiple tasks
+      VERIFY: ['EXECUTE', 'PLAN', 'DONE'], // Can rollback based on verification
+      DONE: ['DONE'], // Terminal state
     };
 
     return validTransitions[fromPhase]?.includes(toPhase) || false;
@@ -502,7 +519,11 @@ export class FSMStateValidator {
   /**
    * Validates a specific transition
    */
-  private validateTransition(fromPhase: Phase, toPhase: Phase, payload: Record<string, any>): string[] {
+  private validateTransition(
+    fromPhase: Phase,
+    toPhase: Phase,
+    payload: Record<string, any>
+  ): string[] {
     const errors: string[] = [];
 
     if (!this.isValidTransition(fromPhase, toPhase)) {
@@ -564,20 +585,26 @@ export class FSMStateValidator {
     // Critical error recommendations
     const criticalErrors = errors.filter(e => e.severity === 'critical');
     if (criticalErrors.length > 0) {
-      recommendations.push('CRITICAL: Address critical errors immediately to prevent system instability');
+      recommendations.push(
+        'CRITICAL: Address critical errors immediately to prevent system instability'
+      );
     }
 
     // Phase-specific recommendations
     switch (sessionState.current_phase) {
       case 'EXECUTE':
         if (sessionState.payload?.current_todos?.length > 10) {
-          recommendations.push('Consider breaking down large task lists into smaller, manageable chunks');
+          recommendations.push(
+            'Consider breaking down large task lists into smaller, manageable chunks'
+          );
         }
         break;
       case 'VERIFY': {
         const completionPercentage = this.calculateCompletionPercentage(sessionState);
         if (completionPercentage < this.config.requiredCompletionThreshold) {
-          recommendations.push(`Completion rate (${(completionPercentage * 100).toFixed(1)}%) below threshold`);
+          recommendations.push(
+            `Completion rate (${(completionPercentage * 100).toFixed(1)}%) below threshold`
+          );
         }
         break;
       }
@@ -585,7 +612,9 @@ export class FSMStateValidator {
 
     // Performance recommendations
     if (sessionState.reasoning_effectiveness < 0.5) {
-      recommendations.push('Low reasoning effectiveness detected - review task complexity and approach');
+      recommendations.push(
+        'Low reasoning effectiveness detected - review task complexity and approach'
+      );
     }
 
     // Warning-based recommendations
@@ -616,7 +645,10 @@ export function createValidator(config?: Partial<ValidationConfig>): FSMStateVal
   return new FSMStateValidator(fullConfig);
 }
 
-export function validateFSMState(sessionState: SessionState, config?: Partial<ValidationConfig>): StateValidationResult {
+export function validateFSMState(
+  sessionState: SessionState,
+  config?: Partial<ValidationConfig>
+): StateValidationResult {
   const validator = createValidator(config);
   return validator.validateState(sessionState);
 }

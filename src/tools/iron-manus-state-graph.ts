@@ -3,7 +3,7 @@
 /**
  * Iron Manus State Graph - Project-scoped FSM state management
  * Forked from MCP Memory Server with Iron Manus FSM terminology
- * 
+ *
  * Core concepts adapted for Iron Manus:
  * - Sessions: FSM execution sessions with isolated state graphs
  * - Phases: FSM phases (INIT, QUERY, ENHANCE, KNOWLEDGE, PLAN, EXECUTE, VERIFY, DONE)
@@ -26,7 +26,7 @@ interface SessionEntity {
 
 interface StateTransition {
   from: string; // entity name
-  to: string; // entity name  
+  to: string; // entity name
   relationType: 'transitions_to' | 'spawns' | 'depends_on' | 'uses' | 'tracks' | 'contains';
 }
 
@@ -50,7 +50,7 @@ class IronManusStateGraphManager {
     if (process.env.NODE_ENV === 'test') {
       return;
     }
-    
+
     const sessionDir = `./iron-manus-sessions/${sessionId}`;
     try {
       await fs.mkdir(sessionDir, { recursive: true });
@@ -64,19 +64,22 @@ class IronManusStateGraphManager {
     if (process.env.NODE_ENV === 'test') {
       return { entities: [], relations: [] };
     }
-    
+
     const graphPath = this.getSessionGraphPath(sessionId);
     try {
-      const data = await fs.readFile(graphPath, "utf-8");
-      const lines = data.split("\n").filter(line => line.trim() !== "");
-      return lines.reduce((graph: StateGraph, line) => {
-        const item = JSON.parse(line);
-        if (item.type === "entity") graph.entities.push(item as SessionEntity);
-        if (item.type === "relation") graph.relations.push(item as StateTransition);
-        return graph;
-      }, { entities: [], relations: [] });
+      const data = await fs.readFile(graphPath, 'utf-8');
+      const lines = data.split('\n').filter(line => line.trim() !== '');
+      return lines.reduce(
+        (graph: StateGraph, line) => {
+          const item = JSON.parse(line);
+          if (item.type === 'entity') graph.entities.push(item as SessionEntity);
+          if (item.type === 'relation') graph.relations.push(item as StateTransition);
+          return graph;
+        },
+        { entities: [], relations: [] }
+      );
     } catch (error) {
-      if (error instanceof Error && 'code' in error && (error as any).code === "ENOENT") {
+      if (error instanceof Error && 'code' in error && (error as any).code === 'ENOENT') {
         return { entities: [], relations: [] };
       }
       throw error;
@@ -88,37 +91,52 @@ class IronManusStateGraphManager {
     if (process.env.NODE_ENV === 'test') {
       return;
     }
-    
+
     await this.ensureSessionDirectory(sessionId);
     const graphPath = this.getSessionGraphPath(sessionId);
     const lines = [
-      ...graph.entities.map(e => JSON.stringify({ type: "entity", ...e })),
-      ...graph.relations.map(r => JSON.stringify({ type: "relation", ...r })),
+      ...graph.entities.map(e => JSON.stringify({ type: 'entity', ...e })),
+      ...graph.relations.map(r => JSON.stringify({ type: 'relation', ...r })),
     ];
-    await fs.writeFile(graphPath, lines.join("\n"));
+    await fs.writeFile(graphPath, lines.join('\n'));
   }
 
-  async createSessionEntities(sessionId: string, entities: SessionEntity[]): Promise<SessionEntity[]> {
+  async createSessionEntities(
+    sessionId: string,
+    entities: SessionEntity[]
+  ): Promise<SessionEntity[]> {
     const graph = await this.loadSessionGraph(sessionId);
-    const newEntities = entities.filter(e => !graph.entities.some(existingEntity => existingEntity.name === e.name));
+    const newEntities = entities.filter(
+      e => !graph.entities.some(existingEntity => existingEntity.name === e.name)
+    );
     graph.entities.push(...newEntities);
     await this.saveSessionGraph(sessionId, graph);
     return newEntities;
   }
 
-  async createStateTransitions(sessionId: string, relations: StateTransition[]): Promise<StateTransition[]> {
+  async createStateTransitions(
+    sessionId: string,
+    relations: StateTransition[]
+  ): Promise<StateTransition[]> {
     const graph = await this.loadSessionGraph(sessionId);
-    const newRelations = relations.filter(r => !graph.relations.some(existingRelation => 
-      existingRelation.from === r.from && 
-      existingRelation.to === r.to && 
-      existingRelation.relationType === r.relationType
-    ));
+    const newRelations = relations.filter(
+      r =>
+        !graph.relations.some(
+          existingRelation =>
+            existingRelation.from === r.from &&
+            existingRelation.to === r.to &&
+            existingRelation.relationType === r.relationType
+        )
+    );
     graph.relations.push(...newRelations);
     await this.saveSessionGraph(sessionId, graph);
     return newRelations;
   }
 
-  async addSessionObservations(sessionId: string, observations: { entityName: string; contents: string[] }[]): Promise<{ entityName: string; addedObservations: string[] }[]> {
+  async addSessionObservations(
+    sessionId: string,
+    observations: { entityName: string; contents: string[] }[]
+  ): Promise<{ entityName: string; addedObservations: string[] }[]> {
     const graph = await this.loadSessionGraph(sessionId);
     const results = observations.map(o => {
       const entity = graph.entities.find(e => e.name === o.entityName);
@@ -136,11 +154,16 @@ class IronManusStateGraphManager {
   async deleteSessionEntities(sessionId: string, entityNames: string[]): Promise<void> {
     const graph = await this.loadSessionGraph(sessionId);
     graph.entities = graph.entities.filter(e => !entityNames.includes(e.name));
-    graph.relations = graph.relations.filter(r => !entityNames.includes(r.from) && !entityNames.includes(r.to));
+    graph.relations = graph.relations.filter(
+      r => !entityNames.includes(r.from) && !entityNames.includes(r.to)
+    );
     await this.saveSessionGraph(sessionId, graph);
   }
 
-  async deleteSessionObservations(sessionId: string, deletions: { entityName: string; observations: string[] }[]): Promise<void> {
+  async deleteSessionObservations(
+    sessionId: string,
+    deletions: { entityName: string; observations: string[] }[]
+  ): Promise<void> {
     const graph = await this.loadSessionGraph(sessionId);
     deletions.forEach(d => {
       const entity = graph.entities.find(e => e.name === d.entityName);
@@ -153,11 +176,15 @@ class IronManusStateGraphManager {
 
   async deleteStateTransitions(sessionId: string, relations: StateTransition[]): Promise<void> {
     const graph = await this.loadSessionGraph(sessionId);
-    graph.relations = graph.relations.filter(r => !relations.some(delRelation => 
-      r.from === delRelation.from && 
-      r.to === delRelation.to && 
-      r.relationType === delRelation.relationType
-    ));
+    graph.relations = graph.relations.filter(
+      r =>
+        !relations.some(
+          delRelation =>
+            r.from === delRelation.from &&
+            r.to === delRelation.to &&
+            r.relationType === delRelation.relationType
+        )
+    );
     await this.saveSessionGraph(sessionId, graph);
   }
 
@@ -167,49 +194,50 @@ class IronManusStateGraphManager {
 
   async searchSessionNodes(sessionId: string, query: string): Promise<StateGraph> {
     const graph = await this.loadSessionGraph(sessionId);
-    
+
     // Filter entities
-    const filteredEntities = graph.entities.filter(e => 
-      e.name.toLowerCase().includes(query.toLowerCase()) ||
-      e.entityType.toLowerCase().includes(query.toLowerCase()) ||
-      e.observations.some(o => o.toLowerCase().includes(query.toLowerCase()))
+    const filteredEntities = graph.entities.filter(
+      e =>
+        e.name.toLowerCase().includes(query.toLowerCase()) ||
+        e.entityType.toLowerCase().includes(query.toLowerCase()) ||
+        e.observations.some(o => o.toLowerCase().includes(query.toLowerCase()))
     );
-  
+
     // Create a Set of filtered entity names for quick lookup
     const filteredEntityNames = new Set(filteredEntities.map(e => e.name));
-  
+
     // Filter relations to only include those between filtered entities
-    const filteredRelations = graph.relations.filter(r => 
-      filteredEntityNames.has(r.from) && filteredEntityNames.has(r.to)
+    const filteredRelations = graph.relations.filter(
+      r => filteredEntityNames.has(r.from) && filteredEntityNames.has(r.to)
     );
-  
+
     const filteredGraph: StateGraph = {
       entities: filteredEntities,
       relations: filteredRelations,
     };
-  
+
     return filteredGraph;
   }
 
   async openSessionNodes(sessionId: string, names: string[]): Promise<StateGraph> {
     const graph = await this.loadSessionGraph(sessionId);
-    
+
     // Filter entities
     const filteredEntities = graph.entities.filter(e => names.includes(e.name));
-  
+
     // Create a Set of filtered entity names for quick lookup
     const filteredEntityNames = new Set(filteredEntities.map(e => e.name));
-  
+
     // Filter relations to only include those between filtered entities
-    const filteredRelations = graph.relations.filter(r => 
-      filteredEntityNames.has(r.from) && filteredEntityNames.has(r.to)
+    const filteredRelations = graph.relations.filter(
+      r => filteredEntityNames.has(r.from) && filteredEntityNames.has(r.to)
     );
-  
+
     const filteredGraph: StateGraph = {
       entities: filteredEntities,
       relations: filteredRelations,
     };
-  
+
     return filteredGraph;
   }
 
@@ -222,18 +250,22 @@ class IronManusStateGraphManager {
         `objective: ${objective}`,
         `detected_role: ${role}`,
         `created_at: ${new Date().toISOString()}`,
-        `current_phase: INIT`
-      ]
+        `current_phase: INIT`,
+      ],
     };
 
     await this.createSessionEntities(sessionId, [sessionEntity]);
   }
 
-  async recordPhaseTransition(sessionId: string, fromPhase: string, toPhase: string): Promise<void> {
+  async recordPhaseTransition(
+    sessionId: string,
+    fromPhase: string,
+    toPhase: string
+  ): Promise<void> {
     const phaseTransition: StateTransition = {
       from: `${sessionId}_phase_${fromPhase}`,
       to: `${sessionId}_phase_${toPhase}`,
-      relationType: 'transitions_to'
+      relationType: 'transitions_to',
     };
 
     // Create phase entities if they don't exist
@@ -241,20 +273,25 @@ class IronManusStateGraphManager {
       {
         name: `${sessionId}_phase_${fromPhase}`,
         entityType: 'phase',
-        observations: [`phase_name: ${fromPhase}`, `session_id: ${sessionId}`]
+        observations: [`phase_name: ${fromPhase}`, `session_id: ${sessionId}`],
       },
       {
         name: `${sessionId}_phase_${toPhase}`,
-        entityType: 'phase', 
-        observations: [`phase_name: ${toPhase}`, `session_id: ${sessionId}`]
-      }
+        entityType: 'phase',
+        observations: [`phase_name: ${toPhase}`, `session_id: ${sessionId}`],
+      },
     ];
 
     await this.createSessionEntities(sessionId, phaseEntities);
     await this.createStateTransitions(sessionId, [phaseTransition]);
   }
 
-  async recordTaskCreation(sessionId: string, taskId: string, content: string, priority: string): Promise<void> {
+  async recordTaskCreation(
+    sessionId: string,
+    taskId: string,
+    content: string,
+    priority: string
+  ): Promise<void> {
     const taskEntity: SessionEntity = {
       name: `${sessionId}_task_${taskId}`,
       entityType: 'task',
@@ -263,14 +300,14 @@ class IronManusStateGraphManager {
         `priority: ${priority}`,
         `status: pending`,
         `session_id: ${sessionId}`,
-        `created_at: ${new Date().toISOString()}`
-      ]
+        `created_at: ${new Date().toISOString()}`,
+      ],
     };
 
     const taskRelation: StateTransition = {
       from: sessionId,
       to: `${sessionId}_task_${taskId}`,
-      relationType: 'contains'
+      relationType: 'contains',
     };
 
     await this.createSessionEntities(sessionId, [taskEntity]);
@@ -278,10 +315,12 @@ class IronManusStateGraphManager {
   }
 
   async updateTaskStatus(sessionId: string, taskId: string, status: string): Promise<void> {
-    await this.addSessionObservations(sessionId, [{
-      entityName: `${sessionId}_task_${taskId}`,
-      contents: [`status_updated: ${status} at ${new Date().toISOString()}`]
-    }]);
+    await this.addSessionObservations(sessionId, [
+      {
+        entityName: `${sessionId}_task_${taskId}`,
+        contents: [`status_updated: ${status} at ${new Date().toISOString()}`],
+      },
+    ]);
   }
 }
 
@@ -293,8 +332,9 @@ const stateGraphManager = new IronManusStateGraphManager();
  */
 export class IronManusStateGraphTool extends BaseTool {
   readonly name = 'IronManusStateGraph';
-  readonly description = 'Project-scoped FSM state management using knowledge graphs. Manage sessions, phases, tasks, and transitions with isolated state per project.';
-  
+  readonly description =
+    'Project-scoped FSM state management using knowledge graphs. Manage sessions, phases, tasks, and transitions with isolated state per project.';
+
   readonly inputSchema = {
     type: 'object' as const,
     properties: {
@@ -302,7 +342,7 @@ export class IronManusStateGraphTool extends BaseTool {
         type: 'string',
         enum: [
           'create_entities',
-          'create_transitions', 
+          'create_transitions',
           'add_observations',
           'delete_entities',
           'delete_observations',
@@ -313,13 +353,13 @@ export class IronManusStateGraphTool extends BaseTool {
           'initialize_session',
           'record_phase_transition',
           'record_task_creation',
-          'update_task_status'
+          'update_task_status',
         ],
-        description: 'The action to perform on the session state graph'
+        description: 'The action to perform on the session state graph',
       },
       session_id: {
         type: 'string',
-        description: 'The session ID for project-scoped state isolation'
+        description: 'The session ID for project-scoped state isolation',
       },
       // Generic graph operations
       entities: {
@@ -328,11 +368,14 @@ export class IronManusStateGraphTool extends BaseTool {
           type: 'object',
           properties: {
             name: { type: 'string' },
-            entityType: { type: 'string', enum: ['session', 'phase', 'task', 'role', 'api', 'performance'] },
-            observations: { type: 'array', items: { type: 'string' } }
-          }
+            entityType: {
+              type: 'string',
+              enum: ['session', 'phase', 'task', 'role', 'api', 'performance'],
+            },
+            observations: { type: 'array', items: { type: 'string' } },
+          },
         },
-        description: 'Entities to create (for create_entities action)'
+        description: 'Entities to create (for create_entities action)',
       },
       transitions: {
         type: 'array',
@@ -341,10 +384,13 @@ export class IronManusStateGraphTool extends BaseTool {
           properties: {
             from: { type: 'string' },
             to: { type: 'string' },
-            relationType: { type: 'string', enum: ['transitions_to', 'spawns', 'depends_on', 'uses', 'tracks', 'contains'] }
-          }
+            relationType: {
+              type: 'string',
+              enum: ['transitions_to', 'spawns', 'depends_on', 'uses', 'tracks', 'contains'],
+            },
+          },
         },
-        description: 'State transitions to create (for create_transitions action)'
+        description: 'State transitions to create (for create_transitions action)',
       },
       observations: {
         type: 'array',
@@ -352,55 +398,55 @@ export class IronManusStateGraphTool extends BaseTool {
           type: 'object',
           properties: {
             entityName: { type: 'string' },
-            contents: { type: 'array', items: { type: 'string' } }
-          }
+            contents: { type: 'array', items: { type: 'string' } },
+          },
         },
-        description: 'Observations to add (for add_observations action)'
+        description: 'Observations to add (for add_observations action)',
       },
       query: {
         type: 'string',
-        description: 'Search query (for search_nodes action)'
+        description: 'Search query (for search_nodes action)',
       },
       names: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Entity names to retrieve (for open_nodes action)'
+        description: 'Entity names to retrieve (for open_nodes action)',
       },
       // Iron Manus-specific actions
       objective: {
         type: 'string',
-        description: 'Session objective (for initialize_session action)'
+        description: 'Session objective (for initialize_session action)',
       },
       role: {
         type: 'string',
-        description: 'Detected role (for initialize_session action)'
+        description: 'Detected role (for initialize_session action)',
       },
       from_phase: {
         type: 'string',
-        description: 'Source phase (for record_phase_transition action)'
+        description: 'Source phase (for record_phase_transition action)',
       },
       to_phase: {
         type: 'string',
-        description: 'Target phase (for record_phase_transition action)'
+        description: 'Target phase (for record_phase_transition action)',
       },
       task_id: {
         type: 'string',
-        description: 'Task identifier (for task operations)'
+        description: 'Task identifier (for task operations)',
       },
       content: {
         type: 'string',
-        description: 'Task content (for record_task_creation action)'
+        description: 'Task content (for record_task_creation action)',
       },
       priority: {
         type: 'string',
-        description: 'Task priority (for record_task_creation action)'
+        description: 'Task priority (for record_task_creation action)',
       },
       status: {
         type: 'string',
-        description: 'Task status (for update_task_status action)'
-      }
+        description: 'Task status (for update_task_status action)',
+      },
     },
-    required: ['action', 'session_id']
+    required: ['action', 'session_id'],
   };
 
   async handle(args: any): Promise<ToolResult> {
@@ -413,127 +459,185 @@ export class IronManusStateGraphTool extends BaseTool {
     try {
       switch (action) {
         case 'create_entities': {
-          const newEntities = await stateGraphManager.createSessionEntities(session_id, args.entities || []);
+          const newEntities = await stateGraphManager.createSessionEntities(
+            session_id,
+            args.entities || []
+          );
           return {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(newEntities, null, 2)
-            }]
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(newEntities, null, 2),
+              },
+            ],
           };
         }
 
         case 'create_transitions': {
-          const newTransitions = await stateGraphManager.createStateTransitions(session_id, args.transitions || []);
+          const newTransitions = await stateGraphManager.createStateTransitions(
+            session_id,
+            args.transitions || []
+          );
           return {
-            content: [{
-              type: 'text', 
-              text: JSON.stringify(newTransitions, null, 2)
-            }]
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(newTransitions, null, 2),
+              },
+            ],
           };
         }
 
         case 'add_observations': {
-          const addedObservations = await stateGraphManager.addSessionObservations(session_id, args.observations || []);
+          const addedObservations = await stateGraphManager.addSessionObservations(
+            session_id,
+            args.observations || []
+          );
           return {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(addedObservations, null, 2)
-            }]
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(addedObservations, null, 2),
+              },
+            ],
           };
         }
 
         case 'delete_entities':
           await stateGraphManager.deleteSessionEntities(session_id, args.entity_names || []);
           return {
-            content: [{
-              type: 'text',
-              text: 'Session entities deleted successfully'
-            }]
+            content: [
+              {
+                type: 'text',
+                text: 'Session entities deleted successfully',
+              },
+            ],
           };
 
         case 'delete_observations':
           await stateGraphManager.deleteSessionObservations(session_id, args.deletions || []);
           return {
-            content: [{
-              type: 'text',
-              text: 'Session observations deleted successfully'
-            }]
+            content: [
+              {
+                type: 'text',
+                text: 'Session observations deleted successfully',
+              },
+            ],
           };
 
         case 'delete_transitions':
           await stateGraphManager.deleteStateTransitions(session_id, args.transitions || []);
           return {
-            content: [{
-              type: 'text',
-              text: 'State transitions deleted successfully'
-            }]
+            content: [
+              {
+                type: 'text',
+                text: 'State transitions deleted successfully',
+              },
+            ],
           };
 
         case 'read_graph': {
           const graph = await stateGraphManager.readSessionGraph(session_id);
           return {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(graph, null, 2)
-            }]
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(graph, null, 2),
+              },
+            ],
           };
         }
 
         case 'search_nodes': {
-          const searchResults = await stateGraphManager.searchSessionNodes(session_id, args.query || '');
+          const searchResults = await stateGraphManager.searchSessionNodes(
+            session_id,
+            args.query || ''
+          );
           return {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(searchResults, null, 2)
-            }]
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(searchResults, null, 2),
+              },
+            ],
           };
         }
 
         case 'open_nodes': {
-          const openResults = await stateGraphManager.openSessionNodes(session_id, args.names || []);
+          const openResults = await stateGraphManager.openSessionNodes(
+            session_id,
+            args.names || []
+          );
           return {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(openResults, null, 2)
-            }]
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(openResults, null, 2),
+              },
+            ],
           };
         }
 
         // Iron Manus-specific convenience actions
         case 'initialize_session':
-          await stateGraphManager.initializeSession(session_id, args.objective || '', args.role || '');
+          await stateGraphManager.initializeSession(
+            session_id,
+            args.objective || '',
+            args.role || ''
+          );
           return {
-            content: [{
-              type: 'text',
-              text: `Session ${session_id} initialized successfully`
-            }]
+            content: [
+              {
+                type: 'text',
+                text: `Session ${session_id} initialized successfully`,
+              },
+            ],
           };
 
         case 'record_phase_transition':
-          await stateGraphManager.recordPhaseTransition(session_id, args.from_phase || '', args.to_phase || '');
+          await stateGraphManager.recordPhaseTransition(
+            session_id,
+            args.from_phase || '',
+            args.to_phase || ''
+          );
           return {
-            content: [{
-              type: 'text',
-              text: `Phase transition recorded: ${args.from_phase} → ${args.to_phase}`
-            }]
+            content: [
+              {
+                type: 'text',
+                text: `Phase transition recorded: ${args.from_phase} → ${args.to_phase}`,
+              },
+            ],
           };
 
         case 'record_task_creation':
-          await stateGraphManager.recordTaskCreation(session_id, args.task_id || '', args.content || '', args.priority || 'medium');
+          await stateGraphManager.recordTaskCreation(
+            session_id,
+            args.task_id || '',
+            args.content || '',
+            args.priority || 'medium'
+          );
           return {
-            content: [{
-              type: 'text',
-              text: `Task ${args.task_id} created successfully`
-            }]
+            content: [
+              {
+                type: 'text',
+                text: `Task ${args.task_id} created successfully`,
+              },
+            ],
           };
 
         case 'update_task_status':
-          await stateGraphManager.updateTaskStatus(session_id, args.task_id || '', args.status || '');
+          await stateGraphManager.updateTaskStatus(
+            session_id,
+            args.task_id || '',
+            args.status || ''
+          );
           return {
-            content: [{
-              type: 'text',
-              text: `Task ${args.task_id} status updated to: ${args.status}`
-            }]
+            content: [
+              {
+                type: 'text',
+                text: `Task ${args.task_id} status updated to: ${args.status}`,
+              },
+            ],
           };
 
         default:
@@ -542,11 +646,13 @@ export class IronManusStateGraphTool extends BaseTool {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
-        content: [{
-          type: 'text',
-          text: `ERROR: ${errorMessage}`
-        }],
-        isError: true
+        content: [
+          {
+            type: 'text',
+            text: `ERROR: ${errorMessage}`,
+          },
+        ],
+        isError: true,
       };
     }
   }

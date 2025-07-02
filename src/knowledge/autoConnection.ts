@@ -313,10 +313,10 @@ export async function autoConnection(
     return {
       answer: `Mock knowledge synthesis for: ${query}`,
       contradictions: [],
-      confidence: 0.8
+      confidence: 0.8,
     };
   }
-  
+
   try {
     // Use a subset of sample APIs for demonstration
     const sampleUrls = [
