@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Enhanced 6-Phase FSM**: Improved 6-phase workflow (QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY) with INIT/DONE states
-- **Jest to Vitest Migration**: Complete test framework migration with 107/107 tests passing
+- **Jest to Vitest Migration**: Complete test framework migration with 163/163 tests passing
 - **Repository Flattening**: Eliminated nested directory structure for cleaner architecture
 - **ESLint Integration**: Added comprehensive TypeScript linting with @typescript-eslint
 - **Node.js Compatibility**: Tested support for Node 18.x, 20.x, and 22.x

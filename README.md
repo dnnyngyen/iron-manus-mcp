@@ -1,7 +1,7 @@
 <img src="banner.png" alt="Iron Manus MCP Banner" width="100%" height="250">
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
-[![Tests](https://img.shields.io/badge/tests-107%2F107-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
+[![Tests](https://img.shields.io/badge/tests-163%2F163-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -40,7 +40,7 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages c
 - 🛠️ **Modular Tool Registry** - 8+ specialized tools with extensible architecture
 - 📡 **65+ API Registry** - Intelligent API discovery and selection system
 - 🔒 **SSRF Protection** - Enterprise-grade security with allowlist validation
-- ✅ **107/107 Tests Passing** - Comprehensive test coverage with Vitest (100% success rate)
+- ✅ **163/163 Tests Passing** - Comprehensive test coverage with Vitest (100% success rate)
 - 📦 **ES Modules** - Modern JavaScript with TypeScript 5.0 support
 
 ## Quick Start
@@ -127,7 +127,7 @@ await mcp.callTool({
 **Available Scripts:**
 ```bash
 npm run build        # TypeScript compilation
-npm test            # Run full test suite (107 tests)
+npm test            # Run full test suite (163 tests)
 npm run test:nocov   # Run tests without coverage
 npm run lint        # ESLint checking
 npm run format      # Prettier formatting
@@ -147,7 +147,7 @@ MIN_COMPLETION_PERCENT=70            # Quality threshold
 
 ## Testing
 
-Comprehensive test suite with 107 tests using Vitest:
+Comprehensive test suite with 163 tests using Vitest:
 
 ```bash
 # Run all tests
