@@ -1,6 +1,6 @@
 {
   "name": "iron-manus-mcp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "FSM-driven MCP server with 8-phase agent loop orchestration and 65+ API registry integration",
   "type": "module",
   "main": "dist/index.js",
