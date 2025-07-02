@@ -24,7 +24,7 @@ import {
   parseClaudeRoleSelection,
   PHASE_ALLOWED_TOOLS,
 } from '../core/prompts.js';
-import { stateManager } from '../core/state.js';
+import { graphStateManager } from '../core/graph-state-adapter.js';
 import {
   selectRelevantAPIs,
   generateAPISelectionPrompt,
@@ -59,7 +59,7 @@ export async function processState(
   deps: AutoConnectionDeps
 ): Promise<FromJARVIS> {
   const sessionId = input.session_id;
-  const session = stateManager.getSessionState(sessionId);
+  const session = graphStateManager.getSessionState(sessionId);
 
   // Handle initial objective setup with Claude-powered role detection
   if (input.initial_objective) {
@@ -81,7 +81,7 @@ export async function processState(
       role_selection_prompt: roleSelectionPrompt,
       awaiting_role_selection: true,
     };
-    stateManager.updateSessionState(sessionId, session);
+    graphStateManager.updateSessionState(sessionId, session);
   }
 
   // Determine next phase based on current phase and completed phase
@@ -185,7 +185,7 @@ export async function processState(
 
   // Update session with new phase
   session.current_phase = nextPhase;
-  stateManager.updateSessionState(sessionId, session);
+  graphStateManager.updateSessionState(sessionId, session);
 
   // Generate enhanced system prompt
   const augmentedPrompt = generateSystemPrompt(session, nextPhase, input);
@@ -594,7 +594,7 @@ export function updateReasoningEffectiveness(
   success: boolean,
   taskComplexity: 'simple' | 'complex' = 'simple'
 ): void {
-  const session = stateManager.getSessionState(sessionId);
+  const session = graphStateManager.getSessionState(sessionId);
   const multiplier = taskComplexity === 'complex' ? 0.15 : 0.1;
 
   if (success) {
@@ -603,7 +603,7 @@ export function updateReasoningEffectiveness(
     session.reasoning_effectiveness = Math.max(0.3, session.reasoning_effectiveness - multiplier);
   }
 
-  stateManager.updateSessionState(sessionId, session);
+  graphStateManager.updateSessionState(sessionId, session);
 }
 
 // Validation context no longer needed - removed with enhanced features

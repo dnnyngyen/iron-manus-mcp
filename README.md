@@ -6,15 +6,16 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# 🦾 Iron Manus MCP (J.A.R.V.I.S.)
+# Iron Manus MCP (J.A.R.V.I.S.)
 
-> **Claude-code MCP server that spawns agents as tools** - An agent orchestration system that lets Claude autonomously break down complex workflows by structured phases and delegate to subagents with native context management.
+**Claude-code MCP server that spawns agents as tools** - An agent orchestration system that lets Claude autonomously break down complex workflows by structured phases and delegate to subagents with native context management.
 
-## Fit over 300k+ tokens in one session!
+## Fit over 300k+ tokens in one session
 
 <div align="center">
 
 ### 📹 GIF Demo
+
 <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWpiYWd4eWx6bWlwcHA5Z3QxOGR1Nzh6aWcyY3hzMGlpaGpqYm12ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7fqy8AAeJusLTkSGzF/giphy.gif" alt="Iron Manus MCP Demo" width="650">
 
 #### 🎥 Video Tutorials
@@ -30,15 +31,16 @@
 
 Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages complex workflows through structured phases. It features a complete tool registry with JARVIS FSM controller and intelligent API selection from 65+ endpoints.
 
-**6-Phase Workflow**: `QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY`
+**8-Phase Workflow**: `INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE`
 
 **Key Features:**
-- 🔄 **6-Phase Orchestraion Loop** - Structured workflow orchestration with INIT/DONE states
-- 🧠 **Optimized Context Management** - Subagent delegation enables 300k+ token conversations
-- 🛠️ **Modular Tool Registry** - 5+ specialized tools with extensible architecture
+
+- 🔄 **8-Phase Orchestration Loop** - Structured workflow orchestration with complete FSM states
+- 🧠 **Optimized Context Management** - Subagent delegation enables 300k+ token conversations  
+- 🛠️ **Modular Tool Registry** - 8+ specialized tools with extensible architecture
 - 📡 **65+ API Registry** - Intelligent API discovery and selection system
 - 🔒 **SSRF Protection** - Enterprise-grade security with allowlist validation
-- ✅ **107/107 Tests Passing** - Comprehensive test coverage with Vitest
+- ✅ **107/107 Tests Passing** - Comprehensive test coverage with Vitest (100% success rate)
 - 📦 **ES Modules** - Modern JavaScript with TypeScript 5.0 support
 
 ## Quick Start
@@ -88,10 +90,10 @@ await mcp.callTool({
 
 ## Available Tools
 
-- `JARVIS` - Main FSM controller (6-phase orchestration)
+- `JARVIS` - Main FSM controller (8-phase orchestration)
 - `APISearch` - Intelligent API discovery from 65+ endpoint registry
 - `MultiAPIFetch` - Parallel HTTP requests with SSRF protection
-- `KnowledgeSynthesize` - Cross-validation with conflict resolution
+- `IronManusStateGraph` - Project-scoped FSM state management
 - `APIValidator` - Response validation and confidence scoring
 
 ## Development
@@ -171,7 +173,7 @@ See `.claude/HOOKS_INTEGRATION.md` for complete hook configuration and security 
 ## Architecture
 
 **Core Components:**
-- **FSM Engine** - 6-phase state machine orchestration
+- **FSM Engine** - 8-phase state machine orchestration
 - **Tool Registry** - Modular tool architecture with dependency injection
 - **API Registry** - 65+ APIs with role-based selection
 - **Security Layer** - SSRF guard with comprehensive validation
@@ -184,7 +186,7 @@ MIT - See [LICENSE](LICENSE) file for details.
 ## Version History
 
 - **v0.2.1** - Claude Code Hooks integration with enhanced security validation and intelligent feedback loops
-- **v0.2.0** - Complete refactor with Jest→Vitest migration, repository flattening, 6-phase FSM
+- **v0.2.0** - Complete refactor with Jest→Vitest migration, repository flattening, 8-phase FSM
 - **v0.1.x** - Initial release with 6-phase workflow
 
 ---

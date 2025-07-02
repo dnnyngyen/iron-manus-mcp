@@ -14,4 +14,5 @@ export {
   EnhancedPythonDataScienceTool,
   type PythonExecutorArgs,
 } from './python-executor.js';
+export { IronManusStateGraphTool } from './iron-manus-state-graph.js';
 export { ToolRegistry, toolRegistry } from './tool-registry.js';

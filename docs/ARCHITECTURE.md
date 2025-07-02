@@ -265,7 +265,7 @@ case 'QUERY':
 - **65+ API Registry**: Comprehensive API ecosystem with role-based preferences
 - **Knowledge Synthesis**: Cross-validation and confidence scoring of gathered information
 
-**Tool Constraints**: `['WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'KnowledgeSynthesize', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'PythonExecutor', 'EnhancedPythonDataScience', 'JARVIS']`
+**Tool Constraints**: `['WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'IronManusStateGraph', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'PythonExecutor', 'EnhancedPythonDataScience', 'JARVIS']`
 
 **Auto-Connection Process** (`src/phase-engine/FSM.ts:215-261`):
 ```typescript
@@ -840,7 +840,7 @@ INIT:      ['JARVIS']
 QUERY:     ['JARVIS']
 ENHANCE:   ['JARVIS']
 KNOWLEDGE: ['WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 
-            'KnowledgeSynthesize', 'mcp__ide__executeCode', 
+            'IronManusStateGraph', 'mcp__ide__executeCode', 
             'PythonDataAnalysis', 'PythonExecutor', 
             'EnhancedPythonDataScience', 'JARVIS']
 PLAN:      ['TodoWrite']

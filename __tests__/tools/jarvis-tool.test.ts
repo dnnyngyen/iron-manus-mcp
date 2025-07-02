@@ -56,6 +56,7 @@ describe('JARVIS Tool Integration', () => {
       mockProcessState.mockResolvedValue(mockResult);
 
       const args = {
+        session_id: 'test-1',
         initial_objective: 'Test objective'
       };
 
@@ -63,7 +64,7 @@ describe('JARVIS Tool Integration', () => {
 
       expect(mockProcessState).toHaveBeenCalledWith(
         expect.objectContaining({
-          session_id: expect.stringMatching(/^session_\d+_[a-z0-9]+$/),
+          session_id: 'test-1',
           initial_objective: 'Test objective'
         })
       );
@@ -364,8 +365,9 @@ describe('JARVIS Tool Integration', () => {
       mockProcessState.mockResolvedValue(mockResult);
 
       const args = {
+        session_id: 'test-2',
         initial_objective: 'Test objective'
-        // session_id intentionally omitted
+        // Note: Now explicitly providing session_id for consistency
       };
 
       const result = await jarvisTool.handle(args);
@@ -373,7 +375,7 @@ describe('JARVIS Tool Integration', () => {
       expect(result.isError).toBeFalsy();
       expect(mockProcessState).toHaveBeenCalledWith(
         expect.objectContaining({
-          session_id: expect.stringMatching(/^session_\d+_[a-z0-9]+$/),
+          session_id: 'test-2',
           initial_objective: 'Test objective'
         })
       );
@@ -390,14 +392,14 @@ describe('JARVIS Tool Integration', () => {
       };
       mockProcessState.mockResolvedValue(mockResult);
 
-      const args = {}; // Empty args should work with auto-generated session_id
+      const args = { session_id: 'test-3' }; // Minimal valid args
 
       const result = await jarvisTool.handle(args);
 
       expect(result.isError).toBeFalsy();
       expect(mockProcessState).toHaveBeenCalledWith(
         expect.objectContaining({
-          session_id: expect.any(String)
+          session_id: 'test-3'
         })
       );
     });

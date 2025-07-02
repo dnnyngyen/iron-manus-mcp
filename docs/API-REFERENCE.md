@@ -186,46 +186,39 @@ await mcp.callTool({
 });
 ```
 
-### KnowledgeSynthesize
+### IronManusStateGraph
 
-Cross-validation engine with conflict resolution and confidence scoring.
+Project-scoped FSM state management using knowledge graphs for session isolation.
 
 #### Tool Definition
 
 ```typescript
 {
-  name: "KnowledgeSynthesize",
-  description: "Cross-validation engine with conflict resolution and confidence scoring",
+  name: "IronManusStateGraph",
+  description: "Project-scoped FSM state management using knowledge graphs. Manage sessions, phases, tasks, and transitions with isolated state per project.",
   inputSchema: {
     type: "object",
     properties: {
-      api_responses: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            source: { type: "string" },
-            data: { type: "string" },
-            confidence: { type: "number" }
-          }
-        },
-        description: "Array of API response objects to synthesize"
-      },
-      synthesis_mode: {
+      action: {
         type: "string",
-        enum: ["consensus", "weighted", "hierarchical", "conflict_resolution"],
-        description: "Method for synthesizing conflicting information"
+        enum: ["create_entities", "create_transitions", "add_observations", "delete_entities", "delete_observations", "delete_transitions", "read_graph", "search_nodes", "open_nodes", "initialize_session", "record_phase_transition", "record_task_creation", "update_task_status"],
+        description: "The action to perform on the session state graph"
       },
-      confidence_threshold: {
-        type: "number",
-        description: "Minimum confidence score for inclusion (0-1, default: 0.5)"
+      session_id: {
+        type: "string",
+        description: "The session ID for project-scoped state isolation"
       },
-      objective_context: {
-        type: "string", 
-        description: "Original objective for context-aware synthesis"
-      }
+      // Additional properties based on action type
+      objective: { type: "string", description: "Session objective (for initialize_session)" },
+      role: { type: "string", description: "Detected role (for initialize_session)" },
+      from_phase: { type: "string", description: "Source phase (for record_phase_transition)" },
+      to_phase: { type: "string", description: "Target phase (for record_phase_transition)" },
+      task_id: { type: "string", description: "Task identifier (for task operations)" },
+      content: { type: "string", description: "Task content (for record_task_creation)" },
+      priority: { type: "string", description: "Task priority (for record_task_creation)" },
+      status: { type: "string", description: "Task status (for update_task_status)" }
     },
-    required: ["api_responses", "synthesis_mode"]
+    required: ["action", "session_id"]
   }
 }
 ```
@@ -274,7 +267,7 @@ INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DON
 | **INIT** | Session initialization | `["JARVIS"]` | `initial_objective` |
 | **QUERY** | Goal interpretation | `["JARVIS"]` | None |
 | **ENHANCE** | Goal enrichment | `["JARVIS"]` | `interpreted_goal` |
-| **KNOWLEDGE** | Information gathering | `["WebSearch", "WebFetch", "APISearch", "MultiAPIFetch", "KnowledgeSynthesize", "JARVIS"]` | `enhanced_goal` |
+| **KNOWLEDGE** | Information gathering | `["WebSearch", "WebFetch", "APISearch", "MultiAPIFetch", "IronManusStateGraph", "JARVIS"]` | `enhanced_goal` |
 | **PLAN** | Task decomposition | `["TodoWrite"]` | `knowledge_gathered` |
 | **EXECUTE** | Task execution | `["TodoRead", "TodoWrite", "Task", "Bash", "Read", "Write", "Edit"]` | `plan_created` |
 | **VERIFY** | Quality validation | `["TodoRead", "Read"]` | `execution_success` |
@@ -434,7 +427,7 @@ All tools return standardized error responses:
 - **JARVIS**: ~100-500ms per state transition
 - **APISearch**: ~50-200ms for registry lookup
 - **MultiAPIFetch**: Variable based on API response times
-- **KnowledgeSynthesize**: ~200-1000ms depending on data volume
+- **IronManusStateGraph**: ~50-200ms for graph operations
 
 ### Optimization Tips
 
@@ -491,7 +484,7 @@ const apiData = await mcp.callTool({
 
 // Synthesize conflicting data
 const synthesis = await mcp.callTool({
-  name: "KnowledgeSynthesize", 
+  name: "IronManusStateGraph", 
   args: {
     api_responses: apiData.responses,
     synthesis_mode: "consensus",

@@ -55,8 +55,12 @@ export class JARVISTool extends BaseTool {
   async handle(args: JARVISArgs): Promise<ToolResult> {
     try {
       // Auto-generate session_id if not provided (for convenience)
+      // NOTE: In tests, always provide explicit session_id to avoid directory proliferation
       if (!args.session_id) {
         args.session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        console.warn(
+          `Auto-generated session ID: ${args.session_id}. Consider providing explicit session_id.`
+        );
       }
 
       this.validateArgs(args);

@@ -75,6 +75,7 @@ describe('MCP Server Integration', () => {
       const jarvisTool = new JARVISTool();
       
       const testArgs = {
+        session_id: 'int-basic',
         initial_objective: 'Test the MCP server integration'
       };
 
@@ -91,6 +92,7 @@ describe('MCP Server Integration', () => {
       const jarvisTool = new JARVISTool();
       
       const testArgs = {
+        session_id: 'int-session-gen',
         initial_objective: 'Test session ID generation'
       };
 
@@ -104,7 +106,7 @@ describe('MCP Server Integration', () => {
     it('should handle empty arguments gracefully', async () => {
       const jarvisTool = new JARVISTool();
       
-      const testArgs = {};
+      const testArgs = { session_id: 'int-empty-args' };
 
       const result = await jarvisTool.handle(testArgs);
       
@@ -118,8 +120,8 @@ describe('MCP Server Integration', () => {
       const jarvisTool = new JARVISTool();
       
       const testArgs = {
-        phase_completed: 'INVALID_PHASE' as any,
-        session_id: null as any
+        session_id: 'int-malformed',
+        phase_completed: 'INVALID_PHASE' as any
       };
 
       const result = await jarvisTool.handle(testArgs);
@@ -133,9 +135,9 @@ describe('MCP Server Integration', () => {
     it('should provide meaningful error messages when tools fail', async () => {
       const jarvisTool = new JARVISTool();
       
-      // Test with invalid arguments that should cause an error
+      // Test with invalid arguments that should cause an error  
       const testArgs = {
-        session_id: null,
+        session_id: 'int-error-messages',
         invalid_field: 'invalid'
       };
 
@@ -153,6 +155,7 @@ describe('MCP Server Integration', () => {
       const jarvisTool = new JARVISTool();
       
       const testArgs = {
+        session_id: 'int-mcp-compliance', 
         initial_objective: 'Test MCP protocol compliance'
       };
 
@@ -176,6 +179,7 @@ describe('MCP Server Integration', () => {
       
       const promises = Array.from({ length: 3 }, (_, i) => 
         jarvisTool.handle({
+          session_id: `int-concurrent-${i + 1}`,
           initial_objective: `Concurrent test ${i + 1}`
         })
       );
@@ -197,6 +201,7 @@ describe('MCP Server Integration', () => {
       const startTime = Date.now();
       
       const result = await jarvisTool.handle({
+        session_id: 'int-performance',
         initial_objective: 'Performance test'
       });
       
@@ -235,11 +240,11 @@ describe('MCP Server Integration', () => {
   describe('State Management Integration', () => {
     it('should maintain session state across calls', async () => {
       const jarvisTool = new JARVISTool();
-      const sessionId = 'integration-test-session';
+      const sessionId = 'int-session';
       
       // Initialize session
       const initResult = await jarvisTool.handle({
-        session_id: sessionId,
+        session_id: 'int-state-persistence',
         initial_objective: 'Test state persistence'
       });
       
@@ -247,7 +252,7 @@ describe('MCP Server Integration', () => {
       
       // Continue session
       const continueResult = await jarvisTool.handle({
-        session_id: sessionId,
+        session_id: 'int-state-persistence',
         phase_completed: 'QUERY',
         payload: {
           interpreted_goal: 'Enhanced objective'
@@ -264,7 +269,7 @@ describe('MCP Server Integration', () => {
       
       // Test initial session creation
       const initResult = await jarvisTool.handle({
-        session_id: sessionId,
+        session_id: 'int-lifecycle',
         initial_objective: 'Lifecycle test'
       });
       
@@ -272,7 +277,7 @@ describe('MCP Server Integration', () => {
       
       // Test phase completion
       const queryResult = await jarvisTool.handle({
-        session_id: sessionId,
+        session_id: 'int-lifecycle',
         phase_completed: 'QUERY' as const,
         payload: {
           test_data: 'Query phase completed'

@@ -10,6 +10,7 @@ import { APISearchTool } from './api-search.js';
 import { APIValidatorTool } from './api-validator.js';
 import { PythonDataAnalysisTool } from './python-data-analysis.js';
 import { PythonExecutorTool, EnhancedPythonDataScienceTool } from './python-executor.js';
+import { IronManusStateGraphTool } from './iron-manus-state-graph.js';
 
 /**
  * Tool Registry Class
@@ -33,6 +34,7 @@ export class ToolRegistry {
     this.registerTool(new PythonDataAnalysisTool());
     this.registerTool(new PythonExecutorTool());
     this.registerTool(new EnhancedPythonDataScienceTool());
+    this.registerTool(new IronManusStateGraphTool());
   }
 
   /**
