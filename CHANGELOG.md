@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-01-02
+
+### Changed
+- **Documentation Updates**: Updated all test count references from 107 to 163 tests to reflect current test suite status
+- **Badge Updates**: Updated GitHub badges in README.md to show accurate test counts (163/163 passing)
+- **Cleanup**: Removed legacy JSON files as per prevention guidelines
+
+### Fixed
+- Documentation accuracy across README.md, CHANGELOG.md for global deployment readiness
+- Test count inconsistencies in documentation and badges
+
+## [0.2.1] - 2024-12-30
+
+### Added
+- **Build Reliability**: Enhanced build script with mkdir -p dist to ensure output directory exists
+- **Installation Troubleshooting**: Added comprehensive fallback instructions for npm install issues
+- **Clean Build Process**: Verified complete workflow from clean state to running server
+- **Deployment Documentation**: Added specific commands for handling installation failures
+
+### Fixed
+- Build process reliability issues
+- npm install hanging or failure scenarios
+- Missing directory creation before TypeScript compilation
+
 ## [0.2.0] - 2024-12-29
 
 ### Added
