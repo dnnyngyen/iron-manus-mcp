@@ -213,7 +213,7 @@ export class FSMStateValidator {
   } {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
-    let totalChecks = 3;
+    const totalChecks = 3;
     let passedChecks = 0;
 
     // Check if phase is valid
@@ -277,7 +277,7 @@ export class FSMStateValidator {
   } {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
-    let totalChecks = 4;
+    const totalChecks = 4;
     let passedChecks = 0;
 
     // Check payload exists
@@ -428,7 +428,7 @@ export class FSMStateValidator {
   } {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
-    let totalChecks = 2;
+    const totalChecks = 2;
     let passedChecks = 0;
 
     // Check last activity timestamp
@@ -574,12 +574,13 @@ export class FSMStateValidator {
           recommendations.push('Consider breaking down large task lists into smaller, manageable chunks');
         }
         break;
-      case 'VERIFY':
+      case 'VERIFY': {
         const completionPercentage = this.calculateCompletionPercentage(sessionState);
         if (completionPercentage < this.config.requiredCompletionThreshold) {
           recommendations.push(`Completion rate (${(completionPercentage * 100).toFixed(1)}%) below threshold`);
         }
         break;
+      }
     }
 
     // Performance recommendations

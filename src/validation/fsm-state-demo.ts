@@ -151,7 +151,7 @@ function generateValidationReport(validator: FSMStateValidator, scenarios: any[]
   console.log('VALIDATION SUMMARY REPORT');
   console.log('='.repeat(80));
   
-  let totalScenarios = scenarios.length;
+  const totalScenarios = scenarios.length;
   let validScenarios = 0;
   let totalErrors = 0;
   let totalWarnings = 0;
