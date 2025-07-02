@@ -61,6 +61,18 @@ npm test
 npm start
 ```
 
+**If npm install hangs or fails:**
+```bash
+# Clean and retry
+rm -rf node_modules package-lock.json
+npm cache clean --force
+npm install --no-optional
+
+# If it still fails, install core dependencies first:
+npm install @modelcontextprotocol/sdk@^1.13.2 typescript@^5.0.0
+npm run build
+```
+
 ## ⚠️ Legacy File Prevention
 
 This project uses knowledge graph state management. If you see files like `iron_manus_*.json`, immediately:

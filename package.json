@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "mkdir -p dist && tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --exec \"tsc && node dist/index.js\" --ext ts",
     "clean": "rm -rf dist",
