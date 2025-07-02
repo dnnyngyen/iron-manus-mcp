@@ -1,6 +1,7 @@
-// Enhanced session state management - replicates Manus's event stream and performance tracking
-// + Component-Cognitive Duality integration for V0 encapsulation patterns
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+// LEGACY session state management - FILE OPERATIONS DISABLED
+// This is legacy code kept for reference only. All file operations have been disabled.
+// State is now managed by GraphStateAdapter in graph-state-adapter.ts
+// import { readFileSync, writeFileSync, existsSync } from 'fs'; // DISABLED
 import {
   SessionState,
   Phase,
@@ -12,7 +13,7 @@ import {
   ComponentCognitiveMetrics,
 } from './types.js';
 
-const STATE_FILE = './iron_manus_state.json';
+// const STATE_FILE = './iron_manus_state.json'; // DISABLED - No longer used
 
 class StateManager {
   private sessions: Map<string, SessionState> = new Map();
@@ -55,25 +56,16 @@ class StateManager {
   }
 
   private loadState(): void {
-    if (existsSync(STATE_FILE)) {
-      try {
-        const data = readFileSync(STATE_FILE, 'utf-8');
-        const parsed = JSON.parse(data);
-        this.sessions = new Map(Object.entries(parsed));
-      } catch (error) {
-        console.warn('Failed to load state file, starting fresh');
-        this.sessions = new Map();
-      }
-    }
+    // LEGACY CODE - File operations disabled to prevent JSON file creation
+    // State is now managed by GraphStateAdapter in graph-state-adapter.ts
+    console.warn('Legacy state manager - file operations disabled. Use GraphStateAdapter instead.');
+    this.sessions = new Map();
   }
 
   private saveState(): void {
-    try {
-      const data = Object.fromEntries(this.sessions);
-      writeFileSync(STATE_FILE, JSON.stringify(data, null, 2));
-    } catch (error) {
-      console.error('Failed to save state:', error);
-    }
+    // LEGACY CODE - File operations disabled to prevent JSON file creation
+    // State is now managed by GraphStateAdapter in graph-state-adapter.ts
+    // No-op to prevent ./iron_manus_state.json creation
   }
 
   // Performance analytics (replicates Manus's cognitive tracking)
@@ -276,47 +268,18 @@ class StateManager {
 
   // Load component-cognitive state from persistence
   private loadComponentCognitiveState(): void {
-    const dualityFile = './iron_manus_component_cognitive_duality.json';
-    const constraintsFile = './iron_manus_unified_constraints.json';
-
-    if (existsSync(dualityFile)) {
-      try {
-        const data = readFileSync(dualityFile, 'utf-8');
-        const parsed = JSON.parse(data);
-        this.componentCognitiveDuality = new Map(Object.entries(parsed));
-      } catch (error) {
-        console.warn('Failed to load component-cognitive duality state, starting fresh');
-      }
-    }
-
-    if (existsSync(constraintsFile)) {
-      try {
-        const data = readFileSync(constraintsFile, 'utf-8');
-        const parsed = JSON.parse(data);
-        this.unifiedConstraints = new Map(Object.entries(parsed));
-      } catch (error) {
-        console.warn('Failed to load unified constraints state, starting fresh');
-      }
-    }
+    // LEGACY CODE - File operations disabled to prevent JSON file creation
+    // State is now managed by GraphStateAdapter in graph-state-adapter.ts
+    console.warn('Legacy component-cognitive state manager - file operations disabled. Use GraphStateAdapter instead.');
+    this.componentCognitiveDuality = new Map();
+    this.unifiedConstraints = new Map();
   }
 
   // Save component-cognitive state to persistence
   private saveComponentCognitiveState(): void {
-    try {
-      const dualityData = Object.fromEntries(this.componentCognitiveDuality);
-      writeFileSync(
-        './iron_manus_component_cognitive_duality.json',
-        JSON.stringify(dualityData, null, 2)
-      );
-
-      const constraintsData = Object.fromEntries(this.unifiedConstraints);
-      writeFileSync(
-        './iron_manus_unified_constraints.json',
-        JSON.stringify(constraintsData, null, 2)
-      );
-    } catch (error) {
-      console.error('Failed to save component-cognitive state:', error);
-    }
+    // LEGACY CODE - File operations disabled to prevent JSON file creation
+    // State is now managed by GraphStateAdapter in graph-state-adapter.ts
+    // No-op to prevent ./iron_manus_component_cognitive_duality.json and ./iron_manus_unified_constraints.json creation
   }
 
   // Enhanced cleanup with performance archiving (including component-cognitive duality)
@@ -350,20 +313,10 @@ class StateManager {
   }
 
   private saveArchivedMetrics(archivedSessions: any[]): void {
-    try {
-      const archiveFile = './iron_manus_performance_archive.json';
-      let existingArchive: any[] = [];
-
-      if (existsSync(archiveFile)) {
-        const data = readFileSync(archiveFile, 'utf-8');
-        existingArchive = JSON.parse(data);
-      }
-
-      existingArchive.push(...archivedSessions);
-      writeFileSync(archiveFile, JSON.stringify(existingArchive, null, 2));
-    } catch (error) {
-      console.error('Failed to archive performance metrics:', error);
-    }
+    // LEGACY CODE - File operations disabled to prevent JSON file creation
+    // Performance metrics are now tracked by GraphStateAdapter in graph-state-adapter.ts
+    // No-op to prevent ./iron_manus_performance_archive.json creation
+    console.warn(`Legacy performance archiving disabled - ${archivedSessions.length} sessions would have been archived. Use GraphStateAdapter instead.`);
   }
 }
 
