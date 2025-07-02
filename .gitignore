@@ -15,8 +15,12 @@ manus_fsm_state.json
 manus_*.json
 *_state.json
 
-# Legacy JSON files (migrated to knowledge graph)
+# Legacy JSON files (migrated to knowledge graph) - NEVER COMMIT THESE
 iron_manus_*.json
+iron_manus_component_cognitive_duality.json
+iron_manus_performance_archive.json
+iron_manus_unified_constraints.json
+iron_manus_state.json
 
 # Archive and temporary files
 gitignore.archive/
@@ -80,4 +84,4 @@ pnpm-lock.yaml
 jest.config.js
 
 # Hooks (unless needed for project)
-hooks/
+hooks/dist/

@@ -61,6 +61,15 @@ npm test
 npm start
 ```
 
+## ⚠️ Legacy File Prevention
+
+This project uses knowledge graph state management. If you see files like `iron_manus_*.json`, immediately:
+1. Stop the server: `pkill -f iron-manus`
+2. Remove files: `rm -f iron_manus_*.json` 
+3. Clean rebuild: `rm -rf dist/ && npm run build`
+
+See [LEGACY_PREVENTION.md](./LEGACY_PREVENTION.md) for details.
+
 **For MCP Integration:**
 Add to your MCP client configuration or register with Claude Code:
 ```bash
