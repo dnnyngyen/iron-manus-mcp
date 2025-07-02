@@ -37,7 +37,7 @@ Add this to your Claude Desktop MCP configuration:
 - **JARVIS**: Main FSM controller with 8-phase agent loop
 - **MultiAPIFetch**: Parallel API data gathering  
 - **APISearch**: Intelligent API discovery
-- **KnowledgeSynthesize**: Cross-validation and synthesis
+- **IronManusStateGraph**: Project-scoped FSM state management
 - **APIValidator**: Endpoint validation and auto-correction
 
 ## Key Features

@@ -1,19 +1,20 @@
 // FSM Core Tests - Tests for the 6-phase finite state machine
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { processState, extractMetaPromptFromTodo, validateTaskCompletion } from '../../src/core/fsm.js';
-import { stateManager } from '../../src/core/state.js';
+import { graphStateManager } from '../../src/core/graph-state-adapter.js';
 import { MessageJARVIS, Phase, Role } from '../../src/core/types.js';
 
-// Mock the state manager
-vi.mock('../../src/core/state.js', () => ({
-  stateManager: {
+// Mock the graph state manager
+vi.mock('../../src/core/graph-state-adapter.js', () => ({
+  graphStateManager: {
     getSessionState: vi.fn(),
     updateSessionState: vi.fn(),
   }
 }));
 
 describe('FSM Core Functionality', () => {
-  const mockStateManager = stateManager as vi.Mocked<typeof stateManager>;
+  const mockStateManager = graphStateManager as vi.Mocked<typeof graphStateManager>;
+  const TEST_SESSION_ID = 'fsm-test-session';
   
   beforeEach(() => {
     vi.clearAllMocks();
@@ -32,7 +33,7 @@ describe('FSM Core Functionality', () => {
   describe('Phase Transitions', () => {
     it('should initialize session with initial_objective', async () => {
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         initial_objective: 'Test objective'
       };
 
@@ -55,7 +56,7 @@ describe('FSM Core Functionality', () => {
       });
 
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         phase_completed: 'QUERY',
         payload: {
           interpreted_goal: 'Enhanced test objective'
@@ -81,7 +82,7 @@ describe('FSM Core Functionality', () => {
       });
 
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         phase_completed: 'ENHANCE',
         payload: {
           enhanced_goal: 'Enhanced test objective with details'
@@ -107,7 +108,7 @@ describe('FSM Core Functionality', () => {
       });
 
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         phase_completed: 'KNOWLEDGE',
         payload: {
           knowledge_gathered: 'Relevant knowledge'
@@ -130,7 +131,7 @@ describe('FSM Core Functionality', () => {
       });
 
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         phase_completed: 'PLAN',
         payload: {
           plan_created: true,
@@ -160,7 +161,7 @@ describe('FSM Core Functionality', () => {
       });
 
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         phase_completed: 'EXECUTE',
         payload: {
           execution_success: true
@@ -189,7 +190,7 @@ describe('FSM Core Functionality', () => {
       });
 
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         phase_completed: 'EXECUTE',
         payload: {
           execution_success: true
@@ -216,7 +217,7 @@ describe('FSM Core Functionality', () => {
       });
 
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         phase_completed: 'VERIFY',
         payload: {
           verification_passed: true
@@ -414,7 +415,7 @@ describe('FSM Core Functionality', () => {
         });
 
         const input: MessageJARVIS = {
-          session_id: 'test-session'
+          session_id: TEST_SESSION_ID
         };
 
         const result = await processState(input);
@@ -426,7 +427,7 @@ describe('FSM Core Functionality', () => {
   describe('Role Detection Integration', () => {
     it('should properly set detected role during initialization', async () => {
       const input: MessageJARVIS = {
-        session_id: 'test-session',
+        session_id: TEST_SESSION_ID,
         initial_objective: 'Build a React application with authentication'
       };
 

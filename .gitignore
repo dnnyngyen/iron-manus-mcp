@@ -15,6 +15,9 @@ manus_fsm_state.json
 manus_*.json
 *_state.json
 
+# Legacy JSON files (migrated to knowledge graph)
+iron_manus_*.json
+
 # Archive and temporary files
 gitignore.archive/
 temp-files/
