@@ -5,6 +5,7 @@
 
 import { BaseTool, ToolSchema, ToolResult } from './base-tool.js';
 import { APIEndpoint } from '../core/api-registry.js';
+import { validateAndSanitizeURL } from '../security/ssrfGuard.js';
 import axios from 'axios';
 
 export interface APIValidatorArgs {
@@ -102,7 +103,16 @@ export class APIValidatorTool extends BaseTool {
     url: string
   ): Promise<{ working: boolean; code?: number; error?: string }> {
     try {
-      const response = await axios.get(url, {
+      // SSRF Protection: Validate and sanitize URL before making request
+      const sanitizedUrl = validateAndSanitizeURL(url);
+      if (!sanitizedUrl) {
+        return {
+          working: false,
+          error: 'URL blocked by SSRF protection - invalid or dangerous URL',
+        };
+      }
+
+      const response = await axios.get(sanitizedUrl, {
         timeout: 5000,
         headers: {
           'User-Agent': 'Iron-Manus-API-Validator/0.2.4',

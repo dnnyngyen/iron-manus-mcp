@@ -6,6 +6,7 @@
 import { BaseTool, ToolSchema, ToolResult } from './base-tool.js';
 import axios, { AxiosError } from 'axios';
 import { rateLimiter, SAMPLE_API_REGISTRY } from '../core/api-registry.js';
+import { validateAndSanitizeURL } from '../security/ssrfGuard.js';
 
 export interface MultiAPIFetchArgs {
   api_endpoints: string[];
@@ -190,7 +191,13 @@ export class MultiAPIFetchTool extends BaseTool {
                   await new Promise(resolve => setTimeout(resolve, delay));
                 }
 
-                const response = await axiosInstance.get(currentUrl);
+                // SSRF Protection: Validate and sanitize URL before making request
+                const sanitizedUrl = validateAndSanitizeURL(currentUrl);
+                if (!sanitizedUrl) {
+                  throw new Error(`URL blocked by SSRF protection: ${currentUrl}`);
+                }
+
+                const response = await axiosInstance.get(sanitizedUrl);
                 const duration = Date.now() - startTime;
 
                 // Sanitize response data

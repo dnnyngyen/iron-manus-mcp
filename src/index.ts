@@ -24,6 +24,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { toolRegistry } from './tools/index.js';
+import { validateConfig } from './config.js';
 
 /**
  * MCP Server Instance
@@ -140,8 +141,39 @@ export function createServer() {
  * - Skips startup during testing (NODE_ENV === 'test')
  * - Allows test suites to create isolated server instances
  * - Prevents conflicts during automated testing
+ * 
+ * Security Validation:
+ * - Validates configuration before server startup
+ * - Prevents insecure configurations in production
+ * - Logs configuration errors for debugging
  */
 if (process.env.NODE_ENV !== 'test') {
+  // Validate configuration before starting server
+  const configValidation = validateConfig();
+  if (!configValidation.valid) {
+    console.error('❌ Configuration validation failed:');
+    configValidation.errors.forEach(error => {
+      if (error.includes('CRITICAL')) {
+        console.error(`🚨 ${error}`);
+        process.exit(1); // Exit for critical security errors
+      } else if (error.includes('WARNING')) {
+        console.warn(`⚠️  ${error}`);
+      } else {
+        console.error(`❌ ${error}`);
+      }
+    });
+    
+    // Exit if any critical errors (already handled above) or non-warning errors exist
+    const hasNonWarningErrors = configValidation.errors.some(error => 
+      !error.includes('WARNING')
+    );
+    if (hasNonWarningErrors) {
+      process.exit(1);
+    }
+  } else {
+    console.log('✅ Configuration validation passed');
+  }
+
   const transport = new StdioServerTransport();
   server.connect(transport);
 }

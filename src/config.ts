@@ -229,6 +229,22 @@ export const CONFIG = {
 export function validateConfig(): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   
+  // Production Security Validation - Critical security checks for production environments
+  if (process.env.NODE_ENV === 'production') {
+    if (!CONFIG.ENABLE_SSRF_PROTECTION) {
+      errors.push('CRITICAL: SSRF protection must be enabled in production (ENABLE_SSRF_PROTECTION=true)');
+    }
+    
+    if (CONFIG.ALLOWED_HOSTS.length === 0) {
+      errors.push('WARNING: ALLOWED_HOSTS is empty in production - consider restricting to specific domains for enhanced security');
+    }
+    
+    if (CONFIG.KNOWLEDGE_MAX_CONCURRENCY > 5) {
+      errors.push('WARNING: High concurrency in production may overwhelm external APIs (recommended: <= 5)');
+    }
+  }
+  
+  // General Configuration Validation
   if (CONFIG.KNOWLEDGE_MAX_CONCURRENCY < 1 || CONFIG.KNOWLEDGE_MAX_CONCURRENCY > 10) {
     errors.push('KNOWLEDGE_MAX_CONCURRENCY must be between 1 and 10');
   }
