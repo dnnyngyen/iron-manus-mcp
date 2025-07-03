@@ -43,7 +43,7 @@ services:
       ENABLE_SSRF_PROTECTION: ${ENABLE_SSRF_PROTECTION:-true}
       
       # User agent
-      USER_AGENT: ${USER_AGENT:-Iron-Manus-MCP/1.0.0-AutoFetch}
+      USER_AGENT: ${USER_AGENT:-Iron-Manus-MCP/0.2.4-AutoFetch}
     
     # Resource limits (optional, adjust based on your needs)
     deploy:

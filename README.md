@@ -5,8 +5,9 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Docker Hub](https://img.shields.io/badge/Docker_Hub-v0.2.4-blue.svg)](https://hub.docker.com/r/dnnyngyen/iron-manus-mcp)
-[![GitHub Container Registry](https://img.shields.io/badge/GHCR-v0.2.4-blue.svg)](https://github.com/dnnyngyen/iron-manus-mcp/pkgs/container/iron-manus-mcp)
+[![Docker Hub](https://img.shields.io/badge/Docker_Hub-v0.2.3-blue.svg)](https://hub.docker.com/r/dnnyngyen/iron-manus-mcp)
+[![GitHub Container Registry](https://img.shields.io/badge/GHCR-v0.2.3-blue.svg)](https://github.com/dnnyngyen/iron-manus-mcp/pkgs/container/iron-manus-mcp)
+[![Source Code](https://img.shields.io/badge/Source-v0.2.4-green.svg)](https://github.com/dnnyngyen/iron-manus-mcp)
 
 # Iron Manus MCP (J.A.R.V.I.S.)
 
@@ -47,13 +48,20 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages c
 
 ## Quick Start
 
-### Option 1: Docker (Recommended)
+> **📦 Docker Images**: v0.2.3 (stable, published)  
+> **📄 Source Code**: v0.2.4 (latest, with comprehensive JSDoc documentation)
+
+### Option 1: Docker (Recommended - v0.2.3)
 
 **Docker Hub:**
 ```bash
-# Pull and run from Docker Hub
-docker pull dnnyngyen/iron-manus-mcp:0.2.4
-docker run -d --name iron-manus-mcp dnnyngyen/iron-manus-mcp:0.2.4
+# Pull and run from Docker Hub (v0.2.3 - stable)
+docker pull dnnyngyen/iron-manus-mcp:0.2.3
+docker run -d --name iron-manus-mcp dnnyngyen/iron-manus-mcp:0.2.3
+
+# Alternative: Use latest tag
+docker pull dnnyngyen/iron-manus-mcp:latest
+docker run -d --name iron-manus-mcp dnnyngyen/iron-manus-mcp:latest
 
 # Or using docker-compose
 curl -O https://raw.githubusercontent.com/dnnyngyen/iron-manus-mcp/main/docker-compose.yml
@@ -62,15 +70,19 @@ docker-compose up -d
 
 **GitHub Container Registry:**
 ```bash
-# Pull and run from GitHub Container Registry
-docker pull ghcr.io/dnnyngyen/iron-manus-mcp:0.2.4
-docker run -d --name iron-manus-mcp ghcr.io/dnnyngyen/iron-manus-mcp:0.2.4
+# Pull and run from GitHub Container Registry (v0.2.3 - stable)
+docker pull ghcr.io/dnnyngyen/iron-manus-mcp:0.2.3
+docker run -d --name iron-manus-mcp ghcr.io/dnnyngyen/iron-manus-mcp:0.2.3
+
+# Alternative: Use latest tag
+docker pull ghcr.io/dnnyngyen/iron-manus-mcp:latest
+docker run -d --name iron-manus-mcp ghcr.io/dnnyngyen/iron-manus-mcp:latest
 ```
 
-### Option 2: From Source
+### Option 2: From Source (v0.2.4 - Latest with JSDoc)
 
 ```bash
-# Clone and install
+# Clone and install (v0.2.4 - includes comprehensive JSDoc documentation)
 git clone https://github.com/dnnyngyen/iron-manus-mcp
 cd iron-manus-mcp
 npm install
@@ -78,7 +90,7 @@ npm install
 # Build TypeScript
 npm run build
 
-# Run tests (optional)
+# Run tests (optional - 313 tests)
 npm test
 
 # Start server
@@ -122,7 +134,7 @@ The easiest way to run Iron Manus MCP is using Docker Compose:
 # docker-compose.yml
 services:
   iron-manus-mcp:
-    image: dnnyngyen/iron-manus-mcp:0.2.4
+    image: dnnyngyen/iron-manus-mcp:0.2.3  # or :latest
     container_name: iron-manus-mcp
     restart: unless-stopped
     stdin_open: true
@@ -148,15 +160,15 @@ docker-compose down
 ### Docker Commands
 
 ```bash
-# Pull latest stable version
-docker pull dnnyngyen/iron-manus-mcp:stable
+# Pull latest stable version (v0.2.3)
+docker pull dnnyngyen/iron-manus-mcp:0.2.3
 
 # Run with custom environment variables
 docker run -d \
   --name iron-manus-mcp \
   -e KNOWLEDGE_MAX_CONCURRENCY=3 \
   -e ALLOWED_HOSTS="api.github.com,httpbin.org" \
-  dnnyngyen/iron-manus-mcp:0.2.4
+  dnnyngyen/iron-manus-mcp:0.2.3
 
 # View container logs
 docker logs iron-manus-mcp
@@ -167,13 +179,17 @@ docker stop iron-manus-mcp && docker rm iron-manus-mcp
 
 ### Available Tags
 
-- `latest` - Latest development build
-- `stable` - Latest stable release
-- `0.2.4` - Specific version (recommended for production)
+**Docker Registry Tags:**
+- `0.2.3` - Current stable published version (recommended for production)
+- `latest` - Points to v0.2.3 stable release
+- `stable` - Alias for v0.2.3
 
-**Registry Options:**
-- Docker Hub: `dnnyngyen/iron-manus-mcp:0.2.4`
-- GitHub Container Registry: `ghcr.io/dnnyngyen/iron-manus-mcp:0.2.4`
+**Available Registries:**
+- Docker Hub: `dnnyngyen/iron-manus-mcp:0.2.3`
+- GitHub Container Registry: `ghcr.io/dnnyngyen/iron-manus-mcp:0.2.3`
+
+> **Note**: Source code v0.2.4 includes comprehensive JSDoc documentation improvements.
+> Docker images will be updated to v0.2.4 in the next release.
 
 ## Example Usage
 
@@ -293,11 +309,14 @@ MIT - See [LICENSE](LICENSE) file for details.
 
 ## Version History
 
-- **v0.2.4** - Docker Hub and GitHub Container Registry release with clean configuration
+- **v0.2.4** - (Source) Comprehensive JSDoc documentation, professional standards
+- **v0.2.3** - (Docker) Published Docker images with clean configuration 
 - **v0.2.2** - Stable release with comprehensive test coverage and build improvements
-- **v0.2.4** - Claude Code Hooks integration with enhanced security validation and intelligent feedback loops
+- **v0.2.1** - Claude Code Hooks integration with enhanced security validation
 - **v0.2.0** - Complete refactor with Jest→Vitest migration, repository flattening, 8-phase FSM
 - **v0.1.x** - Initial release with 6-phase workflow
+
+> **Current Status**: Docker images (v0.2.3) provide stable functionality, while source code (v0.2.4) includes the latest documentation improvements.
 
 ---
 
