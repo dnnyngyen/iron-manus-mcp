@@ -97,6 +97,16 @@ npm test
 npm start
 ```
 
+**If git clone fails with network errors:**
+```bash
+# Try with increased buffer and timeout
+git clone --depth 1 https://github.com/dnnyngyen/iron-manus-mcp
+# OR download as ZIP
+curl -L https://github.com/dnnyngyen/iron-manus-mcp/archive/main.zip -o iron-manus-mcp.zip
+unzip iron-manus-mcp.zip
+cd iron-manus-mcp-main
+```
+
 **If npm install hangs or fails:**
 ```bash
 # Clean and retry
