@@ -22,6 +22,8 @@
  * @module config
  */
 
+import { z } from 'zod';
+
 /**
  * Centralized configuration object containing all system settings and defaults.
  * 
@@ -202,6 +204,54 @@ export const CONFIG = {
 } as const;
 
 /**
+ * Zod schema for runtime configuration validation
+ * Provides type-safe validation with detailed error messages
+ */
+const ConfigSchema = z.object({
+  KNOWLEDGE_MAX_CONCURRENCY: z.number().int().min(1).max(10),
+  KNOWLEDGE_TIMEOUT_MS: z.number().int().min(1000).max(30000),
+  KNOWLEDGE_CONFIDENCE_THRESHOLD: z.number().min(0).max(1),
+  KNOWLEDGE_MAX_RESPONSE_SIZE: z.number().int().positive(),
+  AUTO_CONNECTION_ENABLED: z.boolean(),
+  RATE_LIMIT_REQUESTS_PER_MINUTE: z.number().int().positive(),
+  RATE_LIMIT_WINDOW_MS: z.number().int().positive(),
+  MAX_CONTENT_LENGTH: z.number().int().positive(),
+  MAX_BODY_LENGTH: z.number().int().positive(),
+  VERIFICATION_COMPLETION_THRESHOLD: z.number().int().min(50).max(100),
+  EXECUTION_SUCCESS_RATE_THRESHOLD: z.number().min(0).max(1),
+  INITIAL_REASONING_EFFECTIVENESS: z.number().min(0).max(1),
+  MIN_REASONING_EFFECTIVENESS: z.number().min(0).max(1),
+  MAX_REASONING_EFFECTIVENESS: z.number().min(0).max(1),
+  ALLOWED_HOSTS: z.array(z.string()),
+  ENABLE_SSRF_PROTECTION: z.boolean(),
+  USER_AGENT: z.string().min(1),
+}).refine((config) => {
+  return config.MIN_REASONING_EFFECTIVENESS <= config.MAX_REASONING_EFFECTIVENESS;
+}, {
+  message: "MIN_REASONING_EFFECTIVENESS must be <= MAX_REASONING_EFFECTIVENESS",
+  path: ["MIN_REASONING_EFFECTIVENESS"]
+});
+
+/**
+ * Validates configuration using Zod schema
+ * @returns Validation result with detailed error information
+ */
+export function validateConfigWithSchema(): { valid: boolean; errors: string[] } {
+  try {
+    ConfigSchema.parse(CONFIG);
+    return { valid: true, errors: [] };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errors = error.errors.map(err => 
+        `${err.path.join('.')}: ${err.message}`
+      );
+      return { valid: false, errors };
+    }
+    return { valid: false, errors: [`Unexpected validation error: ${error}`] };
+  }
+}
+
+/**
  * Validates the current configuration settings against defined constraints.
  * 
  * This function performs comprehensive validation of all configuration parameters
@@ -229,6 +279,12 @@ export const CONFIG = {
 export function validateConfig(): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   
+  // First run Zod schema validation for type safety and basic constraints
+  const schemaValidation = validateConfigWithSchema();
+  if (!schemaValidation.valid) {
+    errors.push(...schemaValidation.errors.map(err => `Schema validation: ${err}`));
+  }
+  
   // Production Security Validation - Critical security checks for production environments
   if (process.env.NODE_ENV === 'production') {
     if (!CONFIG.ENABLE_SSRF_PROTECTION) {
@@ -244,25 +300,14 @@ export function validateConfig(): { valid: boolean; errors: string[] } {
     }
   }
   
-  // General Configuration Validation
-  if (CONFIG.KNOWLEDGE_MAX_CONCURRENCY < 1 || CONFIG.KNOWLEDGE_MAX_CONCURRENCY > 10) {
-    errors.push('KNOWLEDGE_MAX_CONCURRENCY must be between 1 and 10');
+  // Environment-specific validation
+  if (CONFIG.USER_AGENT && !CONFIG.USER_AGENT.includes('Iron-Manus-MCP')) {
+    errors.push('WARNING: USER_AGENT should identify as Iron-Manus-MCP for proper service recognition');
   }
   
-  if (CONFIG.KNOWLEDGE_TIMEOUT_MS < 1000 || CONFIG.KNOWLEDGE_TIMEOUT_MS > 30000) {
-    errors.push('KNOWLEDGE_TIMEOUT_MS must be between 1000 and 30000');
-  }
-  
-  if (CONFIG.KNOWLEDGE_CONFIDENCE_THRESHOLD < 0 || CONFIG.KNOWLEDGE_CONFIDENCE_THRESHOLD > 1) {
-    errors.push('KNOWLEDGE_CONFIDENCE_THRESHOLD must be between 0 and 1');
-  }
-  
-  if (CONFIG.VERIFICATION_COMPLETION_THRESHOLD < 50 || CONFIG.VERIFICATION_COMPLETION_THRESHOLD > 100) {
-    errors.push('VERIFICATION_COMPLETION_THRESHOLD must be between 50 and 100');
-  }
-  
-  if (CONFIG.EXECUTION_SUCCESS_RATE_THRESHOLD < 0 || CONFIG.EXECUTION_SUCCESS_RATE_THRESHOLD > 1) {
-    errors.push('EXECUTION_SUCCESS_RATE_THRESHOLD must be between 0 and 1');
+  // Performance optimization warnings
+  if (CONFIG.KNOWLEDGE_TIMEOUT_MS > 10000) {
+    errors.push('INFO: Long timeout values may impact user experience (consider reducing KNOWLEDGE_TIMEOUT_MS)');
   }
   
   return {

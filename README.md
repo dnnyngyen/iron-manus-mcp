@@ -334,23 +334,33 @@ await mcp.callTool({
 **Available Scripts:**
 ```bash
 npm run build        # TypeScript compilation
-npm test            # Run full test suite (163 tests)
+npm test            # Run full test suite (313 tests)
 npm run test:nocov   # Run tests without coverage
-npm run lint        # ESLint checking
+npm run lint        # ESLint checking (with enhanced rules)
 npm run format      # Prettier formatting
 npm start          # Start compiled server
-npm run dev        # Build and start server
+npm run dev         # Fast incremental compilation + watch mode
+npm run dev:simple  # Simple dev script (fallback)
+npm run check       # Run lint + format + tests in parallel
+npm run check:fix   # Auto-fix lint/format issues + run tests
 ```
 
 **Configuration:**
-Environment variables for customization:
+Environment variables with enhanced validation:
 ```bash
-KNOWLEDGE_MAX_CONCURRENCY=2          # API concurrency limit
-KNOWLEDGE_TIMEOUT_MS=4000            # Request timeout
+KNOWLEDGE_MAX_CONCURRENCY=2          # API concurrency limit (1-10)
+KNOWLEDGE_TIMEOUT_MS=4000            # Request timeout (1000-30000ms)
 ALLOWED_HOSTS="api.github.com,httpbin.org"  # SSRF whitelist
-ENABLE_SSRF_PROTECTION=true          # Security toggle
-MIN_COMPLETION_PERCENT=70            # Quality threshold
+ENABLE_SSRF_PROTECTION=true          # Security toggle (required in production)
+MIN_COMPLETION_PERCENT=70            # Quality threshold (50-100)
+USER_AGENT="Iron-Manus-MCP/0.2.4"    # Service identification
 ```
+
+**Enhanced Features (v0.2.4+):**
+- ✅ **Zod Schema Validation** - Type-safe configuration with detailed error messages
+- ⚡ **Optimized Dev Experience** - Incremental TypeScript compilation with parallel tools
+- 🔧 **Enhanced ESLint Rules** - Strict type checking and code quality enforcement
+- 🚀 **Parallel Script Execution** - Run lint, format, and tests concurrently
 
 ## Testing
 

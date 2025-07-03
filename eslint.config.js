@@ -19,15 +19,16 @@ export default [
     },
     rules: {
       ...typescript.configs.recommended.rules,
-      '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-inferrable-types': 'off',
-      'no-console': 'off',
+      'no-console': 'warn',
       'no-undef': 'off',
       'no-redeclare': 'off',
       'no-useless-escape': 'off',
       'prefer-const': 'error',
-      'no-var': 'error'
+      'no-var': 'error',
+      'eqeqeq': 'error'
     }
   },
   {
