@@ -16,12 +16,12 @@ export interface JARVISArgs {
 
 /**
  * JARVIS Finite State Machine Controller Tool
- * Implements the 6-step agent loop with fractal orchestration
+ * Implements the 8-phase agent loop with fractal orchestration
  */
 export class JARVISTool extends BaseTool {
   readonly name = 'JARVIS';
   readonly description =
-    'JARVIS Finite State Machine Controller - Implements the 6-step agent loop (QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY) with Meta Thread-of-Thought orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, fractal task decomposition, performance tracking, and single-tool-per-iteration enforcement. Enables Claude to autonomously manage complex projects through context segmentation.';
+    'JARVIS Finite State Machine Controller - Implements the 8-phase agent loop (INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE) with Meta Thread-of-Thought orchestration. Features: Role-based cognitive enhancement through systematic thinking methodologies, meta-prompt generation for Task() agent spawning, fractal task decomposition, performance tracking, and single-tool-per-iteration enforcement. Enables Claude to autonomously manage complex projects through context segmentation.';
 
   readonly inputSchema: ToolSchema = {
     type: 'object',

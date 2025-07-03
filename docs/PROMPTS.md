@@ -100,11 +100,16 @@ AUTOMATED WORKFLOW COMPLETED:
 
 ### Phase 5: PLAN
 **Purpose**: Strategic task decomposition with meta-prompt generation
+
+For detailed guidance on meta-prompts and fractal orchestration, refer to the [Meta-Prompt Architecture Guide](./META_PROMPT_GUIDE.md).
+
 ```typescript
 PLAN: `Think strategically about how to break down this goal. Consider:
 - What is the optimal task breakdown strategy for this specific goal?
 - Which tasks require specialized Task() agent expertise vs direct execution?
 - What are the dependencies, sequencing, and timeline considerations?
+- What complexity challenges might arise during execution?
+- How can you ensure the plan is actionable and efficient?
 
 **FRACTAL ORCHESTRATION:** Mark todos that should spawn Task() agents with detailed meta-prompts:
 Format: "(ROLE: agent_type) (CONTEXT: domain_info) (PROMPT: detailed_instructions) (OUTPUT: deliverables)"`;
@@ -247,7 +252,7 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 
 ### Three-Tier Python Tool System
 
-Iron Manus MCP v0.2.1 introduces comprehensive Python data science integration:
+Iron Manus MCP v0.2.4 implements advanced Software 3.0:
 
 #### Tier 1: Direct Execution
 - **mcp__ide__executeCode** - Direct Python execution in Jupyter kernel
@@ -295,71 +300,7 @@ Python tools are available in specific phases:
 
 ## Meta-Prompt Generation Patterns
 
-### Meta-Prompt Syntax
-
-Iron Manus implements a Domain-Specific Language (DSL) for spawning specialized agents:
-
-```
-(ROLE: agent_type) (CONTEXT: domain_info) (PROMPT: instructions) (OUTPUT: deliverables)
-```
-
-### Meta-Prompt Extraction
-
-```typescript
-export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | null {
-  const roleMatch = todoContent.match(/\(ROLE:\s*([^)]+)\)/i);
-  const contextMatch = todoContent.match(/\(CONTEXT:\s*([^)]+)\)/i);
-  const promptMatch = todoContent.match(/\(PROMPT:\s*([^)]+)\)/i);
-  const outputMatch = todoContent.match(/\(OUTPUT:\s*([^)]+)\)/i);
-  
-  if (roleMatch && promptMatch) {
-    return {
-      role_specification: roleMatch[1].trim(),
-      context_parameters: contextMatch ? { domain: contextMatch[1].trim() } : {},
-      instruction_block: promptMatch[1].trim(),
-      output_requirements: outputMatch ? outputMatch[1].trim() : 'comprehensive_deliverable'
-    };
-  }
-  return null;
-}
-```
-
-### Enhanced Meta-Prompt Generation
-
-The system generates comprehensive prompts for spawned agents:
-
-```typescript
-export function generateMetaPrompt(todoContent: string, role: Role, context: Record<string, any>): MetaPrompt {
-  const config = ROLE_CONFIG[role];
-  const thinkGuidance = generateRoleSpecificThinkGuidance(role, config);
-  
-  return {
-    role_specification: `(ROLE: ${role})`,
-    context_parameters: {
-      domain_info: context.domain || 'general',
-      complexity_level: config.complexityLevel,
-      frameworks: config.suggestedFrameworks,
-      cognitive_frameworks: config.cognitiveFrameworks || config.suggestedFrameworks,
-      ...context
-    },
-    instruction_block: `(PROMPT: "${todoContent}
-
-${thinkGuidance}
-
-**EXECUTION APPROACH:**
-1. Think through your approach using the ${(config.cognitiveFrameworks || config.suggestedFrameworks).join(' and ')} frameworks
-2. Apply ${role} expertise with systematic thinking methodologies
-3. Follow ${config.validationRules.join(', ')} validation rules
-4. Use TodoWrite to create your own sub-task breakdown if needed
-5. Execute with systematic precision using ${config.suggestedFrameworks.join(' and ')} methodologies
-6. Think critically about work quality against ${config.authorityLevel} standards
-7. Report completion with detailed deliverables
-
-**COGNITIVE ENHANCEMENT:** Your reasoning effectiveness is enhanced through systematic thinking and role-specific frameworks.")`,
-    output_requirements: `(OUTPUT: ${config.defaultOutput})`
-  };
-}
-```
+For detailed information on meta-prompt syntax, extraction, and generation, please refer to the [Meta-Prompt Architecture Guide](./META_PROMPT_GUIDE.md).
 
 ---
 
@@ -581,7 +522,7 @@ const PYTHON_INTEGRATION = `
 
 ## Summary
 
-**Iron Manus MCP v0.2.1 implements advanced Software 3.0** with 8-phase FSM orchestration, 9-role cognitive enhancement, and comprehensive Python data science integration.
+**Iron Manus MCP v0.2.4 implements advanced Software 3.0** with 8-phase FSM orchestration, 9-role cognitive enhancement, and comprehensive Python data science integration.
 
 ### Key Innovations:
 

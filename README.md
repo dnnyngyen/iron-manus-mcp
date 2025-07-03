@@ -5,6 +5,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docker Hub](https://img.shields.io/badge/Docker_Hub-v0.2.4-blue.svg)](https://hub.docker.com/r/dnnyngyen/iron-manus-mcp)
+[![GitHub Container Registry](https://img.shields.io/badge/GHCR-v0.2.4-blue.svg)](https://github.com/dnnyngyen/iron-manus-mcp/pkgs/container/iron-manus-mcp)
 
 # Iron Manus MCP (J.A.R.V.I.S.)
 
@@ -44,6 +46,28 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages c
 - 📦 **ES Modules** - Modern JavaScript with TypeScript 5.0 support
 
 ## Quick Start
+
+### Option 1: Docker (Recommended)
+
+**Docker Hub:**
+```bash
+# Pull and run from Docker Hub
+docker pull dnnyngyen/iron-manus-mcp:0.2.4
+docker run -d --name iron-manus-mcp dnnyngyen/iron-manus-mcp:0.2.4
+
+# Or using docker-compose
+curl -O https://raw.githubusercontent.com/dnnyngyen/iron-manus-mcp/main/docker-compose.yml
+docker-compose up -d
+```
+
+**GitHub Container Registry:**
+```bash
+# Pull and run from GitHub Container Registry
+docker pull ghcr.io/dnnyngyen/iron-manus-mcp:0.2.4
+docker run -d --name iron-manus-mcp ghcr.io/dnnyngyen/iron-manus-mcp:0.2.4
+```
+
+### Option 2: From Source
 
 ```bash
 # Clone and install
@@ -87,6 +111,69 @@ Add to your MCP client configuration or register with Claude Code:
 ```bash
 claude mcp add iron-manus-mcp node dist/index.js
 ```
+
+## Docker Usage
+
+### Docker Compose (Recommended)
+
+The easiest way to run Iron Manus MCP is using Docker Compose:
+
+```yaml
+# docker-compose.yml
+services:
+  iron-manus-mcp:
+    image: dnnyngyen/iron-manus-mcp:0.2.4
+    container_name: iron-manus-mcp
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    environment:
+      - KNOWLEDGE_MAX_CONCURRENCY=2
+      - KNOWLEDGE_TIMEOUT_MS=4000
+      - ALLOWED_HOSTS=api.github.com,httpbin.org,api.openai.com
+      - ENABLE_SSRF_PROTECTION=true
+```
+
+```bash
+# Start the service
+docker-compose up -d
+
+# View logs
+docker-compose logs -f iron-manus-mcp
+
+# Stop the service
+docker-compose down
+```
+
+### Docker Commands
+
+```bash
+# Pull latest stable version
+docker pull dnnyngyen/iron-manus-mcp:stable
+
+# Run with custom environment variables
+docker run -d \
+  --name iron-manus-mcp \
+  -e KNOWLEDGE_MAX_CONCURRENCY=3 \
+  -e ALLOWED_HOSTS="api.github.com,httpbin.org" \
+  dnnyngyen/iron-manus-mcp:0.2.4
+
+# View container logs
+docker logs iron-manus-mcp
+
+# Stop and remove container
+docker stop iron-manus-mcp && docker rm iron-manus-mcp
+```
+
+### Available Tags
+
+- `latest` - Latest development build
+- `stable` - Latest stable release
+- `0.2.4` - Specific version (recommended for production)
+
+**Registry Options:**
+- Docker Hub: `dnnyngyen/iron-manus-mcp:0.2.4`
+- GitHub Container Registry: `ghcr.io/dnnyngyen/iron-manus-mcp:0.2.4`
 
 ## Example Usage
 
@@ -206,7 +293,9 @@ MIT - See [LICENSE](LICENSE) file for details.
 
 ## Version History
 
-- **v0.2.1** - Claude Code Hooks integration with enhanced security validation and intelligent feedback loops
+- **v0.2.4** - Docker Hub and GitHub Container Registry release with clean configuration
+- **v0.2.2** - Stable release with comprehensive test coverage and build improvements
+- **v0.2.4** - Claude Code Hooks integration with enhanced security validation and intelligent feedback loops
 - **v0.2.0** - Complete refactor with Jest→Vitest migration, repository flattening, 8-phase FSM
 - **v0.1.x** - Initial release with 6-phase workflow
 

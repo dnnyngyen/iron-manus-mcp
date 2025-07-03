@@ -142,7 +142,7 @@ export class MultiAPIFetchTool extends BaseTool {
       const axiosInstance = axios.create({
         timeout: timeoutMs,
         headers: {
-          'User-Agent': 'Iron-Manus-MCP/0.2.1',
+          'User-Agent': 'Iron-Manus-MCP/0.2.4',
           Accept: 'application/json, text/plain, */*',
           ...headers,
         },

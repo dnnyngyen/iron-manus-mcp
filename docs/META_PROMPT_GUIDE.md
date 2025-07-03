@@ -1,6 +1,6 @@
 # Iron Manus MCP Meta-Prompt Architecture Guide
 
-**Version**: v0.2.1  
+**Version**: v0.2.4  
 **System**: 8-Phase FSM with Meta Thread-of-Thought (THoT) Orchestration
 
 This guide provides a comprehensive reference for Iron Manus MCP's meta-prompt DSL (Domain Specific Language) and Meta Thread-of-Thought orchestration system used for fractal agent spawning and task delegation.
@@ -593,7 +593,7 @@ JARVIS({
 
 ## Claude-Powered Intelligent Role Selection
 
-Iron Manus MCP v0.2.1 implements **Claude-powered role selection** that surpasses simple keyword matching:
+Iron Manus MCP v0.2.4 implements **Claude-powered role selection** that surpasses simple keyword matching:
 
 ### QUERY Phase Role Detection
 
@@ -715,9 +715,9 @@ Meta-prompts serve as the **critical bridge** between high-level strategic orche
 
 ### Production-Ready Architecture
 
-Iron Manus MCP v0.2.1 represents a **production-ready AI orchestration platform** featuring:
+Iron Manus MCP v0.2.4 represents a **production-ready AI orchestration platform** featuring:
 - 8-phase FSM workflow with intelligent rollback (completion percentage-based)
-- 65+ API registry with auto-connection and knowledge synthesis
+- 65 API registry with auto-connection and knowledge synthesis
 - Claude-powered intelligent role selection and API selection
 - Comprehensive testing suite (107/107 tests passing)
 - Security-hardened hook integration with sub-100ms validation

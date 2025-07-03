@@ -12,6 +12,22 @@ vi.mock('../../src/core/graph-state-adapter.js', () => ({
   }
 }));
 
+// Mock the autoConnection module to prevent real HTTP requests
+vi.mock('../../src/knowledge/autoConnection.js', () => ({
+  autoConnection: vi.fn().mockResolvedValue({
+    answer: 'Mock synthesized knowledge',
+    contradictions: [],
+    confidence: 0.8,
+  }),
+  AUTO_CONNECTION_CONFIG: {
+    enabled: true,
+    timeout_ms: 5000,
+    max_concurrent: 3,
+    confidence_threshold: 0.7,
+    max_response_size: 100000,
+  },
+}));
+
 describe('FSM Core Functionality', () => {
   const mockStateManager = graphStateManager as vi.Mocked<typeof graphStateManager>;
   const TEST_SESSION_ID = 'fsm-test-session';

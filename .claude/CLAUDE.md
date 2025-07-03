@@ -33,7 +33,7 @@ npm start          # Start compiled server
 
 ## Recent Updates
 
-- **v0.2.1**: Claude Code Hooks integration with security validation
+- **v0.2.4**: Claude Code Hooks integration with security validation
 - Fixed all test issues achieving 100% success rate
 - Enhanced SSRF protection with hooks validation
 - Added intelligent output validation and rollback signaling
@@ -44,7 +44,7 @@ npm start          # Start compiled server
 ✅ Core FSM functionality working
 ✅ Tool registry operational
 ✅ Build pipeline functional
-✅ Test suite 100% passing (107/107)
+✅ Test suite 100% passing (163/163)
 ✅ MCP SDK v1.13.2 fully compatible
 ✅ Claude Code Hooks integrated
 ✅ Production ready

@@ -211,31 +211,7 @@ plt.show()
 
 ## Integration with FSM Phases
 
-### QUERY Phase
-- Identifies data science requirements
-- Determines appropriate Python libraries needed
-
-### ENHANCE Phase  
-- Selects optimal role (researcher, analyzer, data_scientist)
-- Applies cognitive enhancement for data science thinking
-
-### KNOWLEDGE Phase
-- Accesses Python documentation APIs
-- Gathers relevant data science knowledge
-
-### PLAN Phase
-- Creates detailed Python execution plan
-- Generates code templates and workflows
-
-### EXECUTE Phase
-- Runs Python code through MCP IDE executeCode
-- Handles library installation and imports
-- Processes data and generates outputs
-
-### VERIFY Phase
-- Validates Python execution results
-- Checks data quality and analysis correctness
-- Ensures visualizations are properly generated
+Python data science tools are integrated across various FSM phases to support different aspects of the workflow. For detailed information on how Python tools are utilized within each phase, refer to [PROMPTS.md](./PROMPTS.md) and [ORCHESTRATION.md](./ORCHESTRATION.md).
 
 ## Error Handling
 

@@ -8,7 +8,7 @@ The project uses Vitest with TypeScript and ES modules for comprehensive testing
 
 - **Unit Tests**: FSM core functionality, API registry, and individual tools
 - **Integration Tests**: MCP server startup and tool interactions  
-- **67 Total Tests**: 66 passing with excellent coverage of all core functionality
+- **163 Total Tests**: 163 passing with excellent coverage of all core functionality
 
 ## Test Structure
 
@@ -114,7 +114,7 @@ it('should extract valid meta-prompt from todo content', () => {
 
 ### API Registry Testing
 
-Tests for the 65+ API endpoint registry:
+Tests for the 65 API endpoint registry:
 
 ```typescript
 // Test role-based API selection

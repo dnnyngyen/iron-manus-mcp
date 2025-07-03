@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] - 2025-01-03
+
+### Added
+- **Comprehensive JSDoc Documentation**: Added complete JSDoc documentation across entire codebase (~4,000+ lines)
+- **Professional Documentation Standards**: Established consistent JSDoc patterns for all interfaces, classes, and functions
+- **Core System Documentation**: Complete documentation for FSM engine, types, configuration, and server setup
+- **Tool Documentation**: 100% JSDoc coverage for all 10 tools in src/tools/ directory
+- **Architecture Documentation**: Detailed explanations of 8-phase FSM, Component-Cognitive Duality, and fractal orchestration
+- **Developer Experience**: Significantly improved code maintainability and onboarding experience
+
+### Enhanced
+- **src/core/types.ts**: Complete JSDoc for all 50+ interfaces, enums, and type definitions
+- **src/core/fsm.ts**: Full documentation of FSM exports and orchestration functions
+- **src/phase-engine/FSM.ts**: Comprehensive documentation of 609-line main FSM engine
+- **src/index.ts**: Complete server setup and MCP protocol documentation
+- **src/core/prompts.ts**: Detailed documentation of 1171-line prompt generation system
+- **src/verification/metrics.ts**: Full validation and metrics system documentation
+- **src/config.ts**: Complete configuration layer documentation with environment variables
+- **src/tools/iron-manus-state-graph.ts**: Comprehensive FSM state management documentation
+- **src/tools/python-executor.ts**: Complete Python integration and data science tool documentation
+
+### Technical Improvements
+- **Parallel Documentation Strategy**: Used 6+ simultaneous agents for efficient large-scale documentation
+- **Documentation Quality**: Professional-grade JSDoc with examples, parameter descriptions, and integration notes
+- **Architectural Clarity**: Clear documentation of complex systems including FSM orchestration and cognitive enhancement
+- **Maintenance**: Established documentation standards for future development
+
+## [0.2.3] - 2025-01-02
+
+### Added
+- **Docker Hub Release**: Published clean Docker images to Docker Hub registry (`dnnyngyen/iron-manus-mcp`)
+- **GitHub Container Registry**: Published images to GHCR (`ghcr.io/dnnyngyen/iron-manus-mcp`)
+- **Docker Compose Support**: Added comprehensive docker-compose.yml with environment configuration
+- **Multi-Registry Distribution**: Images available on both Docker Hub and GitHub Container Registry
+- **Container Documentation**: Added detailed Docker usage instructions and examples to README
+
+### Changed
+- **Clean Docker Configuration**: Removed personal identifiers from docker-compose.yml for public distribution
+- **Docker Image Tagging**: Implemented proper versioning with `latest`, `stable`, and `0.2.3` tags
+- **Documentation Enhancement**: Added comprehensive Docker installation and usage sections
+
+### Fixed
+- Docker image builds with proper multi-stage optimization (217MB final size)
+- Container environment variable configuration
+- Public registry compatibility and clean distribution
+
 ## [0.2.2] - 2025-01-02
 
 ### Changed

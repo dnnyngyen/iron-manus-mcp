@@ -22,7 +22,7 @@ describe('JARVIS Tool Integration', () => {
     it('should have correct tool metadata', () => {
       expect(jarvisTool.name).toBe('JARVIS');
       expect(jarvisTool.description).toMatch(/Finite State Machine Controller/i);
-      expect(jarvisTool.description).toContain('6-step agent loop');
+      expect(jarvisTool.description).toContain('8-phase agent loop');
       expect(jarvisTool.inputSchema).toBeDefined();
       expect(jarvisTool.inputSchema.type).toBe('object');
     });

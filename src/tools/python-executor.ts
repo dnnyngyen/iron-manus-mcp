@@ -1,10 +1,36 @@
 /**
- * Python Executor Tool
- * Bridges Iron Manus MCP tools with MCP IDE Python execution
+ * Python Executor Tool Integration
+ * 
+ * This module provides Python execution capabilities for Iron Manus MCP through integration
+ * with the MCP IDE executeCode tool. It bridges Iron Manus MCP tools with Python data science
+ * execution environment, offering both basic Python execution and comprehensive data science
+ * operations.
+ * 
+ * The module includes:
+ * - PythonExecutorTool: Basic Python code execution with library management
+ * - EnhancedPythonDataScienceTool: Complete data science workflows with auto-generated code
+ * 
+ * Integration Pattern:
+ * 1. Tools prepare Python code with library setup
+ * 2. Code is formatted for MCP IDE executeCode tool
+ * 3. Libraries are auto-installed using pip if missing
+ * 4. Execution happens in persistent Jupyter kernel
+ * 
+ * @fileoverview Python execution and data science integration for Iron Manus MCP
+ * @author Iron Manus MCP Team
+ * @version 1.0.0
  */
 
 import { BaseTool, ToolResult, ToolSchema } from './base-tool.js';
 
+/**
+ * Arguments interface for Python code execution
+ * 
+ * @interface PythonExecutorArgs
+ * @property {string} code - The Python code to execute (required)
+ * @property {string[]} [setup_libraries] - Array of library names to install/import before execution
+ * @property {string} [description] - Optional description of what the code does for documentation
+ */
 export interface PythonExecutorArgs {
   code: string;
   setup_libraries?: string[];
@@ -13,7 +39,35 @@ export interface PythonExecutorArgs {
 
 /**
  * Python Executor Tool
- * Executes Python code through MCP IDE executeCode tool
+ * 
+ * Executes Python code through MCP IDE executeCode tool with automatic library management.
+ * This tool serves as a bridge between Iron Manus MCP and the MCP IDE Python execution
+ * environment, handling library installation and code preparation.
+ * 
+ * Key Features:
+ * - Automatic library installation via pip
+ * - Code preparation with proper imports
+ * - Integration with MCP IDE executeCode tool
+ * - Error handling and validation
+ * - Support for common data science libraries
+ * 
+ * Usage Flow:
+ * 1. Validates input arguments
+ * 2. Prepares code with library setup
+ * 3. Returns formatted instructions for MCP IDE execution
+ * 4. Libraries are auto-installed if missing during execution
+ * 
+ * @class PythonExecutorTool
+ * @extends BaseTool
+ * @example
+ * ```typescript
+ * const tool = new PythonExecutorTool();
+ * const result = await tool.handle({
+ *   code: "import pandas as pd\nprint(pd.__version__)",
+ *   setup_libraries: ["pandas"],
+ *   description: "Check pandas version"
+ * });
+ * ```
  */
 export class PythonExecutorTool extends BaseTool {
   readonly name = 'PythonExecutor';
@@ -40,6 +94,31 @@ export class PythonExecutorTool extends BaseTool {
     additionalProperties: false,
   };
 
+  /**
+   * Handles Python code execution requests
+   * 
+   * Processes Python code execution requests by validating arguments, preparing code with
+   * library setup, and formatting instructions for MCP IDE executeCode tool integration.
+   * 
+   * Error Handling:
+   * - Validates required arguments (code must be provided)
+   * - Catches and formats execution errors
+   * - Returns structured error responses for debugging
+   * 
+   * @param {PythonExecutorArgs} args - The execution arguments containing code and setup options
+   * @returns {Promise<ToolResult>} Promise resolving to execution instructions or error response
+   * 
+   * @throws {Error} When code argument is missing or invalid
+   * 
+   * @example
+   * ```typescript
+   * const result = await tool.handle({
+   *   code: "print('Hello, World!')",
+   *   setup_libraries: ["requests"],
+   *   description: "Simple hello world example"
+   * });
+   * ```
+   */
   async handle(args: PythonExecutorArgs): Promise<ToolResult> {
     try {
       this.validateArgs(args);
@@ -68,6 +147,30 @@ export class PythonExecutorTool extends BaseTool {
     }
   }
 
+  /**
+   * Prepares Python code with library setup and imports
+   * 
+   * Combines user code with auto-generated library installation and import code.
+   * The preparation process ensures all required libraries are available before
+   * executing the main code.
+   * 
+   * Code Structure:
+   * 1. Library installation/import section (if libraries specified)
+   * 2. User's main code
+   * 
+   * @private
+   * @param {PythonExecutorArgs} args - The execution arguments containing code and libraries
+   * @returns {string} The complete Python code ready for execution
+   * 
+   * @example
+   * ```typescript
+   * const fullCode = this.prepareCode({
+   *   code: "df = pd.DataFrame({'a': [1, 2, 3]})",
+   *   setup_libraries: ["pandas"]
+   * });
+   * // Returns: library setup code + user code
+   * ```
+   */
   private prepareCode(args: PythonExecutorArgs): string {
     const { code, setup_libraries } = args;
 
@@ -85,6 +188,37 @@ export class PythonExecutorTool extends BaseTool {
     return fullCode;
   }
 
+  /**
+   * Generates Python code for automatic library installation and import
+   * 
+   * Creates Python code that attempts to import each library and automatically
+   * installs it via pip if the import fails. Handles common library name mappings
+   * where the import name differs from the package name.
+   * 
+   * Library Name Mappings:
+   * - bs4 → beautifulsoup4
+   * - sklearn → scikit-learn
+   * - cv2 → opencv-python
+   * 
+   * Generated Code Pattern:
+   * ```python
+   * try:
+   *     import library_name
+   * except ImportError:
+   *     subprocess.check_call([sys.executable, "-m", "pip", "install", "package_name"])
+   *     import library_name
+   * ```
+   * 
+   * @private
+   * @param {string[]} libraries - Array of library names to install/import
+   * @returns {string} Python code for library setup with auto-installation
+   * 
+   * @example
+   * ```typescript
+   * const setupCode = this.generateLibrarySetup(["pandas", "bs4"]);
+   * // Returns Python code that imports pandas and beautifulsoup4
+   * ```
+   */
   private generateLibrarySetup(libraries: string[]): string {
     const installCode = libraries
       .map(lib => {
@@ -116,7 +250,42 @@ print("✅ All required libraries loaded successfully")`;
 
 /**
  * Enhanced Python Data Science Tool
- * Combines code generation with actual execution
+ * 
+ * Comprehensive data science tool that combines intelligent code generation with execution
+ * instructions for common data science workflows. This tool generates complete, ready-to-run
+ * Python code for various data science operations.
+ * 
+ * Supported Operations:
+ * - web_scraping: Extract data from websites using BeautifulSoup and requests
+ * - data_analysis: Comprehensive data analysis with pandas and numpy
+ * - visualization: Create charts and plots with matplotlib and seaborn
+ * - machine_learning: Build and evaluate ML models with scikit-learn
+ * - custom: Execute user-provided custom Python code
+ * 
+ * Key Features:
+ * - Auto-generates complete, production-ready code
+ * - Handles library installation automatically
+ * - Provides comprehensive error handling
+ * - Includes detailed output and logging
+ * - Supports both structured and unstructured data
+ * 
+ * Integration with MCP IDE:
+ * - Generates code compatible with Jupyter kernels
+ * - Returns execution instructions for mcp__ide__executeCode
+ * - Maintains persistent state across executions
+ * - Handles library dependencies automatically
+ * 
+ * @class EnhancedPythonDataScienceTool
+ * @extends BaseTool
+ * @example
+ * ```typescript
+ * const tool = new EnhancedPythonDataScienceTool();
+ * const result = await tool.handle({
+ *   operation: "data_analysis",
+ *   input_data: "sales,profit\n100,20\n200,30",
+ *   parameters: { analyze_correlations: true }
+ * });
+ * ```
  */
 export class EnhancedPythonDataScienceTool extends BaseTool {
   readonly name = 'EnhancedPythonDataScience';
@@ -147,6 +316,40 @@ export class EnhancedPythonDataScienceTool extends BaseTool {
     additionalProperties: false,
   };
 
+  /**
+   * Handles data science operation requests
+   * 
+   * Processes data science requests by generating appropriate Python code based on the
+   * operation type, input data, and parameters. Returns complete execution instructions
+   * for integration with MCP IDE executeCode tool.
+   * 
+   * Operation Types:
+   * - web_scraping: Generates BeautifulSoup-based scraping code
+   * - data_analysis: Creates comprehensive pandas analysis code
+   * - visualization: Builds matplotlib/seaborn visualization code
+   * - machine_learning: Develops scikit-learn ML pipeline code
+   * - custom: Wraps user code with library setup
+   * 
+   * Error Handling:
+   * - Validates operation type and required parameters
+   * - Handles code generation errors gracefully
+   * - Returns structured error responses with debugging info
+   * - Catches and formats library-related errors
+   * 
+   * @param {any} args - The operation arguments containing operation type, data, and parameters
+   * @returns {Promise<ToolResult>} Promise resolving to generated code and execution instructions
+   * 
+   * @throws {Error} When operation type is invalid or code generation fails
+   * 
+   * @example
+   * ```typescript
+   * const result = await tool.handle({
+   *   operation: "visualization",
+   *   input_data: "x,y\n1,2\n3,4",
+   *   parameters: { chart_type: "scatter" }
+   * });
+   * ```
+   */
   async handle(args: any): Promise<ToolResult> {
     try {
       this.validateArgs(args);
@@ -180,6 +383,38 @@ export class EnhancedPythonDataScienceTool extends BaseTool {
     }
   }
 
+  /**
+   * Generates operation-specific Python code
+   * 
+   * Central code generation dispatcher that routes to appropriate code generators
+   * based on the operation type. Handles custom code execution and validates
+   * operation types.
+   * 
+   * Operation Routing:
+   * - custom: Wraps user code with basic library setup
+   * - web_scraping: Generates BeautifulSoup scraping code
+   * - data_analysis: Creates pandas analysis workflows
+   * - visualization: Builds matplotlib/seaborn charts
+   * - machine_learning: Develops scikit-learn pipelines
+   * 
+   * @private
+   * @param {string} operation - The type of data science operation to perform
+   * @param {string} [inputData] - Optional input data (URL, CSV, JSON, etc.)
+   * @param {any} [parameters] - Optional operation-specific parameters
+   * @param {string} [customCode] - Optional custom Python code for custom operations
+   * @returns {string} Generated Python code ready for execution
+   * 
+   * @throws {Error} When operation type is not supported
+   * 
+   * @example
+   * ```typescript
+   * const code = this.generateOperationCode(
+   *   "data_analysis",
+   *   "name,age\nAlice,25\nBob,30",
+   *   { include_plots: true }
+   * );
+   * ```
+   */
   private generateOperationCode(
     operation: string,
     inputData?: string,
@@ -208,6 +443,31 @@ export class EnhancedPythonDataScienceTool extends BaseTool {
     }
   }
 
+  /**
+   * Generates web scraping code using BeautifulSoup and requests
+   * 
+   * Creates comprehensive web scraping code that fetches web pages, parses HTML,
+   * and extracts common elements like titles, headings, paragraphs, and links.
+   * Includes proper error handling and user-agent headers.
+   * 
+   * Generated Code Features:
+   * - Proper user-agent headers to avoid blocking
+   * - Comprehensive error handling for network requests
+   * - Extraction of titles, headings, paragraphs, and links
+   * - DataFrame creation for structured data
+   * - Detailed logging and progress feedback
+   * 
+   * @private
+   * @param {string} [url] - The URL to scrape (defaults to example.com)
+   * @param {any} [params] - Additional parameters for scraping customization
+   * @returns {string} Python code for web scraping with BeautifulSoup
+   * 
+   * @example
+   * ```typescript
+   * const code = this.generateWebScrapingCode("https://example.com");
+   * // Returns complete scraping code with error handling
+   * ```
+   */
   private generateWebScrapingCode(url?: string, params?: any): string {
     return this.wrapWithLibrarySetup(
       `
@@ -253,6 +513,32 @@ except Exception as e:
     );
   }
 
+  /**
+   * Generates comprehensive data analysis code using pandas and numpy
+   * 
+   * Creates extensive data analysis workflows including dataset overview,
+   * statistical summaries, data quality checks, and correlation analysis.
+   * Handles both provided data and generates sample data when needed.
+   * 
+   * Generated Analysis Includes:
+   * - Dataset shape and column information
+   * - Statistical summaries (describe, mean, median, etc.)
+   * - Missing value analysis
+   * - Data type information
+   * - Correlation matrix for numeric columns
+   * - Memory usage analysis
+   * 
+   * @private
+   * @param {string} [data] - Optional CSV data string to analyze
+   * @param {any} [params] - Additional parameters for analysis customization
+   * @returns {string} Python code for comprehensive data analysis
+   * 
+   * @example
+   * ```typescript
+   * const code = this.generateDataAnalysisCode("name,age\nAlice,25\nBob,30");
+   * // Returns complete analysis code with statistical summaries
+   * ```
+   */
   private generateDataAnalysisCode(data?: string, params?: any): string {
     return this.wrapWithLibrarySetup(
       `
@@ -325,6 +611,31 @@ print("\\n✅ Data analysis completed successfully")
     );
   }
 
+  /**
+   * Generates data visualization code using matplotlib and seaborn
+   * 
+   * Creates comprehensive visualization dashboards with multiple plot types
+   * including distributions, scatter plots, box plots, and categorical charts.
+   * Automatically adapts to data types and creates appropriate visualizations.
+   * 
+   * Generated Visualizations:
+   * - Histogram for numeric distributions
+   * - Scatter plots for numeric relationships
+   * - Box plots for outlier detection
+   * - Bar charts for categorical data
+   * - Comprehensive dashboard layout
+   * 
+   * @private
+   * @param {string} [data] - Optional CSV data string to visualize
+   * @param {any} [params] - Additional parameters for visualization customization
+   * @returns {string} Python code for comprehensive data visualization
+   * 
+   * @example
+   * ```typescript
+   * const code = this.generateVisualizationCode("x,y\n1,2\n3,4");
+   * // Returns complete visualization code with multiple chart types
+   * ```
+   */
   private generateVisualizationCode(data?: string, params?: any): string {
     return this.wrapWithLibrarySetup(
       `
@@ -419,6 +730,32 @@ print(f"Categorical columns: {list(categorical_cols)}")
     );
   }
 
+  /**
+   * Generates machine learning analysis code using scikit-learn
+   * 
+   * Creates complete ML workflows including data preprocessing, model training,
+   * evaluation, and feature importance analysis. Automatically detects whether
+   * to use classification or regression based on target variable characteristics.
+   * 
+   * Generated ML Pipeline:
+   * - Data preprocessing and encoding
+   * - Automatic problem type detection (classification vs regression)
+   * - Train/test split
+   * - Model training (RandomForest)
+   * - Performance evaluation with appropriate metrics
+   * - Feature importance analysis
+   * 
+   * @private
+   * @param {string} [data] - Optional CSV data string for ML analysis
+   * @param {any} [params] - Additional parameters for ML customization
+   * @returns {string} Python code for complete machine learning analysis
+   * 
+   * @example
+   * ```typescript
+   * const code = this.generateMLCode("feature1,feature2,target\n1,2,0\n3,4,1");
+   * // Returns complete ML pipeline with evaluation metrics
+   * ```
+   */
   private generateMLCode(data?: string, params?: any): string {
     return this.wrapWithLibrarySetup(
       `
@@ -530,6 +867,33 @@ print("\\n✅ Machine Learning analysis completed successfully!")
     );
   }
 
+  /**
+   * Wraps user code with automatic library installation setup
+   * 
+   * Prepends user code with library installation and import code that handles
+   * missing dependencies automatically. Uses the same library mapping as the
+   * basic PythonExecutorTool for consistency.
+   * 
+   * Library Installation Pattern:
+   * - Attempts to import each library
+   * - Installs via pip if import fails
+   * - Handles common library name mappings
+   * - Provides user feedback during installation
+   * 
+   * @private
+   * @param {string} code - The user's Python code to wrap
+   * @param {string[]} libraries - Array of library names to install/import
+   * @returns {string} Complete Python code with library setup + user code
+   * 
+   * @example
+   * ```typescript
+   * const wrappedCode = this.wrapWithLibrarySetup(
+   *   "df = pd.DataFrame({'a': [1, 2, 3]})",
+   *   ["pandas"]
+   * );
+   * // Returns: library setup + user code
+   * ```
+   */
   private wrapWithLibrarySetup(code: string, libraries: string[]): string {
     const setupCode = libraries
       .map(lib => {
@@ -559,6 +923,30 @@ ${setupCode}
 ${code}`;
   }
 
+  /**
+   * Gets the required libraries for a specific operation type
+   * 
+   * Returns an array of library names that are required for the specified
+   * data science operation. This information is used for dependency checking
+   * and installation planning.
+   * 
+   * Library Requirements by Operation:
+   * - web_scraping: requests, beautifulsoup4, pandas
+   * - data_analysis: pandas, numpy
+   * - visualization: matplotlib, seaborn, pandas, numpy
+   * - machine_learning: scikit-learn, pandas, numpy
+   * - custom: pandas, numpy (basic data science stack)
+   * 
+   * @private
+   * @param {string} operation - The operation type to get libraries for
+   * @returns {string[]} Array of required library names
+   * 
+   * @example
+   * ```typescript
+   * const libs = this.getRequiredLibraries("machine_learning");
+   * // Returns: ["scikit-learn", "pandas", "numpy"]
+   * ```
+   */
   private getRequiredLibraries(operation: string): string[] {
     const libraryMap: Record<string, string[]> = {
       web_scraping: ['requests', 'beautifulsoup4', 'pandas'],

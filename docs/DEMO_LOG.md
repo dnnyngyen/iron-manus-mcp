@@ -2,8 +2,7 @@ Iron Manus MCP: Complete 8-Phase FSM Architecture & Live Demonstration
 
   🎯 Executive Summary
 
-  The Iron Manus MCP represents a sophisticated AI orchestration platform that bridges cognitive reasoning with deterministic validation through an
-  8-phase Finite State Machine (FSM). This document provides a comprehensive analysis of the architecture, prompt flow, and live demonstration of the
+  The Iron Manus MCP v0.2.4 is a sophisticated, 8-phase Finite State Machine (FSM)-driven orchestration system This document provides a comprehensive analysis of the architecture, prompt flow, and live demonstration of the
   complete workflow.
 
   🧠 Core Architecture: Hybrid Cognitive-Deterministic System
@@ -240,7 +239,7 @@ Iron Manus MCP: Complete 8-Phase FSM Architecture & Live Demonstration
 
   What Happens
 
-- Executes auto-connection with 65+ API registry
+- Executes auto-connection with 65 API registry
 - Performs intelligent API selection using Claude
 - Gathers and synthesizes knowledge from multiple sources
 - Applies cross-validation and confidence scoring
@@ -702,7 +701,7 @@ Iron Manus MCP: Complete 8-Phase FSM Architecture & Live Demonstration
 
   2. Intelligent API Orchestration
 
-- 65+ API registry with role-based selection and SSRF protection
+- 65 API registry with role-based selection and SSRF protection
 - Auto-connection knowledge synthesis with cross-validation and confidence scoring
 - Claude-powered API selection over simple keyword matching
 

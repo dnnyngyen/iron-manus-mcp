@@ -70,7 +70,7 @@ This separation ensures that:
 
 ## Hook Components
 
-### Current Implementation Status: v0.2.1 Production Ready
+### Current Implementation Status: v0.2.4 Production Ready
 
 #### Security Validator (`security-validator.py`)
 
@@ -292,7 +292,7 @@ npm run build              # Should complete without errors
 ls -la scripts/iron-manus/ # Should show executable scripts with -rwxr-xr-x permissions
 ```
 
-**Expected Test Results**: Iron Manus v0.2.1 shows 106 passed tests with 1 expected failure in FSM verification tests. This is normal and indicates the system is functioning correctly.
+**Expected Test Results**: Iron Manus v0.2.4 shows 106 passed tests with 1 expected failure in FSM verification tests. This is normal and indicates the system is functioning correctly.
 
 ### Step 2: Make Scripts Executable
 
@@ -578,7 +578,7 @@ DONE Phase
 └─ Generate session summary
 ```
 
-### API Registry (65+ APIs) Enhancement
+### API Registry (65 APIs) Enhancement
 
 **Before Hooks**:
 ```typescript
@@ -985,7 +985,7 @@ For support, questions, or contributions, please refer to the [Iron Manus MCP do
 
 ---
 
-*This document is part of the Iron Manus MCP v0.2.1 release with Claude Code Hooks integration.*
+*This document is part of the Iron Manus MCP v0.2.4 release with Claude Code Hooks integration.*
 
 **Version Status**: Production Ready  
 **Test Coverage**: 106/107 tests passing (99.1%)  

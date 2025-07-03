@@ -10,7 +10,7 @@ Iron Manus MCP exposes a modular tool system through the Model Context Protocol.
 
 ### JARVIS FSM Controller
 
-The primary orchestration tool that implements the 8-phase finite state machine.
+The Iron Manus MCP v0.2.4 implements an 8-phase finite state machine.
 
 #### Tool Definition
 
@@ -139,7 +139,7 @@ await mcp.callTool({
 
 ### APISearch
 
-Intelligent API discovery with role-based filtering from the 65+ endpoint registry.
+Intelligent API discovery with role-based filtering from the 65 endpoint registry.
 
 #### Tool Definition
 
@@ -250,105 +250,263 @@ Validates API endpoints and suggests corrections for failed requests.
 }
 ```
 
-## FSM Phases and States
+This document provides comprehensive API documentation for the Iron Manus MCP server tools and interfaces. It focuses on tool definitions, input schemas, and usage examples.
 
-### Phase Transitions
+For detailed information on FSM phases, roles, meta-prompts, error handling, and performance considerations, please refer to [PROMPTS.md](./PROMPTS.md), [META_PROMPT_GUIDE.md](./META_PROMPT_GUIDE.md), [ORCHESTRATION.md](./ORCHESTRATION.md), and [ARCHITECTURE.md](./ARCHITECTURE.md).
 
-The JARVIS FSM Controller manages state transitions through 8 phases:
+## Overview
 
-```
-INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
-```
+Iron Manus MCP exposes a modular tool system through the Model Context Protocol. All tools follow a consistent interface pattern and are designed for integration with Claude's native tooling capabilities.
 
-#### Phase Descriptions
+## Core Tools
 
-| Phase | Purpose | Allowed Tools | Expected Input |
-|-------|---------|---------------|----------------|
-| **INIT** | Session initialization | `["JARVIS"]` | `initial_objective` |
-| **QUERY** | Goal interpretation | `["JARVIS"]` | None |
-| **ENHANCE** | Goal enrichment | `["JARVIS"]` | `interpreted_goal` |
-| **KNOWLEDGE** | Information gathering | `["WebSearch", "WebFetch", "APISearch", "MultiAPIFetch", "IronManusStateGraph", "JARVIS"]` | `enhanced_goal` |
-| **PLAN** | Task decomposition | `["TodoWrite"]` | `knowledge_gathered` |
-| **EXECUTE** | Task execution | `["TodoRead", "TodoWrite", "Task", "Bash", "Read", "Write", "Edit"]` | `plan_created` |
-| **VERIFY** | Quality validation | `["TodoRead", "Read"]` | `execution_success` |
-| **DONE** | Completion | `[]` | `verification_passed` |
+### JARVIS FSM Controller
 
-#### State Management
+The Iron Manus MCP v0.2.4 implements an 8-phase finite state machine.
 
-Session state includes:
+#### Tool Definition
 
 ```typescript
-interface SessionState {
-  current_phase: Phase;
-  initial_objective: string;
-  detected_role: Role;
-  payload: Record<string, any>;
-  reasoning_effectiveness: number; // 0.3-1.0
-  last_activity: number; // timestamp
+{
+  name: "JARVIS",
+  description: "JARVIS Finite State Machine Controller - Implements the 8-phase agent loop with fractal orchestration",
+  inputSchema: {
+    type: "object",
+    properties: {
+      session_id: {
+        type: "string",
+        description: "Unique session identifier (auto-generated if not provided)"
+      },
+      phase_completed: {
+        type: "string", 
+        enum: ["QUERY", "ENHANCE", "KNOWLEDGE", "PLAN", "EXECUTE", "VERIFY"],
+        description: "Phase that Claude just completed (omit for initial call)"
+      },
+      initial_objective: {
+        type: "string",
+        description: "User's goal (only on first call)"
+      },
+      payload: {
+        type: "object",
+        description: "Phase-specific data from Claude",
+        additionalProperties: true
+      }
+    },
+    required: []
+  }
 }
 ```
 
-## Role System
+#### Usage Examples
 
-### Available Roles
-
-The system supports 9 specialized roles with distinct processing characteristics:
-
-| Role | Category | Purpose | Preferred APIs |
-|------|----------|---------|----------------|
-| **planner** | Strategy | Task decomposition and dependency analysis | Planning, project management |
-| **coder** | Implementation | Code development with testing and best practices | Development, documentation |
-| **critic** | Quality | Security review and quality assessment | Security, validation |
-| **researcher** | Information | Data gathering and analysis | Research, academic |
-| **analyzer** | Data | Pattern recognition and insights | Analytics, finance |
-| **synthesizer** | Integration | Knowledge integration and optimization | General purpose |
-| **ui_architect** | Design | V0-style UI architecture and systematic design | Design, art |
-| **ui_implementer** | UI Dev | V0-style UI implementation with concurrent execution | UI frameworks |
-| **ui_refiner** | Polish | V0-style UI refinement with polished aesthetics | Design tools |
-
-### Role-Based API Selection
-
-The system automatically selects relevant APIs based on the detected or specified role:
+**Initialize New Session:**
 
 ```typescript
-// Example API preferences by role
-const ROLE_API_MAPPING = {
-  researcher: ["science", "education", "books", "news"],
-  analyzer: ["finance", "cryptocurrency", "data", "analytics"], 
-  coder: ["development", "documentation", "programming"],
-  ui_architect: ["art", "design", "color", "photos"]
-};
+await mcp.callTool({
+  name: "JARVIS",
+  args: {
+    initial_objective: "Create a React dashboard with authentication"
+  }
+});
 ```
 
-## Meta-Prompt DSL
+**Continue Existing Session:**
 
-### Syntax
-
-The system recognizes meta-prompt syntax for specialized task generation:
-
-```
-(ROLE: agent_type) (CONTEXT: domain) (PROMPT: instructions) (OUTPUT: deliverable)
-```
-
-### Example Transformations
-
-**Input:**
-```
-(ROLE: coder) (CONTEXT: authentication) (PROMPT: Implement JWT auth) (OUTPUT: production_code)
+```typescript
+await mcp.callTool({
+  name: "JARVIS", 
+  args: {
+    session_id: "session_1234_abc",
+    phase_completed: "QUERY",
+    payload: {
+      interpreted_goal: "Build secure React dashboard with JWT auth"
+    }
+  }
+});
 ```
 
-**Generated Prompt:**
-- Role-specific thinking methodologies
-- Domain context and frameworks  
-- Quality validation rules
-- Output specifications
+#### Response Format
 
-### Supported Elements
+```typescript
+{
+  content: [{
+    type: "text",
+    text: "{
+  "next_phase": "ENHANCE",
+  "system_prompt": "...",
+  "allowed_next_tools": ["JARVIS"],
+  "status": "IN_PROGRESS",
+  "payload": {...}
+}"
+  }],
+  isError: false
+}
+```
 
-- **ROLE**: Any of the 9 available roles
-- **CONTEXT**: Domain-specific context (e.g., "authentication", "ui", "testing")
-- **PROMPT**: Specific instructions
-- **OUTPUT**: Expected deliverable type
+### MultiAPIFetch
+
+Parallel HTTP requests with timeout management and response aggregation.
+
+#### Tool Definition
+
+```typescript
+{
+  name: "MultiAPIFetch",
+  description: "Parallel HTTP requests to multiple APIs with timeout management",
+  inputSchema: {
+    type: "object", 
+    properties: {
+      api_endpoints: {
+        type: "array",
+        items: { type: "string" },
+        description: "Array of API URLs to fetch from"
+      },
+      headers: {
+        type: "object",
+        description: "Optional headers to include in requests"
+      },
+      max_concurrent: {
+        type: "number",
+        description: "Maximum concurrent requests (default: 3)"
+      },
+      timeout_ms: {
+        type: "number", 
+        description: "Request timeout in milliseconds (default: 5000)"
+      }
+    },
+    required: ["api_endpoints"]
+  }
+}
+```
+
+#### Usage Example
+
+```typescript
+await mcp.callTool({
+  name: "MultiAPIFetch",
+  args: {
+    api_endpoints: [
+      "https://api.github.com/users/octocat",
+      "https://jsonplaceholder.typicode.com/users/1"
+    ],
+    max_concurrent: 2,
+    timeout_ms: 10000
+  }
+});
+```
+
+### APISearch
+
+Intelligent API discovery with role-based filtering from the 65 endpoint registry.
+
+#### Tool Definition
+
+```typescript
+{
+  name: "APISearch", 
+  description: "Intelligent API discovery with role-based filtering",
+  inputSchema: {
+    type: "object",
+    properties: {
+      objective: {
+        type: "string",
+        description: "The goal or task requiring API data"
+      },
+      user_role: {
+        type: "string",
+        enum: ["planner", "coder", "critic", "researcher", "analyzer", "synthesizer", "ui_architect", "ui_implementer", "ui_refiner"],
+        description: "User role for preference-based filtering"
+      },
+      category_filter: {
+        type: "string", 
+        description: "Optional category to filter by"
+      },
+      max_results: {
+        type: "number",
+        description: "Maximum number of APIs to return (default: 5)"
+      }
+    },
+    required: ["objective", "user_role"]
+  }
+}
+```
+
+#### Usage Example
+
+```typescript
+await mcp.callTool({
+  name: "APISearch",
+  args: {
+    objective: "Analyze cryptocurrency market trends",
+    user_role: "analyzer",
+    max_results: 3
+  }
+});
+```
+
+### IronManusStateGraph
+
+Project-scoped FSM state management using knowledge graphs for session isolation.
+
+#### Tool Definition
+
+```typescript
+{
+  name: "IronManusStateGraph",
+  description: "Project-scoped FSM state management using knowledge graphs. Manage sessions, phases, tasks, and transitions with isolated state per project.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      action: {
+        type: "string",
+        enum: ["create_entities", "create_transitions", "add_observations", "delete_entities", "delete_observations", "delete_transitions", "read_graph", "search_nodes", "open_nodes", "initialize_session", "record_phase_transition", "record_task_creation", "update_task_status"],
+        description: "The action to perform on the session state graph"
+      },
+      session_id: {
+        type: "string",
+        description: "The session ID for project-scoped state isolation"
+      },
+      // Additional properties based on action type
+      objective: { type: "string", description: "Session objective (for initialize_session)" },
+      role: { type: "string", description: "Detected role (for initialize_session)" },
+      from_phase: { type: "string", description: "Source phase (for record_phase_transition)" },
+      to_phase: { type: "string", description: "Target phase (for record_phase_transition)" },
+      task_id: { type: "string", description: "Task identifier (for task operations)" },
+      content: { type: "string", description: "Task content (for record_task_creation)" },
+      priority: { type: "string", description: "Task priority (for record_task_creation)" },
+      status: { type: "string", description: "Task status (for update_task_status)" }
+    },
+    required: ["action", "session_id"]
+  }
+}
+```
+
+### APIValidator
+
+Validates API endpoints and suggests corrections for failed requests.
+
+#### Tool Definition
+
+```typescript
+{
+  name: "APIValidator",
+  description: "Validates API endpoints and suggests corrections for failed requests",
+  inputSchema: {
+    type: "object",
+    properties: {
+      api_endpoint: {
+        type: "object",
+        description: "API endpoint to validate"
+      },
+      auto_correct: {
+        type: "boolean",
+        description: "Attempt to auto-correct failed endpoints (default: true)"
+      }
+    },
+    required: ["api_endpoint"]
+  }
+}
+```
 
 ## API Registry
 
@@ -356,7 +514,7 @@ The system recognizes meta-prompt syntax for specialized task generation:
 
 The built-in API registry contains:
 
-- **Total APIs**: 65+ endpoints
+- **Total APIs**: 65 endpoints
 - **Categories**: 25+ different categories
 - **Authentication**: All no-auth APIs for simplicity
 - **Reliability**: Scored 0-1 based on uptime and response quality
@@ -396,45 +554,6 @@ const status = rateLimiter.getRateLimitStatus(apiName);
 // Reset limits
 rateLimiter.resetRateLimit(apiName);
 ```
-
-## Error Handling
-
-### Standard Error Response
-
-All tools return standardized error responses:
-
-```typescript
-{
-  content: [{
-    type: "text",
-    text: "ERROR **Tool Error:** [Error description]"
-  }],
-  isError: true
-}
-```
-
-### Common Error Types
-
-1. **Validation Errors**: Invalid arguments or missing required fields
-2. **FSM State Errors**: Invalid phase transitions or corrupted state
-3. **API Errors**: Network timeouts, rate limits, or invalid endpoints
-4. **Session Errors**: Missing or expired session state
-
-## Performance Considerations
-
-### Tool Execution Times
-
-- **JARVIS**: ~100-500ms per state transition
-- **APISearch**: ~50-200ms for registry lookup
-- **MultiAPIFetch**: Variable based on API response times
-- **IronManusStateGraph**: ~50-200ms for graph operations
-
-### Optimization Tips
-
-1. **Session Reuse**: Maintain session_id across calls for efficiency
-2. **Concurrent APIs**: Use MultiAPIFetch for parallel data gathering
-3. **Rate Limiting**: Respect API limits to avoid throttling
-4. **Payload Size**: Keep payloads reasonable for faster processing
 
 ## Integration Examples
 

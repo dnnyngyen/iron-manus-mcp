@@ -1,4 +1,4 @@
-# Getting Started with Iron Manus MCP v0.2.1
+# Getting Started with Iron Manus MCP v0.2.4
 ## Quick Start Guide
 
 ### What You'll Learn

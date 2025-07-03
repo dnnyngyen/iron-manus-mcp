@@ -1,5 +1,26 @@
-// Phase-specific prompts that replace Manus's Planner/Knowledge/Datasource modules
-// Role-aware, cognitively enhanced prompts with fractal orchestration capability
+/**
+ * @fileoverview Advanced Prompt Generation Engine for Iron Manus MCP
+ * 
+ * This module implements sophisticated prompt generation and role detection systems that form
+ * the cognitive core of the Iron Manus MCP orchestration framework. It replaces Manus's
+ * traditional Planner/Knowledge/Datasource modules with an advanced 8-phase FSM-driven
+ * system enhanced with role-aware cognitive frameworks and fractal orchestration capabilities.
+ * 
+ * Key Features:
+ * - 9 specialized cognitive roles with thinking methodologies
+ * - Component-Cognitive Duality for UI/UX generation
+ * - Unified constraint systems across component/project/ecosystem scopes
+ * - Fractal task decomposition with meta-prompt generation
+ * - Role-specific API guidance and tool selection
+ * - Parallel agent orchestration with session workspace coordination
+ * 
+ * The system uses Claude's advanced reasoning capabilities for intelligent role selection,
+ * moving beyond simple keyword matching to contextual understanding of task requirements.
+ * 
+ * @author Iron Manus MCP Team
+ * @version 2.0.0
+ * @since 1.0.0
+ */
 
 import {
   Phase,
@@ -13,7 +34,22 @@ import {
 } from './types.js';
 // UI agent role functions will be implemented when needed
 
-// Role configuration from Manus's modular architecture
+/**
+ * Role configuration mapping that defines cognitive frameworks and authority levels
+ * for each specialized role in the Iron Manus MCP system.
+ * 
+ * Each role configuration includes:
+ * - Cognitive thinking methodologies for enhanced reasoning
+ * - Suggested frameworks and validation rules
+ * - Authority levels defining operational scope
+ * - Default output formats and complexity levels
+ * 
+ * This replaces Manus's traditional modular architecture with a more sophisticated
+ * role-based cognitive enhancement system.
+ * 
+ * @type {Record<Role, RoleConfig>}
+ * @constant
+ */
 export const ROLE_CONFIG: Record<Role, RoleConfig> = {
   planner: {
     defaultOutput: 'strategic_architecture',
@@ -149,10 +185,26 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
 };
 
 /**
- * Generate role selection prompt for Claude
- * Creates a structured prompt for Claude to intelligently select roles
- * @param objective - User's objective/goal
- * @returns Formatted prompt for Claude
+ * Generates an intelligent role selection prompt for Claude's advanced reasoning.
+ * 
+ * This function creates a comprehensive prompt that leverages Claude's contextual
+ * understanding and nuanced reasoning capabilities to select the optimal role for
+ * a given objective. It moves beyond simple keyword matching to provide Claude
+ * with detailed role descriptions, specializations, and decision criteria.
+ * 
+ * The prompt includes:
+ * - 9 specialized roles with descriptions and optimal use cases
+ * - Advanced selection criteria including task complexity and domain expertise
+ * - Options for suggesting new roles or multi-role approaches
+ * - Structured JSON response format for reliable parsing
+ * 
+ * @param objective - The user's goal or task description to analyze
+ * @returns Formatted prompt string for Claude's role selection process
+ * @example
+ * ```typescript
+ * const prompt = generateRoleSelectionPrompt("Build a React dashboard with analytics");
+ * // Returns comprehensive prompt for Claude to select ui_implementer or ui_architect
+ * ```
  */
 export function generateRoleSelectionPrompt(objective: string): string {
   const availableRoles = [
@@ -250,9 +302,23 @@ Select the BEST SINGLE role for the primary objective. Be decisive and intellige
 }
 
 /**
- * Parse Claude's role selection response
- * @param claudeResponse - Claude's response containing selected role
- * @returns Selected role or fallback to hardcoded detection
+ * Parses Claude's intelligent role selection response with robust error handling.
+ * 
+ * This function extracts and validates Claude's role selection from a JSON response,
+ * providing graceful fallback to legacy keyword-based detection if parsing fails.
+ * It ensures system reliability by handling malformed responses, invalid roles,
+ * and missing data gracefully.
+ * 
+ * @param claudeResponse - Claude's response containing role selection in JSON format
+ * @param objective - Original objective for fallback role detection
+ * @returns Validated Role enum value
+ * @throws Never throws - uses fallback detection on any error
+ * @example
+ * ```typescript
+ * const response = '{"selected_role": "ui_architect", "confidence": 0.9}';
+ * const role = parseClaudeRoleSelection(response, "Design a component system");
+ * // Returns 'ui_architect' or falls back to detectRole(objective)
+ * ```
  */
 export function parseClaudeRoleSelection(claudeResponse: string, objective: string): Role {
   try {
@@ -295,7 +361,28 @@ export function parseClaudeRoleSelection(claudeResponse: string, objective: stri
   }
 }
 
-// Enhanced role detection including UI roles (LEGACY METHOD - replicates Manus's module selection)
+/**
+ * Legacy role detection using keyword-based pattern matching.
+ * 
+ * This function provides fallback role detection when Claude's intelligent selection
+ * is unavailable or fails. It implements enhanced pattern matching that includes
+ * UI-specific roles and meta-prompt syntax recognition.
+ * 
+ * The detection hierarchy:
+ * 1. UI context patterns (highest priority)
+ * 2. Explicit meta-prompt ROLE syntax
+ * 3. UI-specific content patterns
+ * 4. General role keywords (planner, coder, critic, etc.)
+ * 5. Default to researcher role
+ * 
+ * @param objective - The user's goal or task description to analyze
+ * @returns Detected Role based on keyword patterns
+ * @example
+ * ```typescript
+ * const role = detectRole("implement a React component with styling");
+ * // Returns 'ui_implementer' based on UI context and implementation keywords
+ * ```
+ */
 export function detectRole(objective: string): Role {
   const lowerObjective = objective.toLowerCase();
 
@@ -440,7 +527,30 @@ export function detectRole(objective: string): Role {
   return 'researcher';
 }
 
-// Generate enhanced prompts with role-specific cognitive enhancement + tool guidance
+/**
+ * Generates cognitively enhanced prompts with role-specific thinking methodologies.
+ * 
+ * This is the core prompt generation function that combines base phase prompts
+ * with role-specific cognitive enhancements, creating sophisticated instructions
+ * that improve reasoning quality and task-specific expertise.
+ * 
+ * Features:
+ * - Role-specific thinking methodologies and frameworks
+ * - Phase-appropriate tool guidance and restrictions
+ * - Cognitive enhancement patterns for improved reasoning
+ * - Python execution recommendations for applicable roles
+ * - API guidance integration for KNOWLEDGE phase
+ * 
+ * @param phase - Current FSM phase (QUERY, ENHANCE, KNOWLEDGE, etc.)
+ * @param role - Selected cognitive role (planner, coder, critic, etc.)
+ * @param objective - User's goal for context-aware enhancements
+ * @returns Enhanced prompt string with role-specific cognitive frameworks
+ * @example
+ * ```typescript
+ * const prompt = generateRoleEnhancedPrompt('EXECUTE', 'coder', 'Build API endpoints');
+ * // Returns EXECUTE prompt enhanced with coder-specific TDD methodologies
+ * ```
+ */
 export function generateRoleEnhancedPrompt(phase: Phase, role: Role, objective: string): string {
   // UI role support will be added in future enhancement
   // For now, treat UI roles as standard roles with enhanced focus
@@ -484,7 +594,23 @@ Apply these thinking steps systematically to improve reasoning quality and thoro
   return basePrompt + thinkingMethodology;
 }
 
-// Base phase prompts (enhanced for fractal orchestration)
+/**
+ * Base phase prompts for the 8-phase FSM orchestration system.
+ * 
+ * These prompts define the core behavior and expectations for each phase of
+ * the Iron Manus MCP execution cycle. They are enhanced with fractal orchestration
+ * capabilities, parallel agent coordination, and sophisticated tool guidance.
+ * 
+ * Each prompt includes:
+ * - Phase-specific thinking frameworks
+ * - Tool selection guidance and restrictions
+ * - Parallel agent orchestration protocols
+ * - Session workspace coordination patterns
+ * - Quality assessment and validation criteria
+ * 
+ * @type {Record<Phase, string>}
+ * @constant
+ */
 const BASE_PHASE_PROMPTS: Record<Phase, string> = {
   INIT: `You are initializing a new task. This should not be reached - call JARVIS immediately.`,
 
@@ -689,7 +815,34 @@ Apply rigorous quality assessment with your specialized validation expertise.`,
   DONE: `Task completed successfully. Entering standby mode (Manus: "Enter Standby").`,
 };
 
-// Meta-prompt generation for Task() agent spawning with Think tool integration
+/**
+ * Generates structured meta-prompts for Task() agent spawning with cognitive enhancement.
+ * 
+ * This function creates sophisticated meta-prompts that enable fractal task decomposition
+ * by spawning specialized Task() agents with role-specific cognitive frameworks.
+ * It integrates thinking methodologies, validation rules, and execution approaches
+ * tailored to each role's expertise.
+ * 
+ * Meta-prompt structure:
+ * - Role specification with cognitive enhancement
+ * - Context parameters including frameworks and complexity
+ * - Detailed instruction blocks with thinking guidance
+ * - Output requirements aligned with role capabilities
+ * 
+ * @param todoContent - The task description to be executed by spawned agent
+ * @param role - Cognitive role for the spawned agent
+ * @param context - Additional context parameters for customization
+ * @returns Structured MetaPrompt object for Task() agent spawning
+ * @example
+ * ```typescript
+ * const metaPrompt = generateMetaPrompt(
+ *   "Implement user authentication",
+ *   "coder",
+ *   { domain: "security", complexity: "high" }
+ * );
+ * // Returns MetaPrompt with TDD methodologies and security validation
+ * ```
+ */
 export function generateMetaPrompt(
   todoContent: string,
   role: Role,
@@ -735,6 +888,39 @@ COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced through systemat
 // Enhanced meta-prompt generation supporting V0 component patterns + Manus cognitive orchestration
 // ============================================================================
 
+/**
+ * Generates advanced meta-prompts with Component-Cognitive Duality integration.
+ * 
+ * This function represents the pinnacle of the Iron Manus MCP prompt generation
+ * system, combining V0-style component generation with Manus cognitive orchestration.
+ * It creates sophisticated meta-prompts that enable seamless integration between
+ * UI component creation and cognitive reasoning frameworks.
+ * 
+ * Component-Cognitive Duality features:
+ * - Unified constraint systems across component/project/ecosystem scopes
+ * - Encapsulation pattern integration with cognitive frameworks
+ * - Bidirectional mapping between component hierarchies and task structures
+ * - Performance optimization through reasoning-component synergy
+ * - Duality effectiveness metrics and continuous improvement
+ * 
+ * @param todoContent - Task description for the duality-enhanced agent
+ * @param role - Cognitive role (supports all 9 roles including UI specialists)
+ * @param context - Context parameters for duality configuration
+ * @param duality - Component-Cognitive Duality configuration object
+ * @param constraints - Unified constraint array for multi-scope validation
+ * @returns MetaPrompt with Component-Cognitive Duality enhancement
+ * @example
+ * ```typescript
+ * const dualityPrompt = generateComponentCognitiveDualityPrompt(
+ *   "Create dashboard component with analytics",
+ *   "ui_implementer",
+ *   { domain: "react", complexity: "complex" },
+ *   dualityConfig,
+ *   [performanceConstraint, accessibilityConstraint]
+ * );
+ * // Returns MetaPrompt with V0+Manus unified frameworks
+ * ```
+ */
 export function generateComponentCognitiveDualityPrompt(
   todoContent: string,
   role: Role,
@@ -804,7 +990,21 @@ COMPONENT-COGNITIVE ENHANCEMENT: Your reasoning effectiveness is enhanced throug
   };
 }
 
-// Generate component-cognitive duality specific guidance
+/**
+ * Generates reasoning guidance specific to Component-Cognitive Duality modes.
+ * 
+ * This internal function creates specialized guidance based on the reasoning mode,
+ * providing targeted instructions for different approaches to component-cognitive
+ * integration. It adapts the guidance based on whether the focus is on component
+ * generation, cognitive orchestration, or unified hybrid approaches.
+ * 
+ * @param reasoningMode - The cognitive reasoning mode for duality integration
+ * @param role - The cognitive role for context-specific guidance
+ * @param config - Role configuration for framework integration
+ * @param constraints - Active constraints for guidance customization
+ * @returns Reasoning guidance string for the specified mode
+ * @internal
+ */
 function generateComponentCognitiveDualityGuidance(
   reasoningMode: CognitiveContext['reasoning_mode'],
   role: Role,
@@ -851,7 +1051,18 @@ function generateComponentCognitiveDualityGuidance(
   return modeSpecificGuidance[reasoningMode] + constraintGuidance;
 }
 
-// Generate constraint-aware execution framework
+/**
+ * Generates execution framework guidance for unified constraint validation.
+ * 
+ * This function creates constraint-aware execution instructions that ensure
+ * all component-level, project-level, and ecosystem-level constraints are
+ * properly validated and enforced during task execution.
+ * 
+ * @param constraints - Array of unified constraints to enforce
+ * @param role - Cognitive role for context-appropriate constraint handling
+ * @returns Constraint framework guidance string
+ * @internal
+ */
 function generateConstraintAwareFramework(constraints: UnifiedConstraint[], role: Role): string {
   if (constraints.length === 0) {
     return '**🔒 CONSTRAINT FRAMEWORK:** No active constraints - use default role frameworks.';
@@ -883,7 +1094,18 @@ function generateConstraintAwareFramework(constraints: UnifiedConstraint[], role
   return framework;
 }
 
-// Generate encapsulation pattern integration guidance
+/**
+ * Generates guidance for V0 encapsulation pattern integration.
+ * 
+ * This function creates instructions for integrating V0-style encapsulation
+ * patterns with Manus cognitive orchestration, ensuring proper architectural
+ * alignment and pattern constraint enforcement.
+ * 
+ * @param patterns - Array of encapsulation patterns to integrate
+ * @param role - Cognitive role for pattern-specific guidance
+ * @returns Encapsulation pattern integration guidance string
+ * @internal
+ */
 function generateEncapsulationPatternGuidance(
   patterns: EncapsulationPattern[],
   role: Role
@@ -903,7 +1125,18 @@ function generateEncapsulationPatternGuidance(
 - **Pattern constraints:** ${patterns.reduce((total, p) => total + p.constraint_enforcement.length, 0)} pattern-specific constraints to validate`;
 }
 
-// Helper function to detect when Python execution would be beneficial
+/**
+ * Determines if Python execution would be beneficial for the given objective and role.
+ * 
+ * This function analyzes the objective content and role type to recommend Python
+ * execution capabilities for tasks involving data analysis, statistical computation,
+ * algorithmic processing, or code generation.
+ * 
+ * @param objective - The task objective to analyze
+ * @param role - The cognitive role to consider for Python recommendations
+ * @returns True if Python execution is recommended, false otherwise
+ * @internal
+ */
 function requiresPythonExecution(objective: string, role: Role): boolean {
   const lowerObjective = objective.toLowerCase();
 
@@ -950,7 +1183,19 @@ function requiresPythonExecution(objective: string, role: Role): boolean {
   return false;
 }
 
-// Generate role-specific Think tool guidance for cognitive enhancement
+/**
+ * Generates role-specific thinking guidance for cognitive enhancement.
+ * 
+ * This function creates detailed thinking methodologies and reasoning frameworks
+ * tailored to each cognitive role's expertise and responsibilities. It provides
+ * systematic approaches to problem-solving that enhance reasoning quality and
+ * task-specific effectiveness.
+ * 
+ * @param role - The cognitive role for specialized thinking guidance
+ * @param config - Role configuration for framework integration
+ * @returns Role-specific thinking guidance string
+ * @internal
+ */
 function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): string {
   const roleSpecificThinking: Record<Role, string> = {
     planner: `STRATEGIC THINKING REQUIRED: Think strategically about:
@@ -1020,8 +1265,20 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
   return roleSpecificThinking[role];
 }
 
-// Tool gating - enforces Manus's "single tool call per iteration" rule
-// Single tool = forced via tool_code, Multiple tools = Claude chooses from whitelist
+/**
+ * Phase-specific tool allowlists that enforce Manus's "single tool call per iteration" rule.
+ * 
+ * This configuration defines which tools are available in each phase of the FSM,
+ * ensuring proper tool selection and maintaining system integrity through controlled
+ * tool access patterns.
+ * 
+ * Design principle:
+ * - Single tool = forced via tool_code for deterministic phases
+ * - Multiple tools = Claude chooses from whitelist for flexible phases
+ * 
+ * @type {Record<Phase, string[]>}
+ * @constant
+ */
 export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
   INIT: ['JARVIS'], // Force orchestrator
   QUERY: ['JARVIS'], // Natural thinking + orchestrator
@@ -1063,7 +1320,16 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
   DONE: [], // No tools needed
 };
 
-// For phases where Claude should choose, we specify the choice in the prompt
+/**
+ * Phase-specific tool selection guidance for Claude's decision-making.
+ * 
+ * This configuration provides Claude with clear guidance on tool selection
+ * for phases where multiple tools are available, ensuring optimal tool choice
+ * based on task requirements and phase objectives.
+ * 
+ * @type {Record<Phase, string>}
+ * @constant
+ */
 export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
   INIT: 'Call JARVIS to begin',
   QUERY: 'Think through the goal analysis, then call JARVIS with phase_completed: "QUERY"',
@@ -1079,7 +1345,18 @@ export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
   DONE: 'No action needed',
 };
 
-// Role-specific API guidance generation for KNOWLEDGE phase
+/**
+ * Generates role-specific API selection guidance for the KNOWLEDGE phase.
+ * 
+ * This function creates detailed API preferences and selection strategies
+ * tailored to each cognitive role's domain expertise and information needs.
+ * It provides specific API categories, confidence thresholds, and synthesis
+ * modes optimized for each role's cognitive framework.
+ * 
+ * @param role - The cognitive role for API guidance generation
+ * @returns Role-specific API selection guidance string
+ * @internal
+ */
 function getRoleSpecificAPIGuidance(role: Role): string {
   const roleGuidance: Record<Role, string> = {
     researcher: `

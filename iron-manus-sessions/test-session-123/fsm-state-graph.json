@@ -1,1 +1,0 @@
-{"type":"entity","name":"test-session-123","entityType":"session","observations":["objective: Test objective","detected_role: researcher","created_at: 2025-07-02T02:20:31.435Z","current_phase: INIT","current_phase: QUERY","reasoning_effectiveness: 0.8","last_activity: 1751422831435","payload_current_task_index: 0"]}

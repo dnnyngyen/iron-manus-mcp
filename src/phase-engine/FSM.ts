@@ -1,4 +1,27 @@
-// Pure FSM engine - implements the 6-phase state machine
+/**
+ * @fileoverview FSM Engine - Core 8-phase finite state machine implementation
+ * 
+ * This file contains the main FSM engine that orchestrates the 8-phase agent loop:
+ * INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+ * 
+ * The engine provides:
+ * - Phase transition management with strict state validation
+ * - Role-based cognitive enhancement through intelligent role detection
+ * - Auto-connection API orchestration for knowledge gathering
+ * - Fractal task decomposition with meta-prompt extraction
+ * - Session state management with graph-based persistence
+ * - Performance tracking and reasoning effectiveness optimization
+ * 
+ * Key architectural patterns:
+ * - Pure function design with dependency injection
+ * - Immutable state transitions with validation
+ * - Composable phase handlers with standardized interfaces
+ * - Error recovery mechanisms with graceful degradation
+ * 
+ * @version 2.0.0
+ * @since 1.0.0
+ */
+
 import {
   MessageJARVIS,
   FromJARVIS,
@@ -9,8 +32,7 @@ import {
   APIUsageMetrics,
 } from '../core/types.js';
 import {
-  detectEnhancedRole,
-  extractEnhancedMetaPrompts,
+  
   tokenBudgetOkay,
   detectFractalDelegation,
   recordCognitiveLoad,
@@ -43,8 +65,28 @@ import {
 } from '../verification/metrics.js';
 import { CONFIG } from '../config.js';
 
-// Core FSM implementation using basic, proven functionality
-
+/**
+ * Creates a finite state machine instance with dependency injection
+ * 
+ * Factory function that creates an FSM instance with injected dependencies for
+ * auto-connection, API orchestration, and knowledge synthesis. Returns a configured
+ * FSM interface with core processing functions.
+ * 
+ * @param deps - Auto-connection dependencies for API orchestration
+ * @param deps.autoConnection - Function for automatic API knowledge gathering
+ * @param deps.apiSearch - Function for intelligent API discovery
+ * @param deps.validator - Function for API endpoint validation
+ * @returns FSM instance with processing methods
+ * 
+ * @example
+ * ```typescript
+ * const fsm = createFSM({
+ *   autoConnection: async (objective) => ({ answer: "...", confidence: 0.8 }),
+ *   apiSearch: async (query) => [{ name: "API", url: "..." }],
+ *   validator: async (endpoint) => ({ valid: true })
+ * });
+ * ```
+ */
 export function createFSM(deps: AutoConnectionDeps) {
   return {
     processState: (input: MessageJARVIS) => processState(input, deps),
@@ -54,6 +96,35 @@ export function createFSM(deps: AutoConnectionDeps) {
   };
 }
 
+/**
+ * Core FSM state processing function - orchestrates the 8-phase agent loop
+ * 
+ * This is the main entry point for FSM processing that handles:
+ * - Session initialization and role detection
+ * - Phase transition logic with strict validation
+ * - State persistence and error recovery
+ * - System prompt generation with role enhancement
+ * - Tool permission management per phase
+ * 
+ * The function implements the complete 8-phase loop:
+ * INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+ * 
+ * @param input - Incoming message from JARVIS with phase completion data
+ * @param deps - Injected dependencies for auto-connection and API orchestration
+ * @returns Promise resolving to FSM response with next phase and system prompt
+ * 
+ * @throws {Error} When session state is corrupted or phase transition fails
+ * 
+ * @example
+ * ```typescript
+ * const result = await processState({
+ *   session_id: "abc123",
+ *   initial_objective: "Build a web app",
+ *   phase_completed: "QUERY",
+ *   payload: { interpreted_goal: "Create React app" }
+ * }, deps);
+ * ```
+ */
 export async function processState(
   input: MessageJARVIS,
   deps: AutoConnectionDeps
@@ -87,7 +158,7 @@ export async function processState(
   // Determine next phase based on current phase and completed phase
   let nextPhase: Phase = session.current_phase;
 
-  // Phase transition logic - mirrors Manus's 6-step agent loop
+  // Phase transition logic - mirrors Manus's 8-step agent loop
   switch (session.current_phase) {
     case 'INIT':
       nextPhase = 'QUERY';
@@ -212,6 +283,32 @@ export async function processState(
   return output;
 }
 
+/**
+ * Handles the KNOWLEDGE phase processing with multi-modal knowledge gathering
+ * 
+ * This function orchestrates knowledge acquisition through multiple pathways:
+ * 1. Agent synthesis from pre-existing knowledge files
+ * 2. Claude-powered API selection and auto-connection
+ * 3. Fallback to manual research tools
+ * 
+ * The function prioritizes agent synthesis results when available, falling back
+ * to API auto-connection and finally to manual research tool recommendations.
+ * 
+ * @param session - Current session state with payload and configuration
+ * @param input - JARVIS input message with knowledge phase completion data
+ * @param deps - Auto-connection dependencies for API orchestration
+ * 
+ * @throws {Error} When session workspace cannot be created or accessed
+ * 
+ * @example
+ * ```typescript
+ * await handleKnowledgePhase(session, {
+ *   session_id: "abc123",
+ *   phase_completed: "KNOWLEDGE",
+ *   payload: { knowledge_gathered: "Research results..." }
+ * }, deps);
+ * ```
+ */
 async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: AutoConnectionDeps) {
   // Initialize session workspace for agent communication
   const sessionId = input.session_id;
@@ -290,6 +387,32 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
   }
 }
 
+/**
+ * Executes auto-connection API orchestration with intelligent API selection
+ * 
+ * This function implements the core auto-connection logic that:
+ * 1. Generates Claude-powered API selection prompts
+ * 2. Discovers relevant APIs based on enhanced goal and role
+ * 3. Executes parallel API fetching and knowledge synthesis
+ * 4. Tracks performance metrics and success rates
+ * 
+ * The function provides graceful fallback mechanisms when auto-connection fails,
+ * ensuring the system remains functional even with API failures.
+ * 
+ * @param session - Current session state with enhanced goal and role
+ * @param deps - Auto-connection dependencies for API orchestration
+ * 
+ * @throws {Error} When API discovery completely fails (handled gracefully)
+ * 
+ * @example
+ * ```typescript
+ * await runAutoConnection(session, {
+ *   autoConnection: async (objective) => ({ answer: "...", confidence: 0.8 }),
+ *   apiSearch: async (query) => [{ name: "API", url: "..." }],
+ *   validator: async (endpoint) => ({ valid: true })
+ * });
+ * ```
+ */
 async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
   try {
     const startTime = Date.now();
@@ -381,6 +504,22 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
   }
 }
 
+/**
+ * Initializes empty API fields for backward compatibility
+ * 
+ * This function ensures that session payload contains properly initialized
+ * API-related fields when auto-connection is not available or fails.
+ * Prevents undefined field errors in downstream processing.
+ * 
+ * @param session - Current session state to initialize
+ * 
+ * @example
+ * ```typescript
+ * initializeEmptyAPIFields(session);
+ * // session.payload.api_discovery_results = []
+ * // session.payload.api_usage_metrics = { apis_discovered: 0, ... }
+ * ```
+ */
 function initializeEmptyAPIFields(session: any) {
   session.payload.api_discovery_results = session.payload.api_discovery_results || [];
   session.payload.api_fetch_responses = session.payload.api_fetch_responses || [];
@@ -396,6 +535,35 @@ function initializeEmptyAPIFields(session: any) {
   };
 }
 
+/**
+ * Handles the EXECUTE phase processing with fractal task iteration
+ * 
+ * This function manages the execution phase by:
+ * 1. Storing execution results and updating reasoning effectiveness
+ * 2. Tracking task progression through the todo list
+ * 3. Implementing fractal iteration for complex task sequences
+ * 4. Determining when to continue execution vs. move to verification
+ * 
+ * The function supports both linear task execution and fractal delegation
+ * patterns where tasks can spawn sub-agents for specialized work.
+ * 
+ * @param session - Current session state with task tracking
+ * @param input - JARVIS input message with execution results
+ * @returns Next phase (EXECUTE for more tasks, VERIFY when complete)
+ * 
+ * @example
+ * ```typescript
+ * const nextPhase = handleExecutePhase(session, {
+ *   session_id: "abc123",
+ *   phase_completed: "EXECUTE",
+ *   payload: { 
+ *     execution_success: true,
+ *     current_task_index: 2,
+ *     more_tasks_pending: false
+ *   }
+ * });
+ * ```
+ */
 function handleExecutePhase(session: any, input: MessageJARVIS): Phase {
   // Store execution results and continue or move to verification
   if (input.payload) {
@@ -423,6 +591,35 @@ function handleExecutePhase(session: any, input: MessageJARVIS): Phase {
   }
 }
 
+/**
+ * Handles the VERIFY phase processing with intelligent rollback logic
+ * 
+ * This function implements comprehensive verification with:
+ * 1. Strict completion percentage validation using metrics
+ * 2. Intelligent rollback logic based on completion levels
+ * 3. Failure context storage for debugging and recovery
+ * 4. Adaptive retry strategies based on failure severity
+ * 
+ * The function determines whether to complete the FSM loop (DONE) or
+ * rollback to appropriate phases based on verification results.
+ * 
+ * @param session - Current session state with task completion data
+ * @param input - JARVIS input message with verification results
+ * @param deps - Auto-connection dependencies (unused but required for signature)
+ * @returns Next phase (DONE for success, PLAN/EXECUTE for rollback)
+ * 
+ * @example
+ * ```typescript
+ * const nextPhase = handleVerifyPhase(session, {
+ *   session_id: "abc123",
+ *   phase_completed: "VERIFY",
+ *   payload: { 
+ *     verification_passed: true,
+ *     task_completion_rate: 0.95
+ *   }
+ * }, deps);
+ * ```
+ */
 function handleVerifyPhase(session: any, input: MessageJARVIS, deps: AutoConnectionDeps): Phase {
   // Enhanced verification with strict completion percentage validation
   const verificationResult = validateTaskCompletion(session, input.payload);
@@ -456,6 +653,31 @@ function handleVerifyPhase(session: any, input: MessageJARVIS, deps: AutoConnect
   }
 }
 
+/**
+ * Generates comprehensive system prompts with role-based enhancement
+ * 
+ * This function creates dynamic system prompts that adapt to:
+ * 1. Current phase requirements and constraints
+ * 2. Detected user role and cognitive preferences
+ * 3. Session context and accumulated knowledge
+ * 4. Phase-specific tool permissions and guidance
+ * 
+ * The generated prompts include role-based cognitive amplification,
+ * phase-specific context, and session variable substitution.
+ * 
+ * @param session - Current session state with role and objective
+ * @param nextPhase - Target phase for prompt generation
+ * @param input - JARVIS input message with session ID
+ * @returns Enhanced system prompt with phase-specific context
+ * 
+ * @example
+ * ```typescript
+ * const prompt = generateSystemPrompt(session, 'EXECUTE', {
+ *   session_id: "abc123",
+ *   phase_completed: "PLAN"
+ * });
+ * ```
+ */
 function generateSystemPrompt(session: any, nextPhase: Phase, input: MessageJARVIS): string {
   // Generate role-enhanced system prompt with cognitive amplification
   const roleEnhancedPrompt = generateRoleEnhancedPrompt(
@@ -477,6 +699,27 @@ function generateSystemPrompt(session: any, nextPhase: Phase, input: MessageJARV
   return augmentedPrompt;
 }
 
+/**
+ * Adds phase-specific context to system prompts
+ * 
+ * This function enhances base system prompts with contextual information
+ * specific to each phase of the FSM loop. Each phase receives tailored
+ * context that guides Claude's behavior and tool usage.
+ * 
+ * @param prompt - Base system prompt to enhance
+ * @param phase - Current phase requiring context
+ * @param session - Session state containing relevant context data
+ * @returns Enhanced prompt with phase-specific context
+ * 
+ * @example
+ * ```typescript
+ * const enhanced = addPhaseSpecificContext(
+ *   "You are an AI assistant...",
+ *   "EXECUTE",
+ *   session
+ * );
+ * ```
+ */
 function addPhaseSpecificContext(prompt: string, phase: Phase, session: any): string {
   switch (phase) {
     case 'ENHANCE':
@@ -508,6 +751,19 @@ function addPhaseSpecificContext(prompt: string, phase: Phase, session: any): st
   return prompt;
 }
 
+/**
+ * Adds knowledge phase specific context to system prompts
+ * 
+ * This function provides detailed context for the KNOWLEDGE phase including:
+ * - Auto-connection results and API usage metrics
+ * - Synthesized knowledge from automatic processing
+ * - Fallback guidance when auto-connection fails
+ * - Available manual research tools
+ * 
+ * @param prompt - Base system prompt to enhance
+ * @param session - Session state with knowledge gathering results
+ * @returns Enhanced prompt with knowledge phase context
+ */
 function addKnowledgePhaseContext(prompt: string, session: any): string {
   if (session.payload.auto_connection_successful) {
     const metadata = session.payload.auto_connection_metadata;
@@ -531,6 +787,19 @@ function addKnowledgePhaseContext(prompt: string, session: any): string {
   return prompt;
 }
 
+/**
+ * Adds execute phase specific context to system prompts
+ * 
+ * This function provides detailed context for the EXECUTE phase including:
+ * - Current task progression and todo list status
+ * - Reasoning effectiveness tracking
+ * - Fractal execution protocol guidance
+ * - Single tool per iteration constraints
+ * 
+ * @param prompt - Base system prompt to enhance
+ * @param session - Session state with execution context
+ * @returns Enhanced prompt with execute phase context
+ */
 function addExecutePhaseContext(prompt: string, session: any): string {
   const currentTaskIndex = session.payload.current_task_index || 0;
   const currentTodos = session.payload.current_todos || [];
@@ -544,6 +813,19 @@ function addExecutePhaseContext(prompt: string, session: any): string {
   return prompt;
 }
 
+/**
+ * Adds verify phase specific context to system prompts
+ * 
+ * This function provides comprehensive context for the VERIFY phase including:
+ * - Task completion metrics and breakdown analysis
+ * - Critical task tracking and completion status
+ * - Verification requirements and success criteria
+ * - Previous failure context for debugging
+ * 
+ * @param prompt - Base system prompt to enhance
+ * @param session - Session state with verification context
+ * @returns Enhanced prompt with verify phase context
+ */
 function addVerifyPhaseContext(prompt: string, session: any): string {
   const todos = session.payload.current_todos || [];
   const taskBreakdown = calculateTaskBreakdown(todos);
@@ -566,7 +848,26 @@ function addVerifyPhaseContext(prompt: string, session: any): string {
   return prompt;
 }
 
-// Helper function to extract meta-prompt from todo content (Enhanced with AST fallback)
+/**
+ * Extracts meta-prompt specifications from todo content using regex patterns
+ * 
+ * This function parses todo content to extract fractal agent specifications
+ * using the format: (ROLE: role) (CONTEXT: context) (PROMPT: prompt) (OUTPUT: output)
+ * 
+ * When a meta-prompt is detected, it enables Task() agent spawning in the
+ * EXECUTE phase for specialized task delegation.
+ * 
+ * @param todoContent - Raw todo text content to parse
+ * @returns Extracted meta-prompt object or null if no pattern found
+ * 
+ * @example
+ * ```typescript
+ * const metaPrompt = extractMetaPromptFromTodo(
+ *   "(ROLE: coder) (CONTEXT: auth) (PROMPT: Implement JWT) (OUTPUT: code)"
+ * );
+ * // Returns: { role_specification: "coder", context_parameters: { domain: "auth" }, ... }
+ * ```
+ */
 export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | null {
   // Use proven regex-based meta-prompt extraction
   const roleMatch = todoContent.match(/\(ROLE:\s*([^)]+)\)/i);
@@ -586,9 +887,28 @@ export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | nul
   return null;
 }
 
-// Enhanced function removed - use extractMetaPromptFromTodo for all meta-prompt extraction
-
-// Performance tracking for reasoning effectiveness
+/**
+ * Updates session reasoning effectiveness based on task performance
+ * 
+ * This function implements adaptive reasoning effectiveness tracking that:
+ * - Increases effectiveness on successful task completion
+ * - Decreases effectiveness on task failures
+ * - Applies different multipliers based on task complexity
+ * - Maintains effectiveness bounds (0.3 to 1.0)
+ * 
+ * The reasoning effectiveness influences cognitive load calculations
+ * and system prompt generation for enhanced performance.
+ * 
+ * @param sessionId - Session identifier for state management
+ * @param success - Whether the task was completed successfully
+ * @param taskComplexity - Task complexity level affecting update magnitude
+ * 
+ * @example
+ * ```typescript
+ * updateReasoningEffectiveness("session123", true, "complex");
+ * // Increases effectiveness by 0.15 for successful complex task
+ * ```
+ */
 export function updateReasoningEffectiveness(
   sessionId: string,
   success: boolean,
@@ -605,5 +925,3 @@ export function updateReasoningEffectiveness(
 
   graphStateManager.updateSessionState(sessionId, session);
 }
-
-// Validation context no longer needed - removed with enhanced features
