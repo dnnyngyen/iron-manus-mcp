@@ -19,7 +19,7 @@ The Iron Manus MCP hooks integration adds deterministic validation and automatio
   - Enhances existing SSRF protection with URL allowlist validation
   - Blocks execution with exit code 2 for security violations
 
-#### 2. DevEx Workflow (`dev-workflow.sh`)
+#### 2. DevEx Workflow (`dev-workflow.js`)
 - **Type**: PostToolUse hook  
 - **Targets**: `Write|Edit|MultiEdit`
 - **Purpose**: Automated code quality assurance

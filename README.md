@@ -43,7 +43,7 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages c
 - 🛠️ **Modular Tool Registry** - 8+ specialized tools with extensible architecture
 - 📡 **65+ API Registry** - Intelligent API discovery and selection system
 - 🔒 **SSRF Protection** - Enterprise-grade security with allowlist validation
-- ✅ **163/163 Tests Passing** - Comprehensive test coverage with Vitest (100% success rate)
+- ✅ **313/313 Tests Passing** - Comprehensive test coverage with Vitest (100% success rate)
 - 📦 **ES Modules** - Modern JavaScript with TypeScript 5.0 support
 
 ## Quick Start
@@ -176,7 +176,7 @@ This project uses knowledge graph state management. If you see files like `iron_
 2. Remove files: `del iron_manus_*.json 2>nul`
 3. Clean rebuild: `rmdir /s /q dist 2>nul && npm run build`
 
-See [LEGACY_PREVENTION.md](./LEGACY_PREVENTION.md) for details.
+See [LEGACY_PREVENTION.md](./docs/LEGACY_PREVENTION.md) for details.
 
 **For MCP Integration:**
 Add to your MCP client configuration or register with Claude Code:
@@ -304,13 +304,15 @@ await mcp.callTool({
 });
 ```
 
-**6-Phase Flow:**
-1. **QUERY** - Analyze request and detect role
-2. **ENHANCE** - Add missing requirements and context
-3. **KNOWLEDGE** - Auto-discover relevant APIs and patterns
-4. **PLAN** - Create structured tasks with meta-prompts
-5. **EXECUTE** - Process tasks with specialized tools
-6. **VERIFY** - Validate completion and quality
+**8-Phase Flow:**
+1. **INIT** - Initialize session and establish context
+2. **QUERY** - Analyze request and detect role
+3. **ENHANCE** - Add missing requirements and context
+4. **KNOWLEDGE** - Auto-discover relevant APIs and patterns
+5. **PLAN** - Create structured tasks with meta-prompts
+6. **EXECUTE** - Process tasks with specialized tools
+7. **VERIFY** - Validate completion and quality
+8. **DONE** - Complete session and cleanup
 
 ## Available Tools
 
@@ -352,7 +354,7 @@ MIN_COMPLETION_PERCENT=70            # Quality threshold
 
 ## Testing
 
-Comprehensive test suite with 163 tests using Vitest:
+Comprehensive test suite with 313 tests using Vitest:
 
 ```bash
 # Run all tests

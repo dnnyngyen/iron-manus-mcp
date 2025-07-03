@@ -107,7 +107,7 @@ rm -rf /important/directory
 ls -la /safe/directory
 ```
 
-#### DevEx Workflow (`dev-workflow.sh`)
+#### DevEx Workflow (`dev-workflow.js`)
 
 **Purpose**: Automated code quality assurance
 
@@ -115,7 +115,7 @@ ls -la /safe/directory
 {
   "hook_type": "PostToolUse",
   "target_tools": ["Write", "Edit", "MultiEdit"],
-  "command": "scripts/iron-manus/dev-workflow.sh"
+  "command": "node scripts/iron-manus/dev-workflow.js"
 }
 ```
 
@@ -379,7 +379,7 @@ claude-code
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/security-validator.py"
+            "command": "./scripts/iron-manus/security-validator.py"
           }
         ]
       },
@@ -388,7 +388,7 @@ claude-code
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/api-validator.py"
+            "command": "./scripts/iron-manus/api-validator.py"
           }
         ]
       }
@@ -399,7 +399,7 @@ claude-code
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/dev-workflow.sh"
+            "command": "node ./scripts/iron-manus/dev-workflow.js"
           }
         ]
       },
@@ -408,7 +408,7 @@ claude-code
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/session-tracker.py"
+            "command": "./scripts/iron-manus/session-tracker.py"
           }
         ]
       },
@@ -417,7 +417,7 @@ claude-code
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/api-validator.py"
+            "command": "./scripts/iron-manus/api-validator.py"
           }
         ]
       },
@@ -426,7 +426,7 @@ claude-code
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/dannynguyen/iron-manus-mcp/scripts/iron-manus/output-validator.py"
+            "command": "./scripts/iron-manus/output-validator.py"
           }
         ]
       }
