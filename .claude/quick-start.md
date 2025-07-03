@@ -20,13 +20,31 @@ npm start
 
 Add this to your Claude Desktop MCP configuration:
 
+**Cross-Platform Setup:**
 ```json
 {
   "mcpServers": {
     "iron-manus": {
       "command": "node",
       "args": ["dist/index.js"],
-      "cwd": "/Users/dannynguyen/iron-manus-mcp"
+      "cwd": "/path/to/your/iron-manus-mcp"
+    }
+  }
+}
+```
+
+**Platform-Specific Configuration Locations:**
+- **Windows**: `%USERPROFILE%\.claude\settings.json`
+- **macOS/Linux**: `~/.claude/settings.json`
+
+**Example with relative paths** (when Claude Code is run from project directory):
+```json
+{
+  "mcpServers": {
+    "iron-manus": {
+      "command": "node",
+      "args": ["dist/index.js"],
+      "cwd": "."
     }
   }
 }
@@ -61,9 +79,22 @@ npm test            # Full test suite (107 tests)
 
 Configure hooks for enhanced security and quality:
 
+**Unix/Linux/macOS:**
 ```bash
 # Copy hook configuration example
 cp .claude/hooks-example.json ~/.claude/settings.json
+```
+
+**Windows (PowerShell):**
+```powershell
+# Copy hook configuration example
+Copy-Item .claude\hooks-example.json $env:USERPROFILE\.claude\settings.json
+```
+
+**Windows (Command Prompt):**
+```cmd
+# Copy hook configuration example
+copy .claude\hooks-example.json %USERPROFILE%\.claude\settings.json
 ```
 
 See `.claude/HOOKS_INTEGRATION.md` for complete setup instructions.

@@ -5,10 +5,10 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "mkdir -p dist && tsc",
+    "build": "node -e \"const fs=require('fs'); if(!fs.existsSync('dist')) fs.mkdirSync('dist', {recursive:true})\" && tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --exec \"tsc && node dist/index.js\" --ext ts",
-    "clean": "rm -rf dist",
+    "clean": "node -e \"const fs=require('fs'); if(fs.existsSync('dist')) fs.rmSync('dist', {recursive:true})\"",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts",
@@ -29,7 +29,10 @@
     "refs:move": "npm run update-references move",
     "refs:rename": "npm run update-references rename",
     "docs:validate": "npm run validate-references && echo '✅ Documentation references validated'",
-    "install-hooks": "cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit && echo '✅ Git hooks installed'"
+    "install-hooks": "node scripts/install.js --hooks",
+    "setup": "node scripts/install.js",
+    "setup:claude": "node scripts/install.js --claude",
+    "setup:verify": "node scripts/install.js --verify"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.2",

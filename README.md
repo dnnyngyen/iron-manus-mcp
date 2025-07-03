@@ -81,10 +81,19 @@ docker run -d --name iron-manus-mcp ghcr.io/dnnyngyen/iron-manus-mcp:latest
 
 ### Option 2: From Source (v0.2.4 - Latest with JSDoc)
 
+**Quick Setup (Cross-Platform):**
 ```bash
 # Clone and install (v0.2.4 - includes comprehensive JSDoc documentation)
 git clone https://github.com/dnnyngyen/iron-manus-mcp
 cd iron-manus-mcp
+
+# Automated cross-platform installation
+npm run setup
+```
+
+**Manual Installation:**
+```bash
+# Install dependencies
 npm install
 
 # Build TypeScript
@@ -97,6 +106,8 @@ npm test
 npm start
 ```
 
+> 📖 **Platform-Specific Instructions**: See [docs/CROSS_PLATFORM_SETUP.md](docs/CROSS_PLATFORM_SETUP.md) for detailed Windows, macOS, and Linux setup guides.
+
 **If git clone fails with network errors:**
 ```bash
 # Try with increased buffer and timeout
@@ -108,6 +119,8 @@ cd iron-manus-mcp-main
 ```
 
 **If npm install hangs or fails:**
+
+**Unix/Linux/macOS:**
 ```bash
 # Clean and retry
 rm -rf node_modules package-lock.json
@@ -119,12 +132,49 @@ npm install @modelcontextprotocol/sdk@^1.13.2 typescript@^5.0.0
 npm run build
 ```
 
+**Windows (PowerShell):**
+```powershell
+# Clean and retry
+Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction SilentlyContinue
+npm cache clean --force
+npm install --no-optional
+
+# If it still fails, install core dependencies first:
+npm install @modelcontextprotocol/sdk@^1.13.2 typescript@^5.0.0
+npm run build
+```
+
+**Windows (Command Prompt):**
+```cmd
+# Clean and retry
+rmdir /s /q node_modules 2>nul
+del package-lock.json 2>nul
+npm cache clean --force
+npm install --no-optional
+
+# If it still fails, install core dependencies first:
+npm install @modelcontextprotocol/sdk@^1.13.2 typescript@^5.0.0
+npm run build
+```
+
 ## ⚠️ Legacy File Prevention
 
 This project uses knowledge graph state management. If you see files like `iron_manus_*.json`, immediately:
+
+**Unix/Linux/macOS:**
 1. Stop the server: `pkill -f iron-manus`
 2. Remove files: `rm -f iron_manus_*.json` 
 3. Clean rebuild: `rm -rf dist/ && npm run build`
+
+**Windows (PowerShell):**
+1. Stop the server: `Get-Process -Name "*iron-manus*" | Stop-Process -Force`
+2. Remove files: `Remove-Item iron_manus_*.json -Force -ErrorAction SilentlyContinue`
+3. Clean rebuild: `Remove-Item -Recurse -Force dist -ErrorAction SilentlyContinue; npm run build`
+
+**Windows (Command Prompt):**
+1. Stop the server: `taskkill /f /im node.exe /fi "WINDOWTITLE eq iron-manus*"`
+2. Remove files: `del iron_manus_*.json 2>nul`
+3. Clean rebuild: `rmdir /s /q dist 2>nul && npm run build`
 
 See [LEGACY_PREVENTION.md](./LEGACY_PREVENTION.md) for details.
 
@@ -146,12 +196,32 @@ claude mcp add iron-manus-mcp node dist/index.js
 ```
 
 **For Claude Code Hooks (Optional):**
+
+**Unix/Linux/macOS:**
 ```bash
 # Copy example hooks configuration
 cp .claude/hooks-example.json .claude/hooks.json
 
 # Requires Python 3.7+ for validation scripts
 python3 --version
+```
+
+**Windows (PowerShell):**
+```powershell
+# Copy example hooks configuration
+Copy-Item .claude\hooks-example.json .claude\hooks.json
+
+# Requires Python 3.7+ for validation scripts
+python --version
+```
+
+**Windows (Command Prompt):**
+```cmd
+# Copy example hooks configuration
+copy .claude\hooks-example.json .claude\hooks.json
+
+# Requires Python 3.7+ for validation scripts
+python --version
 ```
 
 ## Docker Usage

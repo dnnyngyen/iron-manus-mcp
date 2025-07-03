@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./scripts/iron-manus/dev-workflow.sh"
+            "command": "node ./scripts/iron-manus/dev-workflow.js"
           }
         ]
       },
