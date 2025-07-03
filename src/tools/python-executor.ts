@@ -189,6 +189,59 @@ export class PythonExecutorTool extends BaseTool {
   }
 
   /**
+   * Validates library names to prevent command injection
+   * 
+   * Checks if a library name is safe for use in shell commands by validating
+   * against an allowlist and checking for dangerous patterns that could lead
+   * to command injection vulnerabilities.
+   * 
+   * Security Checks:
+   * - Must be in allowlist of known safe libraries
+   * - Must match safe naming pattern (alphanumeric, hyphens, underscores)
+   * - Cannot contain shell metacharacters or command injection patterns
+   * - Cannot be empty or only whitespace
+   * 
+   * @private
+   * @param {string} libraryName - The library name to validate
+   * @param {Set<string>} allowedLibraries - Set of allowed library names
+   * @returns {boolean} True if library name is safe, false otherwise
+   */
+  private isValidLibraryName(libraryName: string, allowedLibraries: Set<string>): boolean {
+    // Check for empty or whitespace-only strings
+    if (!libraryName || typeof libraryName !== 'string' || libraryName.trim() === '') {
+      return false;
+    }
+
+    // Check if library is in allowlist
+    if (!allowedLibraries.has(libraryName)) {
+      return false;
+    }
+
+    // Check for safe naming pattern: only alphanumeric, hyphens, underscores
+    const safePattern = /^[a-zA-Z0-9_-]+$/;
+    if (!safePattern.test(libraryName)) {
+      return false;
+    }
+
+    // Check for dangerous patterns that could lead to command injection
+    const dangerousPatterns = [
+      /[;&|`$(){}[\]<>'"]/,  // Shell metacharacters
+      /\s/,                  // Whitespace
+      /\.\./,                // Directory traversal
+      /^-/,                  // Options that start with dash
+      /[\\\/]/               // Path separators
+    ];
+
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(libraryName)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Generates Python code for automatic library installation and import
    * 
    * Creates Python code that attempts to import each library and automatically
@@ -220,8 +273,20 @@ export class PythonExecutorTool extends BaseTool {
    * ```
    */
   private generateLibrarySetup(libraries: string[]): string {
+    // Security: Validate library names to prevent command injection
+    const allowedLibraries = new Set([
+      'pandas', 'numpy', 'matplotlib', 'scipy', 'sklearn', 'bs4', 'cv2',
+      'requests', 'json', 'os', 'sys', 're', 'datetime', 'math', 'random',
+      'beautifulsoup4', 'scikit-learn', 'opencv-python', 'seaborn', 'plotly'
+    ]);
+
     const installCode = libraries
       .map(lib => {
+        // Security: Validate library name against allowlist and safe patterns
+        if (!this.isValidLibraryName(lib, allowedLibraries)) {
+          throw new Error(`Security: Invalid or dangerous library name: ${lib}`);
+        }
+
         // Common library installation patterns
         const installMap: Record<string, string> = {
           bs4: 'beautifulsoup4',
@@ -868,6 +933,59 @@ print("\\n✅ Machine Learning analysis completed successfully!")
   }
 
   /**
+   * Validates library names to prevent command injection
+   * 
+   * Checks if a library name is safe for use in shell commands by validating
+   * against an allowlist and checking for dangerous patterns that could lead
+   * to command injection vulnerabilities.
+   * 
+   * Security Checks:
+   * - Must be in allowlist of known safe libraries
+   * - Must match safe naming pattern (alphanumeric, hyphens, underscores)
+   * - Cannot contain shell metacharacters or command injection patterns
+   * - Cannot be empty or only whitespace
+   * 
+   * @private
+   * @param {string} libraryName - The library name to validate
+   * @param {Set<string>} allowedLibraries - Set of allowed library names
+   * @returns {boolean} True if library name is safe, false otherwise
+   */
+  private isValidLibraryName(libraryName: string, allowedLibraries: Set<string>): boolean {
+    // Check for empty or whitespace-only strings
+    if (!libraryName || typeof libraryName !== 'string' || libraryName.trim() === '') {
+      return false;
+    }
+
+    // Check if library is in allowlist
+    if (!allowedLibraries.has(libraryName)) {
+      return false;
+    }
+
+    // Check for safe naming pattern: only alphanumeric, hyphens, underscores
+    const safePattern = /^[a-zA-Z0-9_-]+$/;
+    if (!safePattern.test(libraryName)) {
+      return false;
+    }
+
+    // Check for dangerous patterns that could lead to command injection
+    const dangerousPatterns = [
+      /[;&|`$(){}[\]<>'"]/,  // Shell metacharacters
+      /\s/,                  // Whitespace
+      /\.\./,                // Directory traversal
+      /^-/,                  // Options that start with dash
+      /[\\\/]/               // Path separators
+    ];
+
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(libraryName)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Wraps user code with automatic library installation setup
    * 
    * Prepends user code with library installation and import code that handles
@@ -895,8 +1013,20 @@ print("\\n✅ Machine Learning analysis completed successfully!")
    * ```
    */
   private wrapWithLibrarySetup(code: string, libraries: string[]): string {
+    // Security: Validate library names to prevent command injection
+    const allowedLibraries = new Set([
+      'pandas', 'numpy', 'matplotlib', 'scipy', 'sklearn', 'bs4', 'cv2',
+      'requests', 'json', 'os', 'sys', 're', 'datetime', 'math', 'random',
+      'beautifulsoup4', 'scikit-learn', 'opencv-python', 'seaborn', 'plotly'
+    ]);
+
     const setupCode = libraries
       .map(lib => {
+        // Security: Validate library name against allowlist and safe patterns
+        if (!this.isValidLibraryName(lib, allowedLibraries)) {
+          throw new Error(`Security: Invalid or dangerous library name: ${lib}`);
+        }
+
         const installMap: Record<string, string> = {
           bs4: 'beautifulsoup4',
           sklearn: 'scikit-learn',

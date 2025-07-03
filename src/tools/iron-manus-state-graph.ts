@@ -131,14 +131,66 @@ interface StateGraph {
  */
 class IronManusStateGraphManager {
   /**
+   * Validates session ID to prevent path traversal attacks
+   * 
+   * @private
+   * @param sessionId - Session identifier to validate
+   * @returns True if session ID is safe, false otherwise
+   * @description Ensures session ID cannot be used for directory traversal or file system attacks
+   */
+  private isValidSessionId(sessionId: string): boolean {
+    // Check for empty or non-string values
+    if (!sessionId || typeof sessionId !== 'string' || sessionId.trim() === '') {
+      return false;
+    }
+
+    // Check for reasonable length (prevent extremely long paths)
+    if (sessionId.length > 200) {
+      return false;
+    }
+
+    // Check for safe characters only: alphanumeric, hyphens, underscores
+    const safePattern = /^[a-zA-Z0-9_-]+$/;
+    if (!safePattern.test(sessionId)) {
+      return false;
+    }
+
+    // Check for dangerous patterns that could lead to path traversal
+    const dangerousPatterns = [
+      /\.\./,          // Directory traversal
+      /[\/\\]/,        // Path separators
+      /^[.-]/,         // Leading dots or dashes
+      /[<>:"|?*]/,     // Windows reserved characters
+      // eslint-disable-next-line no-control-regex
+      /[\x00-\x1f]/,   // Control characters
+      /\s/,            // Whitespace
+      /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i, // Windows reserved names
+    ];
+
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(sessionId)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Get file system path for session state graph
    * 
    * @private
    * @param sessionId - Unique session identifier
    * @returns Absolute path to session graph JSON file
-   * @description Constructs standardized file path for session state persistence
+   * @throws Error if session ID is invalid or dangerous
+   * @description Constructs standardized file path for session state persistence with security validation
    */
   private getSessionGraphPath(sessionId: string): string {
+    // Security: Validate session ID to prevent path traversal
+    if (!this.isValidSessionId(sessionId)) {
+      throw new Error(`Security: Invalid session ID format: ${sessionId}`);
+    }
+
     const sessionDir = `./iron-manus-sessions/${sessionId}`;
     return path.join(sessionDir, 'fsm-state-graph.json');
   }
@@ -149,12 +201,18 @@ class IronManusStateGraphManager {
    * @private
    * @param sessionId - Unique session identifier
    * @returns Promise resolving when directory is ready
+   * @throws Error if session ID is invalid or dangerous
    * @description Creates session directory structure, skips in test environment
    */
   private async ensureSessionDirectory(sessionId: string): Promise<void> {
     // Skip directory creation in test environment
     if (process.env.NODE_ENV === 'test') {
       return;
+    }
+
+    // Security: Validate session ID to prevent path traversal
+    if (!this.isValidSessionId(sessionId)) {
+      throw new Error(`Security: Invalid session ID format: ${sessionId}`);
     }
 
     const sessionDir = `./iron-manus-sessions/${sessionId}`;

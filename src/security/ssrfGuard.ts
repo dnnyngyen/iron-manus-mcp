@@ -143,3 +143,48 @@ export function getSSRFProtectionStatus() {
     strictMode: CONFIG.ALLOWED_HOSTS.length > 0,
   };
 }
+
+/**
+ * Validates session ID to prevent path traversal attacks
+ * 
+ * @param sessionId - Session identifier to validate
+ * @returns True if session ID is safe, false otherwise
+ * @description Ensures session ID cannot be used for directory traversal or file system attacks
+ */
+export function isValidSessionId(sessionId: string): boolean {
+  // Check for empty or non-string values
+  if (!sessionId || typeof sessionId !== 'string' || sessionId.trim() === '') {
+    return false;
+  }
+
+  // Check for reasonable length (prevent extremely long paths)
+  if (sessionId.length > 200) {
+    return false;
+  }
+
+  // Check for safe characters only: alphanumeric, hyphens, underscores
+  const safePattern = /^[a-zA-Z0-9_-]+$/;
+  if (!safePattern.test(sessionId)) {
+    return false;
+  }
+
+  // Check for dangerous patterns that could lead to path traversal
+  const dangerousPatterns = [
+    /\.\./,          // Directory traversal
+    /[\/\\]/,        // Path separators
+    /^[.-]/,         // Leading dots or dashes
+    /[<>:"|?*]/,     // Windows reserved characters
+    // eslint-disable-next-line no-control-regex
+    /[\x00-\x1f]/,   // Control characters
+    /\s/,            // Whitespace
+    /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i, // Windows reserved names
+  ];
+
+  for (const pattern of dangerousPatterns) {
+    if (pattern.test(sessionId)) {
+      return false;
+    }
+  }
+
+  return true;
+}

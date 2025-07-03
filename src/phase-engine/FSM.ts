@@ -39,6 +39,7 @@ import {
   KnowledgePhaseResult,
   AutoConnectionDeps,
 } from './helpers.js';
+import { isValidSessionId } from '../security/ssrfGuard.js';
 import {
   generateRoleEnhancedPrompt,
   detectRole,
@@ -312,6 +313,12 @@ export async function processState(
 async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: AutoConnectionDeps) {
   // Initialize session workspace for agent communication
   const sessionId = input.session_id;
+  
+  // Security: Validate session ID to prevent path traversal
+  if (!isValidSessionId(sessionId)) {
+    throw new Error(`Security: Invalid session ID format: ${sessionId}`);
+  }
+  
   const sessionWorkspace = `./iron-manus-sessions/${sessionId}`;
 
   // Store session workspace path in payload for prompt variable substitution
