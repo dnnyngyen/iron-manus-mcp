@@ -131,7 +131,27 @@ See [LEGACY_PREVENTION.md](./LEGACY_PREVENTION.md) for details.
 **For MCP Integration:**
 Add to your MCP client configuration or register with Claude Code:
 ```bash
+# Register with Claude Code (adjust path as needed)
 claude mcp add iron-manus-mcp node dist/index.js
+
+# Or add to MCP client settings.json:
+{
+  "mcpServers": {
+    "iron-manus-mcp": {
+      "command": "node",
+      "args": ["path/to/iron-manus-mcp/dist/index.js"]
+    }
+  }
+}
+```
+
+**For Claude Code Hooks (Optional):**
+```bash
+# Copy example hooks configuration
+cp .claude/hooks-example.json .claude/hooks.json
+
+# Requires Python 3.7+ for validation scripts
+python3 --version
 ```
 
 ## Docker Usage
@@ -236,6 +256,8 @@ await mcp.callTool({
 - Node.js 18+ (tested with 18.x, 20.x, 22.x)
 - npm 8+
 - TypeScript 5.0+
+- Python 3.7+ (for optional Claude Code hooks)
+- Git (for source installation)
 
 **Available Scripts:**
 ```bash
