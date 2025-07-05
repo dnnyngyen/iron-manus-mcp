@@ -16,7 +16,7 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system with 8-phase a
 
 ```bash
 npm run build        # TypeScript compilation
-npm test            # Run full test suite (107 tests)
+npm test            # Run full test suite (323 tests)
 npm run lint        # ESLint checking
 npm run dev         # Build and start server
 npm start          # Start compiled server
@@ -25,7 +25,7 @@ npm start          # Start compiled server
 ## Important Notes
 
 - Uses MCP SDK v1.13.2 with correct import paths
-- 107/107 tests passing (100% success rate)
+- 323/323 tests passing (100% success rate)
 - Claude Code Hooks integration for enhanced security
 - TypeScript strict mode enabled
 - ESM modules with proper .js extensions
@@ -51,7 +51,7 @@ npm start          # Start compiled server
 ✅ Core FSM functionality working
 ✅ Tool registry operational
 ✅ Build pipeline functional
-✅ Test suite 100% passing (163/163)
+✅ Test suite 100% passing (323/323)
 ✅ MCP SDK v1.13.2 fully compatible
 ✅ Claude Code Hooks integrated
 ✅ Production ready

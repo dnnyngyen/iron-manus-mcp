@@ -1,7 +1,7 @@
 <img src="banner.png" alt="Iron Manus MCP Banner" width="100%" height="250">
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
-[![Tests](https://img.shields.io/badge/tests-163%2F163-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
+[![Tests](https://img.shields.io/badge/tests-323%2F323-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -43,7 +43,7 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages c
 - 🛠️ **Modular Tool Registry** - 8+ specialized tools with extensible architecture
 - 📡 **65+ API Registry** - Intelligent API discovery and selection system
 - 🔒 **SSRF Protection** - Enterprise-grade security with allowlist validation
-- ✅ **313/313 Tests Passing** - Comprehensive test coverage with Vitest (100% success rate)
+- ✅ **323/323 Tests Passing** - Comprehensive test coverage with Vitest (100% success rate)
 - 📦 **ES Modules** - Modern JavaScript with TypeScript 5.0 support
 
 ## Quick Start
@@ -99,7 +99,7 @@ npm install
 # Build TypeScript
 npm run build
 
-# Run tests (optional - 313 tests)
+# Run tests (optional - 323 tests)
 npm test
 
 # Start server
@@ -334,7 +334,7 @@ await mcp.callTool({
 **Available Scripts:**
 ```bash
 npm run build        # TypeScript compilation
-npm test            # Run full test suite (313 tests)
+npm test            # Run full test suite (323 tests)
 npm run test:nocov   # Run tests without coverage
 npm run lint        # ESLint checking (with enhanced rules)
 npm run format      # Prettier formatting
@@ -364,7 +364,7 @@ USER_AGENT="Iron-Manus-MCP/0.2.4"    # Service identification
 
 ## Testing
 
-Comprehensive test suite with 313 tests using Vitest:
+Comprehensive test suite with 323 tests using Vitest:
 
 ```bash
 # Run all tests
