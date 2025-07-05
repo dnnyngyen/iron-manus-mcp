@@ -122,7 +122,7 @@ src/
 
 ### Writing Tests
 
-Use Jest with the following patterns:
+Use Vitest with the following patterns:
 
 ```typescript
 // Unit test example
