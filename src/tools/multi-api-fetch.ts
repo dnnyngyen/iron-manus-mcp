@@ -231,9 +231,9 @@ export class MultiAPIFetchTool extends BaseTool {
     // Function to fetch a single API with rate limiting and error handling
     const fetchAPI = async (endpoint: string, index: number) => {
       await semaphore.acquire();
+      const startTime = Date.now();
 
       try {
-        const startTime = Date.now();
 
         // Check rate limiting
         const apiName = new URL(endpoint).hostname;
@@ -333,8 +333,13 @@ export class MultiAPIFetchTool extends BaseTool {
           errorType = 'HTTP';
           errorMessage = `HTTP ${axiosError.response.status}: ${axiosError.response.statusText}`;
         } else if (error instanceof Error) {
-          errorType = 'Request';
-          errorMessage = error.message;
+          if (error.message.includes('Rate limit exceeded')) {
+            errorType = 'Rate Limit';
+            errorMessage = 'Rate limit exceeded';
+          } else {
+            errorType = 'Request';
+            errorMessage = error.message;
+          }
         }
 
         return {
