@@ -1,8 +1,9 @@
 // FSM State Validation Demo
 // Demonstrates validation with realistic FSM state examples and edge cases
+/* eslint-disable no-console */
 
 import { FSMStateValidator, createValidator } from './fsm-state-validator.js';
-import { SessionState, Phase, TodoItem } from '../core/types.js';
+import { SessionState, TodoItem } from '../core/types.js';
 
 // Demo scenarios
 const demoScenarios = [
@@ -183,7 +184,10 @@ async function runValidationDemo(): Promise<void> {
   generateValidationReport(validator, demoScenarios);
 }
 
-function generateValidationReport(validator: FSMStateValidator, scenarios: any[]): void {
+function generateValidationReport(
+  validator: FSMStateValidator,
+  scenarios: Array<{ name: string; description: string; state: SessionState }>
+): void {
   console.log('VALIDATION SUMMARY REPORT');
   console.log('='.repeat(80));
 
@@ -260,7 +264,7 @@ function createAuthSystemState(variant: 'healthy' | 'problematic'): SessionState
     baseTodos.push({
       id: 'auth-6',
       content: 'Security audit',
-      status: 'invalid_status' as any, // Invalid status
+      status: 'invalid_status' as 'pending', // Invalid status for testing
       priority: 'high',
     });
   }
@@ -293,7 +297,7 @@ function createAuthSystemState(variant: 'healthy' | 'problematic'): SessionState
   };
 }
 
-function createEcommerceState(variant: 'problematic'): SessionState {
+function createEcommerceState(_variant: 'problematic'): SessionState {
   const manyTodos = Array(35)
     .fill(0)
     .map((_, i) => ({
@@ -324,7 +328,7 @@ function createEcommerceState(variant: 'problematic'): SessionState {
   };
 }
 
-function createEdgeCaseState(variant: 'empty'): SessionState {
+function createEdgeCaseState(_variant: 'empty'): SessionState {
   return {
     current_phase: 'INIT',
     initial_objective: 'Minimal test case',

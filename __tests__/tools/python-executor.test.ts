@@ -13,7 +13,7 @@ describe('PythonExecutor Tool', () => {
   describe('Tool Definition', () => {
     it('should have correct tool metadata', () => {
       expect(tool.name).toBe('PythonExecutor');
-      expect(tool.description).toContain('Execute Python code');
+      expect(tool.description).toContain('Computational thinking catalyst');
       expect(tool.inputSchema).toBeDefined();
       expect(tool.inputSchema.type).toBe('object');
       expect(tool.inputSchema.required).toEqual(['code']);
@@ -164,7 +164,7 @@ describe('EnhancedPythonDataScience Tool', () => {
   describe('Tool Definition', () => {
     it('should have correct tool metadata', () => {
       expect(tool.name).toBe('EnhancedPythonDataScience');
-      expect(tool.description).toContain('Complete Python data science operations');
+      expect(tool.description).toContain('Data science thinking orchestrator');
       expect(tool.inputSchema).toBeDefined();
       expect(tool.inputSchema.type).toBe('object');
       expect(tool.inputSchema.required).toEqual(['operation']);
@@ -196,7 +196,7 @@ describe('EnhancedPythonDataScience Tool', () => {
       const result = await tool.handle(args);
       
       expect(result.isError).toBe(true);
-      expect(result.content[0].text).toContain('Unknown operation');
+      expect(result.content[0].text).toContain('Invalid arguments');
     });
   });
 

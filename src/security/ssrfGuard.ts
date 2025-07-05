@@ -46,7 +46,7 @@ export function ssrfGuard(url: string, allowedHosts?: string[]): boolean {
 
     // If no allowed hosts specified, allow all public hosts
     return true;
-  } catch (error) {
+  } catch (_error) {
     // Invalid URL
     return false;
   }
@@ -127,7 +127,7 @@ export function validateAndSanitizeURL(url: string, allowedHosts?: string[]): st
     }
 
     return urlObj.toString();
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 }
@@ -146,7 +146,7 @@ export function getSSRFProtectionStatus() {
 
 /**
  * Validates session ID to prevent path traversal attacks
- * 
+ *
  * @param sessionId - Session identifier to validate
  * @returns True if session ID is safe, false otherwise
  * @description Ensures session ID cannot be used for directory traversal or file system attacks
@@ -170,13 +170,13 @@ export function isValidSessionId(sessionId: string): boolean {
 
   // Check for dangerous patterns that could lead to path traversal
   const dangerousPatterns = [
-    /\.\./,          // Directory traversal
-    /[\/\\]/,        // Path separators
-    /^[.-]/,         // Leading dots or dashes
-    /[<>:"|?*]/,     // Windows reserved characters
+    /\.\./, // Directory traversal
+    /[\/\\]/, // Path separators
+    /^[.-]/, // Leading dots or dashes
+    /[<>:"|?*]/, // Windows reserved characters
     // eslint-disable-next-line no-control-regex
-    /[\x00-\x1f]/,   // Control characters
-    /\s/,            // Whitespace
+    /[\x00-\x1f]/, // Control characters
+    /\s/, // Whitespace
     /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i, // Windows reserved names
   ];
 

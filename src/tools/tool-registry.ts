@@ -11,6 +11,7 @@ import { APIValidatorTool } from './api-validator.js';
 import { PythonDataAnalysisTool } from './python-data-analysis.js';
 import { PythonExecutorTool, EnhancedPythonDataScienceTool } from './python-executor.js';
 import { IronManusStateGraphTool } from './iron-manus-state-graph.js';
+import { HealthCheckTool } from './health-check.js';
 
 /**
  * Tool Registry Class
@@ -35,6 +36,7 @@ export class ToolRegistry {
     this.registerTool(new PythonExecutorTool());
     this.registerTool(new EnhancedPythonDataScienceTool());
     this.registerTool(new IronManusStateGraphTool());
+    this.registerTool(new HealthCheckTool());
   }
 
   /**
@@ -92,7 +94,7 @@ export class ToolRegistry {
   /**
    * Handle tool execution by name
    */
-  async executeTool(name: string, args: any): Promise<any> {
+  async executeTool(name: string, args: unknown): Promise<unknown> {
     const tool = this.getTool(name);
     if (!tool) {
       throw new Error(

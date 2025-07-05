@@ -4,6 +4,8 @@ import { GraphStateAdapter, graphStateManager } from '../../src/core/graph-state
 import { SessionState, Phase, Role } from '../../src/core/types.js';
 import { stateGraphManager } from '../../src/tools/iron-manus-state-graph.js';
 
+// Logger automatically forwards to console in test environment
+
 // Mock the state graph manager
 vi.mock('../../src/tools/iron-manus-state-graph.js', () => ({
   stateGraphManager: {
@@ -613,6 +615,7 @@ describe('GraphStateManager', () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       // Test development environment
+      const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'development';
       manager.emitErrorEvent('test_error', 'test-session', new Error('Test error'));
       
@@ -631,7 +634,7 @@ describe('GraphStateManager', () => {
 
       consoleWarnSpy.mockRestore();
       consoleErrorSpy.mockRestore();
-      process.env.NODE_ENV = 'test';
+      process.env.NODE_ENV = originalEnv;
     });
   });
 

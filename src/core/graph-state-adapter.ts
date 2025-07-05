@@ -5,6 +5,7 @@
 
 import { SessionState, Phase, Role } from './types.js';
 import { stateGraphManager } from '../tools/iron-manus-state-graph.js';
+import logger from '../utils/logger.js';
 
 /**
  * Adapter that converts between SessionState and knowledge graph entities
@@ -51,11 +52,15 @@ export class GraphStateAdapter {
       }
 
       // Convert graph entities back to SessionState
-      const session = this.entitiesToSessionState(sessionId, graph.entities, graph.relations);
+      const session = this.entitiesToSessionState(
+        sessionId,
+        graph.entities as Array<{ name: string; entityType: string; observations?: string[] }>,
+        graph.relations as unknown as Array<Record<string, unknown>>
+      );
       this.sessionCache.set(sessionId, session);
       return session;
     } catch (error) {
-      console.warn(`Failed to load session ${sessionId} from graph, creating new:`, error);
+      logger.warn(`Failed to load session ${sessionId} from graph, creating new:`, error);
 
       // Fallback to new session
       const newSession: SessionState = {
@@ -98,8 +103,8 @@ export class GraphStateAdapter {
    */
   private entitiesToSessionState(
     sessionId: string,
-    entities: any[],
-    relations: any[]
+    entities: Array<{ name: string; entityType: string; observations?: string[] }>,
+    _relations: Array<Record<string, unknown>>
   ): SessionState {
     const sessionEntity = entities.find(e => e.name === sessionId && e.entityType === 'session');
 
@@ -128,12 +133,12 @@ export class GraphStateAdapter {
     );
     session.payload.current_todos = taskEntities.map(task => ({
       id: task.name.replace(`${sessionId}_task_`, ''),
-      content: this.extractObservation(task.observations, 'content', ''),
-      status: this.extractObservation(task.observations, 'status', 'pending') as
+      content: this.extractObservation(task.observations || [], 'content', ''),
+      status: this.extractObservation(task.observations || [], 'status', 'pending') as
         | 'pending'
         | 'in_progress'
         | 'completed',
-      priority: this.extractObservation(task.observations, 'priority', 'medium') as
+      priority: this.extractObservation(task.observations || [], 'priority', 'medium') as
         | 'high'
         | 'medium'
         | 'low',
@@ -177,7 +182,7 @@ export class GraphStateAdapter {
     ]);
 
     // Update tasks
-    if (session.payload.current_todos) {
+    if (Array.isArray(session.payload.current_todos)) {
       for (const todo of session.payload.current_todos) {
         const taskId = todo.id || `task_${Date.now()}`;
         await stateGraphManager.recordTaskCreation(sessionId, taskId, todo.content, todo.priority);
@@ -200,8 +205,8 @@ export class GraphStateAdapter {
   /**
    * Extract payload from observations
    */
-  private extractPayload(observations: string[]): Record<string, any> {
-    const payload: Record<string, any> = {
+  private extractPayload(observations: string[]): Record<string, unknown> {
+    const payload: Record<string, unknown> = {
       current_task_index: 0,
       current_todos: [],
     };
@@ -227,7 +232,7 @@ export class GraphStateAdapter {
   /**
    * Convert payload to observations
    */
-  private payloadToObservations(payload: Record<string, any>): string[] {
+  private payloadToObservations(payload: Record<string, unknown>): string[] {
     const observations: string[] = [];
 
     Object.entries(payload).forEach(([key, value]) => {
@@ -249,7 +254,7 @@ export class GraphStateAdapter {
   /**
    * Get session performance metrics
    */
-  async getSessionPerformanceMetrics(sessionId: string): Promise<Record<string, any>> {
+  async getSessionPerformanceMetrics(sessionId: string): Promise<Record<string, unknown>> {
     const session = await this.getSessionState(sessionId);
 
     // Search for performance-related entities
@@ -264,7 +269,12 @@ export class GraphStateAdapter {
       reasoning_effectiveness: session.reasoning_effectiveness,
       performance_grade: this.calculatePerformanceGrade(session.reasoning_effectiveness),
       cognitive_enhancement_active: session.reasoning_effectiveness > 0.7,
-      task_complexity_handled: (session.payload.current_task_index || 0) > 3 ? 'complex' : 'simple',
+      task_complexity_handled:
+        (typeof session.payload.current_task_index === 'number'
+          ? session.payload.current_task_index
+          : 0) > 3
+          ? 'complex'
+          : 'simple',
       session_duration_minutes: Math.round(
         (Date.now() - (session.last_activity || Date.now())) / (1000 * 60)
       ),
@@ -331,7 +341,7 @@ class GraphStateManager {
         this.sessionCache.set(sessionId, session);
       })
       .catch(error => {
-        console.error(`Background session load failed for ${sessionId}:`, error);
+        logger.error(`Background session load failed for ${sessionId}:`, error);
 
         // Recovery strategy: Mark for retry if not a permanent failure
         if (this.isRetriableError(error)) {
@@ -353,7 +363,7 @@ class GraphStateManager {
 
     // Proper error handling for graph update with recovery
     this.adapter.updateSessionState(sessionId, updates).catch(error => {
-      console.error(`Graph update failed for session ${sessionId}:`, error);
+      logger.error(`Graph update failed for session ${sessionId}:`, error);
 
       // Recovery strategy: Mark session for retry
       this.markSessionForRetry(sessionId, 'update', { updates });
@@ -363,7 +373,7 @@ class GraphStateManager {
     });
   }
 
-  getSessionPerformanceMetrics(sessionId: string): Record<string, any> {
+  getSessionPerformanceMetrics(sessionId: string): Record<string, unknown> {
     // Simplified synchronous version
     const session = this.getSessionState(sessionId);
     return {
@@ -385,7 +395,7 @@ class GraphStateManager {
 
     // Proper error handling for async cleanup
     this.adapter.cleanup().catch(error => {
-      console.error('Graph cleanup failed:', error);
+      logger.error('Graph cleanup failed:', error);
 
       // Recovery strategy: Schedule retry for next cleanup cycle
       this.scheduleCleanupRetry();
@@ -398,17 +408,17 @@ class GraphStateManager {
   // Add retry tracking for failed operations
   private retryQueue: Map<
     string,
-    { operation: string; data: any; attempts: number; nextRetry: number }
+    { operation: string; data: unknown; attempts: number; nextRetry: number }
   > = new Map();
   private readonly MAX_RETRY_ATTEMPTS = 3;
   private readonly RETRY_DELAY_MS = 5000;
 
-  private markSessionForRetry(sessionId: string, operation: string, data: any): void {
+  private markSessionForRetry(sessionId: string, operation: string, data: unknown): void {
     const key = `${sessionId}_${operation}`;
     const existing = this.retryQueue.get(key);
 
     if (existing && existing.attempts >= this.MAX_RETRY_ATTEMPTS) {
-      console.warn(`Max retry attempts reached for session ${sessionId}, operation ${operation}`);
+      logger.warn(`Max retry attempts reached for session ${sessionId}, operation ${operation}`);
       return;
     }
 
@@ -432,7 +442,10 @@ class GraphStateManager {
           const [sessionId] = key.split('_');
 
           if (retryItem.operation === 'update') {
-            await this.adapter.updateSessionState(sessionId, retryItem.data.updates);
+            await this.adapter.updateSessionState(
+              sessionId,
+              (retryItem.data as { updates: Partial<SessionState> }).updates
+            );
             this.retryQueue.delete(key); // Success - remove from queue
           } else if (retryItem.operation === 'load') {
             const session = await this.adapter.getSessionState(sessionId);
@@ -440,7 +453,7 @@ class GraphStateManager {
             this.retryQueue.delete(key); // Success - remove from queue
           }
         } catch (error) {
-          console.warn(`Retry failed for ${key}, attempt ${retryItem.attempts}:`, error);
+          logger.warn(`Retry failed for ${key}, attempt ${retryItem.attempts}:`, error);
 
           if (retryItem.attempts >= this.MAX_RETRY_ATTEMPTS) {
             this.retryQueue.delete(key); // Give up after max attempts
@@ -454,7 +467,7 @@ class GraphStateManager {
     }
   }
 
-  private isRetriableError(error: any): boolean {
+  private isRetriableError(error: unknown): boolean {
     // Determine if an error is worth retrying
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
@@ -487,13 +500,13 @@ class GraphStateManager {
     // Retry cleanup after delay
     setTimeout(() => {
       this.adapter.cleanup().catch(error => {
-        console.warn('Cleanup retry failed:', error);
+        logger.warn('Cleanup retry failed:', error);
         // Could implement exponential backoff here if needed
       });
     }, this.RETRY_DELAY_MS);
   }
 
-  private emitErrorEvent(eventType: string, sessionId: string, error: any): void {
+  private emitErrorEvent(eventType: string, sessionId: string, error: unknown): void {
     // Structured error event for monitoring systems
     const errorEvent = {
       timestamp: new Date().toISOString(),
@@ -507,9 +520,9 @@ class GraphStateManager {
     // In production, this could send to monitoring systems (DataDog, etc.)
     if (process.env.NODE_ENV === 'production') {
       // Could integrate with monitoring systems here
-      console.error('PRODUCTION_ERROR_EVENT:', JSON.stringify(errorEvent));
+      logger.error('PRODUCTION_ERROR_EVENT:', JSON.stringify(errorEvent));
     } else {
-      console.warn('Error event:', errorEvent);
+      logger.warn('Error event:', errorEvent);
     }
   }
 }

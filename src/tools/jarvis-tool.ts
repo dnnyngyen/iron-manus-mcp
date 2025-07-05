@@ -5,13 +5,14 @@
 
 import { BaseTool, ToolSchema, ToolResult } from './base-tool.js';
 import { processState } from '../core/fsm.js';
-import { MessageJARVIS, Phase } from '../core/types.js';
+import { MessageJARVIS } from '../core/types.js';
+import logger from '../utils/logger.js';
 
 export interface JARVISArgs {
   session_id?: string;
   phase_completed?: 'QUERY' | 'ENHANCE' | 'KNOWLEDGE' | 'PLAN' | 'EXECUTE' | 'VERIFY';
   initial_objective?: string;
-  payload?: Record<string, any>;
+  payload?: Record<string, unknown>;
 }
 
 /**
@@ -58,7 +59,7 @@ export class JARVISTool extends BaseTool {
       // NOTE: In tests, always provide explicit session_id to avoid directory proliferation
       if (!args.session_id) {
         args.session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        console.warn(
+        logger.warn(
           `Auto-generated session ID: ${args.session_id}. Consider providing explicit session_id.`
         );
       }
@@ -80,7 +81,7 @@ export class JARVISTool extends BaseTool {
       const responseText = JSON.stringify(result, null, 2);
       return this.createResponse(responseText);
     } catch (error) {
-      console.error('JARVIS FSM Error:', error);
+      logger.error('JARVIS FSM Error:', error);
       return this.createErrorResponse(error instanceof Error ? error : String(error));
     }
   }

@@ -1,13 +1,8 @@
 // FSM State Consistency Validation System
 // Implements comprehensive state validation and transition logging for the Iron Manus FSM
 
-import {
-  Phase,
-  SessionState,
-  TodoItem,
-  VerificationResult,
-  APIUsageMetrics,
-} from '../core/types.js';
+import { Phase, SessionState, TodoItem, APIUsageMetrics } from '../core/types.js';
+import logger from '../utils/logger.js';
 
 // Validation configuration
 export interface ValidationConfig {
@@ -40,7 +35,7 @@ export interface ValidationError {
   message: string;
   severity: 'critical' | 'high' | 'medium';
   phase: Phase;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export interface ValidationWarning {
@@ -66,7 +61,7 @@ export interface PhaseTransition {
   toPhase: Phase;
   timestamp: number;
   duration: number;
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
   success: boolean;
   errors?: string[];
 }
@@ -157,7 +152,7 @@ export class FSMStateValidator {
     sessionId: string,
     fromPhase: Phase,
     toPhase: Phase,
-    payload: Record<string, any>,
+    payload: Record<string, unknown>,
     duration: number = 0
   ): void {
     if (!this.config.enableTransitionLogging) return;
@@ -195,11 +190,11 @@ export class FSMStateValidator {
     const totalTime = log.transitions.reduce((sum, t) => sum + t.duration, 0);
     log.averageTransitionTime = totalTime / log.transitions.length;
 
-    console.log(
+    logger.info(
       `[FSM-TRANSITION] ${fromPhase} -> ${toPhase} (${duration}ms) ${transition.success ? 'SUCCESS' : 'FAILED'}`
     );
     if (transition.errors && transition.errors.length > 0) {
-      console.warn(`[FSM-TRANSITION-ERRORS] ${transition.errors.join(', ')}`);
+      logger.warn(`[FSM-TRANSITION-ERRORS] ${transition.errors.join(', ')}`);
     }
   }
 
@@ -313,8 +308,9 @@ export class FSMStateValidator {
     const payload = sessionState.payload;
 
     // Check task index validity
-    const currentTaskIndex = payload.current_task_index || 0;
-    const totalTasks = (payload.current_todos || []).length;
+    const currentTaskIndex =
+      typeof payload.current_task_index === 'number' ? payload.current_task_index : 0;
+    const totalTasks = Array.isArray(payload.current_todos) ? payload.current_todos.length : 0;
     if (currentTaskIndex >= 0 && currentTaskIndex < Math.max(totalTasks, 1)) {
       passedChecks++;
     } else if (totalTasks > 0) {
@@ -367,7 +363,9 @@ export class FSMStateValidator {
   } {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
-    const todos = sessionState.payload?.current_todos || [];
+    const todos = Array.isArray(sessionState.payload?.current_todos)
+      ? sessionState.payload.current_todos
+      : [];
     let totalChecks = todos.length * 3; // 3 checks per todo
     let passedChecks = 0;
 
@@ -522,7 +520,7 @@ export class FSMStateValidator {
   private validateTransition(
     fromPhase: Phase,
     toPhase: Phase,
-    payload: Record<string, any>
+    payload: Record<string, unknown>
   ): string[] {
     const errors: string[] = [];
 
@@ -548,7 +546,7 @@ export class FSMStateValidator {
         }
         break;
       case 'EXECUTE':
-        if (!payload.current_todos || payload.current_todos.length === 0) {
+        if (!Array.isArray(payload.current_todos) || payload.current_todos.length === 0) {
           errors.push('Missing todos for EXECUTE phase');
         }
         break;
@@ -565,7 +563,7 @@ export class FSMStateValidator {
   /**
    * Calculates transition integrity score
    */
-  private calculateTransitionIntegrityScore(sessionState: SessionState): number {
+  private calculateTransitionIntegrityScore(_sessionState: SessionState): number {
     const log = this.transitionLogs.get('current'); // Simplified for demo
     if (!log || log.totalTransitions === 0) return 1.0;
 
@@ -593,7 +591,10 @@ export class FSMStateValidator {
     // Phase-specific recommendations
     switch (sessionState.current_phase) {
       case 'EXECUTE':
-        if (sessionState.payload?.current_todos?.length > 10) {
+        if (
+          Array.isArray(sessionState.payload?.current_todos) &&
+          sessionState.payload.current_todos.length > 10
+        ) {
           recommendations.push(
             'Consider breaking down large task lists into smaller, manageable chunks'
           );
@@ -631,7 +632,9 @@ export class FSMStateValidator {
    * Calculates completion percentage for verification
    */
   private calculateCompletionPercentage(sessionState: SessionState): number {
-    const todos = sessionState.payload?.current_todos || [];
+    const todos = Array.isArray(sessionState.payload?.current_todos)
+      ? sessionState.payload.current_todos
+      : [];
     if (todos.length === 0) return 1.0;
 
     const completed = todos.filter((todo: TodoItem) => todo.status === 'completed').length;

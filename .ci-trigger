@@ -1,1 +1,7 @@
-# Force CI refresh - Tue Jul  1 21:16:32 PDT 2025
+# CI Trigger File
+# 
+# This file is used to manually trigger CI/CD pipeline refreshes when needed.
+# Last trigger: Tue Jul  1 21:16:32 PDT 2025
+#
+# Usage: Touch this file or update the timestamp to trigger a new CI build
+# without making code changes.

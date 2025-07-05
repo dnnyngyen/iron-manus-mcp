@@ -7,6 +7,7 @@ import { BaseTool, ToolSchema, ToolResult } from './base-tool.js';
 import { APIEndpoint } from '../core/api-registry.js';
 import { validateAndSanitizeURL } from '../security/ssrfGuard.js';
 import axios from 'axios';
+import logger from '../utils/logger.js';
 
 export interface APIValidatorArgs {
   api_endpoint: APIEndpoint;
@@ -21,6 +22,18 @@ export interface ValidationResult {
   error_message?: string;
   suggested_alternatives?: string[];
   documentation_link?: string;
+}
+
+interface TestResult {
+  working: boolean;
+  code?: number;
+  error?: string;
+}
+
+interface HTTPError extends Error {
+  response?: {
+    status: number;
+  };
 }
 
 /**
@@ -91,7 +104,7 @@ export class APIValidatorTool extends BaseTool {
         )
       );
     } catch (error) {
-      console.error('API Validator Error:', error);
+      logger.error('API Validator Error:', error);
       return this.createErrorResponse(error instanceof Error ? error : String(error));
     }
   }
@@ -123,11 +136,12 @@ export class APIValidatorTool extends BaseTool {
         working: true,
         code: response.status,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const httpError = error as HTTPError;
       return {
         working: false,
-        code: error.response?.status,
-        error: error.message,
+        code: httpError.response?.status,
+        error: httpError.message,
       };
     }
   }
@@ -135,7 +149,7 @@ export class APIValidatorTool extends BaseTool {
   /**
    * Format success response
    */
-  private formatSuccessResponse(url: string, result: any): string {
+  private formatSuccessResponse(url: string, result: TestResult): string {
     return `# SUCCESS API Validation Success
 
 **Endpoint**: ${url}
@@ -152,8 +166,8 @@ This endpoint is validated and ready for use in MultiAPIFetch.`;
   private formatCorrectedResponse(
     originalUrl: string,
     workingUrl: string,
-    originalResult: any,
-    workingResult: any,
+    originalResult: TestResult,
+    workingResult: TestResult,
     docUrl?: string
   ): string {
     return `# INFO API Endpoint Auto-Corrected
@@ -184,7 +198,7 @@ The API registry should be updated with the working endpoint.`;
    */
   private formatFailureResponse(
     originalUrl: string,
-    result: any,
+    result: TestResult,
     patterns: string[],
     docUrl?: string
   ): string {

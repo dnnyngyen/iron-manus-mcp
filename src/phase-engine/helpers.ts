@@ -1,5 +1,6 @@
 // src/phase-engine/helpers.ts
 import type { Role } from '../core/types.js';
+import logger from '../utils/logger.js';
 
 // Type alias for compatibility
 export type RoleName = Role;
@@ -8,7 +9,6 @@ export type RoleName = Role;
  * Parse ROLE and other meta-prompts from a single LLM line.
  * Returns { role, metaPrompts } or null if not found.
  */
-
 
 /** crude token estimator ~4 chars = 1 token */
 export function tokenBudgetOkay(str: string, budget = 6_000): boolean {
@@ -21,7 +21,7 @@ export function detectFractalDelegation(text: string): boolean {
 
 /** no-op placeholder, can wire to a real metrics collector later */
 export function recordCognitiveLoad(phase: string, ms: number): void {
-  if (process.env.DEBUG_LOAD) console.log(`Phase ${phase} took ${ms} ms`);
+  if (process.env.DEBUG_LOAD) logger.debug(`Phase ${phase} took ${ms} ms`);
 }
 
 /** Normalised result object from the Knowledge phase */

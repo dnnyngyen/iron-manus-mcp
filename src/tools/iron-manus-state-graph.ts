@@ -14,22 +14,31 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { BaseTool, type ToolDefinition, type ToolResult } from './base-tool.js';
+import { BaseTool, type ToolResult } from './base-tool.js';
 
 /**
  * Arguments interface for Iron Manus State Graph operations
  * Defines all possible parameters for FSM state management actions
- * 
+ *
  * @interface IronManusStateGraphArgs
  * @description Type-safe argument structure for state graph operations
  */
 interface IronManusStateGraphArgs {
   /** Action to perform on the session state graph */
-  action: 'create_entities' | 'create_transitions' | 'add_observations' | 'delete_entities' | 
-          'delete_observations' | 'delete_transitions' | 'read_graph' | 'search_nodes' | 
-          'open_nodes' | 'initialize_session' | 'record_phase_transition' | 
-          'record_task_creation' | 'update_task_status';
+  action:
+    | 'create_entities'
+    | 'create_transitions'
+    | 'add_observations'
+    | 'delete_entities'
+    | 'delete_observations'
+    | 'delete_transitions'
+    | 'read_graph'
+    | 'search_nodes'
+    | 'open_nodes'
+    | 'initialize_session'
+    | 'record_phase_transition'
+    | 'record_task_creation'
+    | 'update_task_status';
   /** Session ID for project-scoped state isolation */
   session_id: string;
   /** Entities to create (for create_entities action) */
@@ -58,6 +67,10 @@ interface IronManusStateGraphArgs {
   priority?: string;
   /** Task status (for update_task_status action) */
   status?: string;
+  /** Entity names for deletion (for delete_entities action) */
+  entity_names?: string[];
+  /** Deletions array (for delete_observations action) */
+  deletions?: Array<{ entityName: string; observations: string[] }>;
 }
 
 /**
@@ -68,7 +81,7 @@ interface IronManusStateGraphArgs {
 /**
  * SessionEntity - Core entity in Iron Manus FSM state management
  * Represents tracked entities across FSM execution sessions
- * 
+ *
  * @interface SessionEntity
  * @description Core data structure for FSM state entities with observations
  */
@@ -84,7 +97,7 @@ interface SessionEntity {
 /**
  * StateTransition - Represents relationships between FSM entities
  * Defines directional relationships for state graph construction
- * 
+ *
  * @interface StateTransition
  * @description Encodes FSM state transitions and entity relationships
  */
@@ -100,7 +113,7 @@ interface StateTransition {
 /**
  * StateGraph - Complete FSM state representation
  * Encapsulates all entities and their relationships for a session
- * 
+ *
  * @interface StateGraph
  * @description Primary data structure for FSM state management and persistence
  */
@@ -113,11 +126,11 @@ interface StateGraph {
 
 /**
  * Iron Manus State Graph Manager
- * 
+ *
  * Comprehensive FSM state management with project-scoped knowledge graphs.
  * Handles persistent state storage, entity relationships, and FSM transitions
  * across Iron Manus execution sessions.
- * 
+ *
  * Key Features:
  * - Session-isolated state graphs with file-based persistence
  * - FSM phase tracking and transition recording
@@ -125,14 +138,14 @@ interface StateGraph {
  * - Role-based entity categorization
  * - API usage tracking and performance monitoring
  * - Test environment compatibility with in-memory operation
- * 
+ *
  * @class IronManusStateGraphManager
  * @description Core state management engine for Iron Manus MCP FSM orchestration
  */
 class IronManusStateGraphManager {
   /**
    * Validates session ID to prevent path traversal attacks
-   * 
+   *
    * @private
    * @param sessionId - Session identifier to validate
    * @returns True if session ID is safe, false otherwise
@@ -157,13 +170,13 @@ class IronManusStateGraphManager {
 
     // Check for dangerous patterns that could lead to path traversal
     const dangerousPatterns = [
-      /\.\./,          // Directory traversal
-      /[\/\\]/,        // Path separators
-      /^[.-]/,         // Leading dots or dashes
-      /[<>:"|?*]/,     // Windows reserved characters
+      /\.\./, // Directory traversal
+      /[\/\\]/, // Path separators
+      /^[.-]/, // Leading dots or dashes
+      /[<>:"|?*]/, // Windows reserved characters
       // eslint-disable-next-line no-control-regex
-      /[\x00-\x1f]/,   // Control characters
-      /\s/,            // Whitespace
+      /[\x00-\x1f]/, // Control characters
+      /\s/, // Whitespace
       /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i, // Windows reserved names
     ];
 
@@ -178,7 +191,7 @@ class IronManusStateGraphManager {
 
   /**
    * Get file system path for session state graph
-   * 
+   *
    * @private
    * @param sessionId - Unique session identifier
    * @returns Absolute path to session graph JSON file
@@ -197,7 +210,7 @@ class IronManusStateGraphManager {
 
   /**
    * Ensure session directory exists for state persistence
-   * 
+   *
    * @private
    * @param sessionId - Unique session identifier
    * @returns Promise resolving when directory is ready
@@ -218,14 +231,14 @@ class IronManusStateGraphManager {
     const sessionDir = `./iron-manus-sessions/${sessionId}`;
     try {
       await fs.mkdir(sessionDir, { recursive: true });
-    } catch (error) {
+    } catch (_error) {
       // Directory might already exist, which is fine
     }
   }
 
   /**
    * Load session state graph from persistent storage
-   * 
+   *
    * @private
    * @param sessionId - Unique session identifier
    * @returns Promise resolving to complete state graph
@@ -252,7 +265,11 @@ class IronManusStateGraphManager {
         { entities: [], relations: [] }
       );
     } catch (error) {
-      if (error instanceof Error && 'code' in error && (error as any).code === 'ENOENT') {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        (error as Error & { code: string }).code === 'ENOENT'
+      ) {
         return { entities: [], relations: [] };
       }
       throw error;
@@ -261,7 +278,7 @@ class IronManusStateGraphManager {
 
   /**
    * Save session state graph to persistent storage
-   * 
+   *
    * @private
    * @param sessionId - Unique session identifier
    * @param graph - Complete state graph to persist
@@ -285,7 +302,7 @@ class IronManusStateGraphManager {
 
   /**
    * Create new entities in session state graph
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param entities - Array of entities to create
    * @returns Promise resolving to array of successfully created entities
@@ -306,7 +323,7 @@ class IronManusStateGraphManager {
 
   /**
    * Create new state transitions in session graph
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param relations - Array of state transitions to create
    * @returns Promise resolving to array of successfully created transitions
@@ -333,7 +350,7 @@ class IronManusStateGraphManager {
 
   /**
    * Add observations to existing session entities
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param observations - Array of observations to add to entities
    * @returns Promise resolving to summary of added observations per entity
@@ -360,7 +377,7 @@ class IronManusStateGraphManager {
 
   /**
    * Delete entities from session state graph
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param entityNames - Array of entity names to delete
    * @returns Promise resolving when deletion is complete
@@ -377,7 +394,7 @@ class IronManusStateGraphManager {
 
   /**
    * Delete specific observations from session entities
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param deletions - Array specifying entities and observations to delete
    * @returns Promise resolving when deletion is complete
@@ -399,7 +416,7 @@ class IronManusStateGraphManager {
 
   /**
    * Delete specific state transitions from session graph
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param relations - Array of state transitions to delete
    * @returns Promise resolving when deletion is complete
@@ -421,7 +438,7 @@ class IronManusStateGraphManager {
 
   /**
    * Read complete session state graph
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @returns Promise resolving to complete state graph
    * @description Loads and returns entire session state graph
@@ -432,7 +449,7 @@ class IronManusStateGraphManager {
 
   /**
    * Search session nodes by text query
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param query - Search query string
    * @returns Promise resolving to filtered state graph
@@ -467,7 +484,7 @@ class IronManusStateGraphManager {
 
   /**
    * Open specific session nodes by name
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param names - Array of entity names to retrieve
    * @returns Promise resolving to filtered state graph
@@ -501,7 +518,7 @@ class IronManusStateGraphManager {
 
   /**
    * Initialize new FSM session with objective and role
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param objective - Session objective description
    * @param role - Detected user role for cognitive enhancement
@@ -525,7 +542,7 @@ class IronManusStateGraphManager {
 
   /**
    * Record FSM phase transition
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param fromPhase - Source FSM phase name
    * @param toPhase - Target FSM phase name
@@ -563,7 +580,7 @@ class IronManusStateGraphManager {
 
   /**
    * Record task creation within FSM session
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param taskId - Unique task identifier
    * @param content - Task content description
@@ -601,7 +618,7 @@ class IronManusStateGraphManager {
 
   /**
    * Update task status with timestamped observation
-   * 
+   *
    * @param sessionId - Unique session identifier
    * @param taskId - Unique task identifier
    * @param status - New task status
@@ -621,7 +638,7 @@ class IronManusStateGraphManager {
 /**
  * Singleton instance of Iron Manus State Graph Manager
  * Provides shared state management across all tool invocations
- * 
+ *
  * @const stateGraphManager
  * @description Global instance for consistent FSM state management
  */
@@ -629,22 +646,22 @@ const stateGraphManager = new IronManusStateGraphManager();
 
 /**
  * Iron Manus State Graph Tool
- * 
+ *
  * MCP tool interface for FSM state management with comprehensive graph operations.
  * Provides project-scoped state management for Iron Manus execution sessions.
- * 
+ *
  * Supported Operations:
  * - Entity management (create, delete, search)
  * - State transition tracking
  * - Observation management
  * - FSM-specific convenience methods
- * 
+ *
  * Integration Points:
  * - JARVIS FSM controller for phase transitions
  * - Task management system for todo tracking
  * - Role-based cognitive enhancement
  * - Performance monitoring and analytics
- * 
+ *
  * @class IronManusStateGraphTool
  * @extends BaseTool
  * @description MCP tool for comprehensive FSM state graph management
@@ -652,12 +669,12 @@ const stateGraphManager = new IronManusStateGraphManager();
 export class IronManusStateGraphTool extends BaseTool {
   /** Tool name identifier for MCP registration */
   readonly name = 'IronManusStateGraph';
-  
+
   /** Tool description for MCP discovery and usage */
   readonly description =
     'Project-scoped FSM state management using knowledge graphs. Manage sessions, phases, tasks, and transitions with isolated state per project.';
 
-  /** 
+  /**
    * JSON Schema for tool input validation
    * Defines comprehensive parameter structure for all FSM state operations
    */
@@ -777,14 +794,19 @@ export class IronManusStateGraphTool extends BaseTool {
 
   /**
    * Handle Iron Manus State Graph operations
-   * 
+   *
    * @param args - Tool arguments containing action and parameters
    * @returns Promise resolving to tool execution result
    * @throws Error if session_id missing or operation fails
    * @description Processes FSM state graph operations with comprehensive error handling
    */
-  async handle(args: any): Promise<ToolResult> {
-    const { action, session_id } = args;
+  async handle(args: unknown): Promise<ToolResult> {
+    if (!args || typeof args !== 'object') {
+      return this.createErrorResponse('Invalid arguments provided');
+    }
+
+    const argsObj = args as IronManusStateGraphArgs;
+    const { action, session_id } = argsObj;
 
     if (!session_id) {
       throw new Error('session_id is required for all Iron Manus State Graph operations');
@@ -795,7 +817,7 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'create_entities': {
           const newEntities = await stateGraphManager.createSessionEntities(
             session_id,
-            args.entities || []
+            argsObj.entities || []
           );
           return {
             content: [
@@ -810,7 +832,7 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'create_transitions': {
           const newTransitions = await stateGraphManager.createStateTransitions(
             session_id,
-            args.transitions || []
+            argsObj.transitions || []
           );
           return {
             content: [
@@ -825,7 +847,7 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'add_observations': {
           const addedObservations = await stateGraphManager.addSessionObservations(
             session_id,
-            args.observations || []
+            argsObj.observations || []
           );
           return {
             content: [
@@ -838,7 +860,7 @@ export class IronManusStateGraphTool extends BaseTool {
         }
 
         case 'delete_entities':
-          await stateGraphManager.deleteSessionEntities(session_id, args.entity_names || []);
+          await stateGraphManager.deleteSessionEntities(session_id, argsObj.entity_names || []);
           return {
             content: [
               {
@@ -849,7 +871,7 @@ export class IronManusStateGraphTool extends BaseTool {
           };
 
         case 'delete_observations':
-          await stateGraphManager.deleteSessionObservations(session_id, args.deletions || []);
+          await stateGraphManager.deleteSessionObservations(session_id, argsObj.deletions || []);
           return {
             content: [
               {
@@ -860,7 +882,7 @@ export class IronManusStateGraphTool extends BaseTool {
           };
 
         case 'delete_transitions':
-          await stateGraphManager.deleteStateTransitions(session_id, args.transitions || []);
+          await stateGraphManager.deleteStateTransitions(session_id, argsObj.transitions || []);
           return {
             content: [
               {
@@ -885,7 +907,7 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'search_nodes': {
           const searchResults = await stateGraphManager.searchSessionNodes(
             session_id,
-            args.query || ''
+            argsObj.query || ''
           );
           return {
             content: [
@@ -900,7 +922,7 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'open_nodes': {
           const openResults = await stateGraphManager.openSessionNodes(
             session_id,
-            args.names || []
+            argsObj.names || []
           );
           return {
             content: [
@@ -916,8 +938,8 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'initialize_session':
           await stateGraphManager.initializeSession(
             session_id,
-            args.objective || '',
-            args.role || ''
+            argsObj.objective || '',
+            argsObj.role || ''
           );
           return {
             content: [
@@ -931,14 +953,14 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'record_phase_transition':
           await stateGraphManager.recordPhaseTransition(
             session_id,
-            args.from_phase || '',
-            args.to_phase || ''
+            argsObj.from_phase || '',
+            argsObj.to_phase || ''
           );
           return {
             content: [
               {
                 type: 'text',
-                text: `Phase transition recorded: ${args.from_phase} → ${args.to_phase}`,
+                text: `Phase transition recorded: ${argsObj.from_phase} → ${argsObj.to_phase}`,
               },
             ],
           };
@@ -946,15 +968,15 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'record_task_creation':
           await stateGraphManager.recordTaskCreation(
             session_id,
-            args.task_id || '',
-            args.content || '',
-            args.priority || 'medium'
+            argsObj.task_id || '',
+            argsObj.content || '',
+            argsObj.priority || 'medium'
           );
           return {
             content: [
               {
                 type: 'text',
-                text: `Task ${args.task_id} created successfully`,
+                text: `Task ${argsObj.task_id} created successfully`,
               },
             ],
           };
@@ -962,14 +984,14 @@ export class IronManusStateGraphTool extends BaseTool {
         case 'update_task_status':
           await stateGraphManager.updateTaskStatus(
             session_id,
-            args.task_id || '',
-            args.status || ''
+            argsObj.task_id || '',
+            argsObj.status || ''
           );
           return {
             content: [
               {
                 type: 'text',
-                text: `Task ${args.task_id} status updated to: ${args.status}`,
+                text: `Task ${argsObj.task_id} status updated to: ${argsObj.status}`,
               },
             ],
           };

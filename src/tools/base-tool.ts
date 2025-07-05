@@ -5,7 +5,7 @@
 
 export interface ToolSchema {
   type: 'object';
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   required?: string[];
   additionalProperties?: boolean;
 }
@@ -47,13 +47,13 @@ export abstract class BaseTool {
   /**
    * Handle tool execution - must be implemented by concrete tools
    */
-  abstract handle(args: any): Promise<ToolResult>;
+  abstract handle(args: unknown): Promise<ToolResult>;
 
   /**
    * Validate tool arguments against schema
    */
-  protected validateArgs(args: any): void {
-    if (!args) {
+  protected validateArgs(args: unknown): void {
+    if (!args || typeof args !== 'object') {
       throw new Error(`Missing arguments for ${this.name} tool`);
     }
 
@@ -83,15 +83,32 @@ export abstract class BaseTool {
   }
 
   /**
-   * Create standardized error response
+   * Create standardized error response with metaprompting-first guidance
    */
   protected createErrorResponse(error: string | Error): ToolResult {
     const errorMessage = error instanceof Error ? error.message : error;
+    const metaPromptResponse = `# 🔍 Strategic Tool Error Analysis
+
+**Error Encountered**: ${errorMessage}
+
+## Cognitive Recalibration Questions
+
+🤔 **Assumption Check**: What assumptions about this tool's capabilities or your input might need revisiting?
+
+🎯 **Intent Clarification**: Are you using the right tool for your actual objective? What alternative approaches might better serve your goal?
+
+🔄 **Approach Refinement**: If you simplified your request or changed your perspective, what might become possible?
+
+🧠 **Learning Opportunity**: What is this error teaching you about the problem domain or tool design? How might this inform your strategy?
+
+## Strategic Next Steps
+Consider: Should you modify your approach, try a different tool, or reframe your objective entirely? What would success look like with a refined strategy?`;
+
     return {
       content: [
         {
           type: 'text',
-          text: `ERROR Tool Error: ${errorMessage}`,
+          text: metaPromptResponse,
         },
       ],
       isError: true,

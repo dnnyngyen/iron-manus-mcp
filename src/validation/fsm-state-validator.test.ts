@@ -2,13 +2,8 @@
 // Comprehensive testing with mock FSM state data and edge cases
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  FSMStateValidator,
-  createValidator,
-  validateFSMState,
-  ValidationConfig,
-} from './fsm-state-validator.js';
-import { SessionState, Phase, Role, TodoItem } from '../core/types.js';
+import { FSMStateValidator, createValidator } from './fsm-state-validator.js';
+import { SessionState, Phase, TodoItem } from '../core/types.js';
 
 describe('FSMStateValidator', () => {
   let validator: FSMStateValidator;

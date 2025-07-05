@@ -1,9 +1,9 @@
 /**
  * @fileoverview FSM Engine - Core 8-phase finite state machine implementation
- * 
+ *
  * This file contains the main FSM engine that orchestrates the 8-phase agent loop:
  * INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
- * 
+ *
  * The engine provides:
  * - Phase transition management with strict state validation
  * - Role-based cognitive enhancement through intelligent role detection
@@ -11,13 +11,13 @@
  * - Fractal task decomposition with meta-prompt extraction
  * - Session state management with graph-based persistence
  * - Performance tracking and reasoning effectiveness optimization
- * 
+ *
  * Key architectural patterns:
  * - Pure function design with dependency injection
  * - Immutable state transitions with validation
  * - Composable phase handlers with standardized interfaces
  * - Error recovery mechanisms with graceful degradation
- * 
+ *
  * @version 2.0.0
  * @since 1.0.0
  */
@@ -26,19 +26,12 @@ import {
   MessageJARVIS,
   FromJARVIS,
   Phase,
-  Role,
   MetaPrompt,
-  ComplexityLevel,
   APIUsageMetrics,
+  SessionState,
+  TodoItem,
 } from '../core/types.js';
-import {
-  
-  tokenBudgetOkay,
-  detectFractalDelegation,
-  recordCognitiveLoad,
-  KnowledgePhaseResult,
-  AutoConnectionDeps,
-} from './helpers.js';
+import { KnowledgePhaseResult, AutoConnectionDeps } from './helpers.js';
 import { isValidSessionId } from '../security/ssrfGuard.js';
 import {
   generateRoleEnhancedPrompt,
@@ -54,31 +47,28 @@ import {
   parseClaudeAPISelection,
   SAMPLE_API_REGISTRY,
 } from '../core/api-registry.js';
-import {
-  autoFetchAPIs,
-  autoSynthesize,
-  AUTO_CONNECTION_CONFIG,
-} from '../knowledge/autoConnection.js';
+// autoFetchAPIs, autoSynthesize, AUTO_CONNECTION_CONFIG removed as unused
 import {
   validateTaskCompletion,
   calculateTaskBreakdown,
   calculateCompletionPercentage,
 } from '../verification/metrics.js';
 import { CONFIG } from '../config.js';
+import logger from '../utils/logger.js';
 
 /**
  * Creates a finite state machine instance with dependency injection
- * 
+ *
  * Factory function that creates an FSM instance with injected dependencies for
  * auto-connection, API orchestration, and knowledge synthesis. Returns a configured
  * FSM interface with core processing functions.
- * 
+ *
  * @param deps - Auto-connection dependencies for API orchestration
  * @param deps.autoConnection - Function for automatic API knowledge gathering
  * @param deps.apiSearch - Function for intelligent API discovery
  * @param deps.validator - Function for API endpoint validation
  * @returns FSM instance with processing methods
- * 
+ *
  * @example
  * ```typescript
  * const fsm = createFSM({
@@ -99,23 +89,23 @@ export function createFSM(deps: AutoConnectionDeps) {
 
 /**
  * Core FSM state processing function - orchestrates the 8-phase agent loop
- * 
+ *
  * This is the main entry point for FSM processing that handles:
  * - Session initialization and role detection
  * - Phase transition logic with strict validation
  * - State persistence and error recovery
  * - System prompt generation with role enhancement
  * - Tool permission management per phase
- * 
+ *
  * The function implements the complete 8-phase loop:
  * INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
- * 
+ *
  * @param input - Incoming message from JARVIS with phase completion data
  * @param deps - Injected dependencies for auto-connection and API orchestration
  * @returns Promise resolving to FSM response with next phase and system prompt
- * 
+ *
  * @throws {Error} When session state is corrupted or phase transition fails
- * 
+ *
  * @example
  * ```typescript
  * const result = await processState({
@@ -171,8 +161,12 @@ export async function processState(
         if (session.payload.awaiting_role_selection && input.payload?.claude_response) {
           try {
             // Parse Claude's role selection
+            const claudeResponse = input.payload?.claude_response;
+            if (typeof claudeResponse !== 'string') {
+              throw new Error('Claude response must be a string');
+            }
             const claudeSelectedRole = parseClaudeRoleSelection(
-              input.payload.claude_response,
+              claudeResponse,
               session.initial_objective || ''
             );
 
@@ -180,9 +174,9 @@ export async function processState(
             session.detected_role = claudeSelectedRole;
             session.payload.awaiting_role_selection = false;
 
-            console.log(`SUCCESS Claude selected role: ${claudeSelectedRole}`);
+            logger.info(`SUCCESS Claude selected role: ${claudeSelectedRole}`);
           } catch (error) {
-            console.error('Error processing Claude role selection:', error);
+            logger.error('Error processing Claude role selection:', error);
             // Fall back to hardcoded role detection
             session.payload.awaiting_role_selection = false;
           }
@@ -220,7 +214,9 @@ export async function processState(
         if (input.payload?.plan_created) {
           session.payload.plan_created = true;
           // Process todos using proven regex-based extraction
-          const rawTodos = input.payload.todos_with_metaprompts || [];
+          const rawTodos = Array.isArray(input.payload?.todos_with_metaprompts)
+            ? input.payload.todos_with_metaprompts
+            : [];
           if (rawTodos.length > 0) {
             // Store todos directly - meta-prompt extraction happens during execution
             session.payload.current_todos = rawTodos;
@@ -275,7 +271,10 @@ export async function processState(
       current_objective: session.initial_objective,
       detected_role: session.detected_role,
       reasoning_effectiveness: session.reasoning_effectiveness,
-      phase_transition_count: (session.payload.phase_transition_count || 0) + 1,
+      phase_transition_count:
+        (typeof session.payload.phase_transition_count === 'number'
+          ? session.payload.phase_transition_count
+          : 0) + 1,
       ...session.payload,
     },
     status,
@@ -286,21 +285,21 @@ export async function processState(
 
 /**
  * Handles the KNOWLEDGE phase processing with multi-modal knowledge gathering
- * 
+ *
  * This function orchestrates knowledge acquisition through multiple pathways:
  * 1. Agent synthesis from pre-existing knowledge files
  * 2. Claude-powered API selection and auto-connection
  * 3. Fallback to manual research tools
- * 
+ *
  * The function prioritizes agent synthesis results when available, falling back
  * to API auto-connection and finally to manual research tool recommendations.
- * 
+ *
  * @param session - Current session state with payload and configuration
  * @param input - JARVIS input message with knowledge phase completion data
  * @param deps - Auto-connection dependencies for API orchestration
- * 
+ *
  * @throws {Error} When session workspace cannot be created or accessed
- * 
+ *
  * @example
  * ```typescript
  * await handleKnowledgePhase(session, {
@@ -310,15 +309,19 @@ export async function processState(
  * }, deps);
  * ```
  */
-async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: AutoConnectionDeps) {
+async function handleKnowledgePhase(
+  session: SessionState,
+  input: MessageJARVIS,
+  deps: AutoConnectionDeps
+) {
   // Initialize session workspace for agent communication
   const sessionId = input.session_id;
-  
+
   // Security: Validate session ID to prevent path traversal
   if (!isValidSessionId(sessionId)) {
     throw new Error(`Security: Invalid session ID format: ${sessionId}`);
   }
-  
+
   const sessionWorkspace = `./iron-manus-sessions/${sessionId}`;
 
   // Store session workspace path in payload for prompt variable substitution
@@ -337,11 +340,11 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
       session.payload.agent_orchestration_successful = true;
       session.payload.agent_workspace_used = sessionWorkspace;
 
-      console.log(`SUCCESS: Agent synthesis completed, knowledge gathered from ${synthesisFile}`);
+      logger.info(`SUCCESS: Agent synthesis completed, knowledge gathered from ${synthesisFile}`);
       return; // Skip traditional auto-connection if agent synthesis succeeded
     }
-  } catch (error) {
-    console.log(
+  } catch (_error) {
+    logger.debug(
       `No agent synthesis found at ${synthesisFile}, proceeding with traditional research`
     );
   }
@@ -350,10 +353,11 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
   if (session.payload.awaiting_api_selection && input.payload?.claude_response) {
     try {
       // Parse Claude's API selection
-      const claudeSelectedAPIs = parseClaudeAPISelection(
-        input.payload.claude_response,
-        SAMPLE_API_REGISTRY
-      );
+      const claudeResponse = input.payload?.claude_response;
+      if (typeof claudeResponse !== 'string') {
+        throw new Error('Claude response must be a string');
+      }
+      const claudeSelectedAPIs = parseClaudeAPISelection(claudeResponse, SAMPLE_API_REGISTRY);
 
       if (claudeSelectedAPIs.length > 0) {
         // Use Claude's intelligent selection for auto-connection
@@ -361,7 +365,10 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
         session.payload.awaiting_api_selection = false;
 
         // Proceed with auto-connection using Claude's selected APIs
-        const objective = session.payload.enhanced_goal || session.initial_objective || '';
+        const objective =
+          (typeof session.payload.enhanced_goal === 'string'
+            ? session.payload.enhanced_goal
+            : session.initial_objective) || '';
         const result: KnowledgePhaseResult = await deps.autoConnection(objective);
 
         session.payload.synthesized_knowledge = result.answer;
@@ -369,7 +376,7 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
         session.payload.knowledge_confidence = result.confidence;
       }
     } catch (error) {
-      console.error('Error processing Claude API selection:', error);
+      logger.error('Error processing Claude API selection:', error);
       // Fall back to hardcoded selection
       session.payload.awaiting_api_selection = false;
     }
@@ -396,21 +403,21 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
 
 /**
  * Executes auto-connection API orchestration with intelligent API selection
- * 
+ *
  * This function implements the core auto-connection logic that:
  * 1. Generates Claude-powered API selection prompts
  * 2. Discovers relevant APIs based on enhanced goal and role
  * 3. Executes parallel API fetching and knowledge synthesis
  * 4. Tracks performance metrics and success rates
- * 
+ *
  * The function provides graceful fallback mechanisms when auto-connection fails,
  * ensuring the system remains functional even with API failures.
- * 
+ *
  * @param session - Current session state with enhanced goal and role
  * @param deps - Auto-connection dependencies for API orchestration
- * 
+ *
  * @throws {Error} When API discovery completely fails (handled gracefully)
- * 
+ *
  * @example
  * ```typescript
  * await runAutoConnection(session, {
@@ -420,13 +427,15 @@ async function handleKnowledgePhase(session: any, input: MessageJARVIS, deps: Au
  * });
  * ```
  */
-async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
+async function runAutoConnection(session: SessionState, deps: AutoConnectionDeps) {
   try {
     const startTime = Date.now();
 
     // Generate API selection prompt for Claude
     const apiSelectionPrompt = generateAPISelectionPrompt(
-      session.payload.enhanced_goal,
+      typeof session.payload.enhanced_goal === 'string'
+        ? session.payload.enhanced_goal
+        : session.initial_objective,
       session.detected_role,
       SAMPLE_API_REGISTRY
     );
@@ -436,7 +445,12 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
     session.payload.awaiting_api_selection = true;
 
     // Fallback to hardcoded selection
-    const relevantAPIs = selectRelevantAPIs(session.payload.enhanced_goal, session.detected_role);
+    const relevantAPIs = selectRelevantAPIs(
+      typeof session.payload.enhanced_goal === 'string'
+        ? session.payload.enhanced_goal
+        : session.initial_objective,
+      session.detected_role
+    );
 
     // Store API discovery results in session payload
     session.payload.api_discovery_results = relevantAPIs;
@@ -460,7 +474,10 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
       // AUTO-CONNECTION: Automatically fetch and synthesize knowledge
       try {
         const autoConnectionStartTime = Date.now();
-        const objective = session.payload.enhanced_goal || session.initial_objective || '';
+        const objective =
+          (typeof session.payload.enhanced_goal === 'string'
+            ? session.payload.enhanced_goal
+            : session.initial_objective) || '';
 
         const result: KnowledgePhaseResult = await deps.autoConnection(objective);
 
@@ -471,10 +488,17 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
 
         // Update API usage metrics with auto-connection results
         const autoConnectionTime = Date.now() - autoConnectionStartTime;
-        session.payload.api_usage_metrics.apis_queried = relevantAPIs.length;
-        session.payload.api_usage_metrics.synthesis_confidence = result.confidence;
-        session.payload.api_usage_metrics.api_response_time = autoConnectionTime;
-        session.payload.api_usage_metrics.knowledge_synthesis_quality = result.confidence;
+        if (
+          !session.payload.api_usage_metrics ||
+          typeof session.payload.api_usage_metrics !== 'object'
+        ) {
+          session.payload.api_usage_metrics = {};
+        }
+        const metrics = session.payload.api_usage_metrics as Record<string, unknown>;
+        metrics.apis_queried = relevantAPIs.length;
+        metrics.synthesis_confidence = result.confidence;
+        metrics.api_response_time = autoConnectionTime;
+        metrics.knowledge_synthesis_quality = result.confidence;
 
         // Mark auto-connection as successful
         session.payload.auto_connection_successful = true;
@@ -485,7 +509,7 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
           contradictions_found: result.contradictions.length,
         };
       } catch (autoConnectionError) {
-        console.warn(
+        logger.warn(
           '[FSM-KNOWLEDGE] WARNING Auto-connection failed, falling back to manual mode:',
           autoConnectionError
         );
@@ -495,7 +519,14 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
         session.payload.synthesized_knowledge = `Auto-connection failed: ${autoConnectionError instanceof Error ? autoConnectionError.message : 'Unknown error'}. Manual API tools are still available.`;
         session.payload.knowledge_contradictions = [];
         session.payload.knowledge_confidence = 0;
-        session.payload.api_usage_metrics.knowledge_synthesis_quality = 0.0;
+        if (
+          !session.payload.api_usage_metrics ||
+          typeof session.payload.api_usage_metrics !== 'object'
+        ) {
+          session.payload.api_usage_metrics = {};
+        }
+        (session.payload.api_usage_metrics as Record<string, unknown>).knowledge_synthesis_quality =
+          0.0;
       }
     } else {
       session.payload.auto_connection_successful = false;
@@ -503,7 +534,7 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
         'No relevant APIs discovered for automatic knowledge gathering. Consider using manual research tools.';
     }
   } catch (error) {
-    console.warn(
+    logger.warn(
       '[FSM-KNOWLEDGE] API discovery failed, continuing with traditional knowledge gathering:',
       error
     );
@@ -513,13 +544,13 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
 
 /**
  * Initializes empty API fields for backward compatibility
- * 
+ *
  * This function ensures that session payload contains properly initialized
  * API-related fields when auto-connection is not available or fails.
  * Prevents undefined field errors in downstream processing.
- * 
+ *
  * @param session - Current session state to initialize
- * 
+ *
  * @example
  * ```typescript
  * initializeEmptyAPIFields(session);
@@ -527,7 +558,7 @@ async function runAutoConnection(session: any, deps: AutoConnectionDeps) {
  * // session.payload.api_usage_metrics = { apis_discovered: 0, ... }
  * ```
  */
-function initializeEmptyAPIFields(session: any) {
+function initializeEmptyAPIFields(session: SessionState) {
   session.payload.api_discovery_results = session.payload.api_discovery_results || [];
   session.payload.api_fetch_responses = session.payload.api_fetch_responses || [];
   session.payload.synthesized_knowledge = session.payload.synthesized_knowledge || '';
@@ -544,26 +575,26 @@ function initializeEmptyAPIFields(session: any) {
 
 /**
  * Handles the EXECUTE phase processing with fractal task iteration
- * 
+ *
  * This function manages the execution phase by:
  * 1. Storing execution results and updating reasoning effectiveness
  * 2. Tracking task progression through the todo list
  * 3. Implementing fractal iteration for complex task sequences
  * 4. Determining when to continue execution vs. move to verification
- * 
+ *
  * The function supports both linear task execution and fractal delegation
  * patterns where tasks can spawn sub-agents for specialized work.
- * 
+ *
  * @param session - Current session state with task tracking
  * @param input - JARVIS input message with execution results
  * @returns Next phase (EXECUTE for more tasks, VERIFY when complete)
- * 
+ *
  * @example
  * ```typescript
  * const nextPhase = handleExecutePhase(session, {
  *   session_id: "abc123",
  *   phase_completed: "EXECUTE",
- *   payload: { 
+ *   payload: {
  *     execution_success: true,
  *     current_task_index: 2,
  *     more_tasks_pending: false
@@ -571,7 +602,7 @@ function initializeEmptyAPIFields(session: any) {
  * });
  * ```
  */
-function handleExecutePhase(session: any, input: MessageJARVIS): Phase {
+function handleExecutePhase(session: SessionState, input: MessageJARVIS): Phase {
   // Store execution results and continue or move to verification
   if (input.payload) {
     Object.assign(session.payload, input.payload);
@@ -584,10 +615,15 @@ function handleExecutePhase(session: any, input: MessageJARVIS): Phase {
     }
 
     // Check if there are more tasks to execute (fractal iteration)
-    const currentTaskIndex = session.payload.current_task_index || 0;
-    const totalTasks = (session.payload.current_todos || []).length;
+    const currentTaskIndex =
+      typeof session.payload.current_task_index === 'number'
+        ? session.payload.current_task_index
+        : 0;
+    const totalTasks = Array.isArray(session.payload.current_todos)
+      ? session.payload.current_todos.length
+      : 0;
 
-    if (input.payload.more_tasks_pending || currentTaskIndex < totalTasks - 1) {
+    if (input.payload?.more_tasks_pending || currentTaskIndex < totalTasks - 1) {
       session.payload.current_task_index = currentTaskIndex + 1;
       return 'EXECUTE'; // Continue in EXECUTE phase
     } else {
@@ -600,43 +636,47 @@ function handleExecutePhase(session: any, input: MessageJARVIS): Phase {
 
 /**
  * Handles the VERIFY phase processing with intelligent rollback logic
- * 
+ *
  * This function implements comprehensive verification with:
  * 1. Strict completion percentage validation using metrics
  * 2. Intelligent rollback logic based on completion levels
  * 3. Failure context storage for debugging and recovery
  * 4. Adaptive retry strategies based on failure severity
- * 
+ *
  * The function determines whether to complete the FSM loop (DONE) or
  * rollback to appropriate phases based on verification results.
- * 
+ *
  * @param session - Current session state with task completion data
  * @param input - JARVIS input message with verification results
  * @param deps - Auto-connection dependencies (unused but required for signature)
  * @returns Next phase (DONE for success, PLAN/EXECUTE for rollback)
- * 
+ *
  * @example
  * ```typescript
  * const nextPhase = handleVerifyPhase(session, {
  *   session_id: "abc123",
  *   phase_completed: "VERIFY",
- *   payload: { 
+ *   payload: {
  *     verification_passed: true,
  *     task_completion_rate: 0.95
  *   }
  * }, deps);
  * ```
  */
-function handleVerifyPhase(session: any, input: MessageJARVIS, deps: AutoConnectionDeps): Phase {
+function handleVerifyPhase(
+  session: SessionState,
+  input: MessageJARVIS,
+  _deps: AutoConnectionDeps
+): Phase {
   // Enhanced verification with strict completion percentage validation
-  const verificationResult = validateTaskCompletion(session, input.payload);
+  const verificationResult = validateTaskCompletion(session, input.payload || {});
 
   if (verificationResult.isValid && input.payload?.verification_passed === true) {
     return 'DONE';
   } else {
     // Log validation failure details
-    console.warn(`Verification failed: ${verificationResult.reason}`);
-    console.warn(`Completion percentage: ${verificationResult.completionPercentage}%`);
+    logger.warn(`Verification failed: ${verificationResult.reason}`);
+    logger.warn(`Completion percentage: ${verificationResult.completionPercentage}%`);
 
     // Store verification failure context for rollback
     session.payload.verification_failure_reason = verificationResult.reason;
@@ -652,8 +692,12 @@ function handleVerifyPhase(session: any, input: MessageJARVIS, deps: AutoConnect
       return 'EXECUTE';
     } else {
       // Minor incompletion - retry previous task
-      if (session.payload.current_task_index > 0) {
-        session.payload.current_task_index = session.payload.current_task_index - 1;
+      const currentIndex =
+        typeof session.payload.current_task_index === 'number'
+          ? session.payload.current_task_index
+          : 0;
+      if (currentIndex > 0) {
+        session.payload.current_task_index = currentIndex - 1;
       }
       return 'EXECUTE';
     }
@@ -662,21 +706,21 @@ function handleVerifyPhase(session: any, input: MessageJARVIS, deps: AutoConnect
 
 /**
  * Generates comprehensive system prompts with role-based enhancement
- * 
+ *
  * This function creates dynamic system prompts that adapt to:
  * 1. Current phase requirements and constraints
  * 2. Detected user role and cognitive preferences
  * 3. Session context and accumulated knowledge
  * 4. Phase-specific tool permissions and guidance
- * 
+ *
  * The generated prompts include role-based cognitive amplification,
  * phase-specific context, and session variable substitution.
- * 
+ *
  * @param session - Current session state with role and objective
  * @param nextPhase - Target phase for prompt generation
  * @param input - JARVIS input message with session ID
  * @returns Enhanced system prompt with phase-specific context
- * 
+ *
  * @example
  * ```typescript
  * const prompt = generateSystemPrompt(session, 'EXECUTE', {
@@ -685,7 +729,11 @@ function handleVerifyPhase(session: any, input: MessageJARVIS, deps: AutoConnect
  * });
  * ```
  */
-function generateSystemPrompt(session: any, nextPhase: Phase, input: MessageJARVIS): string {
+function generateSystemPrompt(
+  session: SessionState,
+  nextPhase: Phase,
+  input: MessageJARVIS
+): string {
   // Generate role-enhanced system prompt with cognitive amplification
   const roleEnhancedPrompt = generateRoleEnhancedPrompt(
     nextPhase,
@@ -708,16 +756,16 @@ function generateSystemPrompt(session: any, nextPhase: Phase, input: MessageJARV
 
 /**
  * Adds phase-specific context to system prompts
- * 
+ *
  * This function enhances base system prompts with contextual information
  * specific to each phase of the FSM loop. Each phase receives tailored
  * context that guides Claude's behavior and tool usage.
- * 
+ *
  * @param prompt - Base system prompt to enhance
  * @param phase - Current phase requiring context
  * @param session - Session state containing relevant context data
  * @returns Enhanced prompt with phase-specific context
- * 
+ *
  * @example
  * ```typescript
  * const enhanced = addPhaseSpecificContext(
@@ -727,7 +775,7 @@ function generateSystemPrompt(session: any, nextPhase: Phase, input: MessageJARV
  * );
  * ```
  */
-function addPhaseSpecificContext(prompt: string, phase: Phase, session: any): string {
+function addPhaseSpecificContext(prompt: string, phase: Phase, session: SessionState): string {
   switch (phase) {
     case 'ENHANCE':
       if (session.payload.interpreted_goal) {
@@ -760,34 +808,38 @@ function addPhaseSpecificContext(prompt: string, phase: Phase, session: any): st
 
 /**
  * Adds knowledge phase specific context to system prompts
- * 
+ *
  * This function provides detailed context for the KNOWLEDGE phase including:
  * - Auto-connection results and API usage metrics
  * - Synthesized knowledge from automatic processing
  * - Fallback guidance when auto-connection fails
  * - Available manual research tools
- * 
+ *
  * @param prompt - Base system prompt to enhance
  * @param session - Session state with knowledge gathering results
  * @returns Enhanced prompt with knowledge phase context
  */
-function addKnowledgePhaseContext(prompt: string, session: any): string {
+function addKnowledgePhaseContext(prompt: string, session: SessionState): string {
   if (session.payload.auto_connection_successful) {
-    const metadata = session.payload.auto_connection_metadata;
+    const metadata = session.payload.auto_connection_metadata as
+      | Record<string, unknown>
+      | undefined;
+    const metrics = session.payload.api_usage_metrics as Record<string, unknown> | undefined;
     prompt += `\n\nAUTO-CONNECTION RESULTS:\n`;
-    prompt += `- APIs Discovered: ${session.payload.api_usage_metrics?.apis_discovered || 0}\n`;
+    prompt += `- APIs Discovered: ${metrics?.apis_discovered || 0}\n`;
     prompt += `- APIs Successfully Queried: ${metadata?.apis_successful || 0}/${metadata?.apis_attempted || 0}\n`;
-    prompt += `- Synthesis Confidence: ${((metadata?.synthesis_confidence || 0) * 100).toFixed(1)}%\n`;
+    prompt += `- Synthesis Confidence: ${((typeof metadata?.synthesis_confidence === 'number' ? metadata.synthesis_confidence : 0) * 100).toFixed(1)}%\n`;
     prompt += `- Processing Time: ${metadata?.total_processing_time || 0}ms\n`;
-    prompt += `- Sources Used: ${metadata?.sources_used?.join(', ') || 'None'}\n`;
-    if (metadata?.contradictions_found && metadata.contradictions_found > 0) {
+    prompt += `- Sources Used: ${Array.isArray(metadata?.sources_used) ? metadata.sources_used.join(', ') : 'None'}\n`;
+    if (typeof metadata?.contradictions_found === 'number' && metadata.contradictions_found > 0) {
       prompt += `- WARNING Contradictions Found: ${metadata.contradictions_found}\n`;
     }
     prompt += `\n**📄 AUTO-SYNTHESIZED KNOWLEDGE:**\n${session.payload.synthesized_knowledge || 'No knowledge synthesized'}`;
   } else if (session.payload.auto_connection_successful === false) {
     prompt += `\n\nWARNING AUTO-CONNECTION STATUS:\n`;
     prompt += `- Auto-connection failed or no relevant APIs found\n`;
-    prompt += `- APIs Discovered: ${session.payload.api_usage_metrics?.apis_discovered || 0}\n`;
+    const apiMetrics = session.payload.api_usage_metrics as Record<string, unknown> | undefined;
+    prompt += `- APIs Discovered: ${apiMetrics?.apis_discovered || 0}\n`;
     prompt += `- Fallback Message: ${session.payload.synthesized_knowledge || 'Manual research tools required'}\n`;
     prompt += `- Manual tools available: APISearch, MultiAPIFetch, KnowledgeSynthesize, WebSearch, WebFetch`;
   }
@@ -796,20 +848,23 @@ function addKnowledgePhaseContext(prompt: string, session: any): string {
 
 /**
  * Adds execute phase specific context to system prompts
- * 
+ *
  * This function provides detailed context for the EXECUTE phase including:
  * - Current task progression and todo list status
  * - Reasoning effectiveness tracking
  * - Fractal execution protocol guidance
  * - Single tool per iteration constraints
- * 
+ *
  * @param prompt - Base system prompt to enhance
  * @param session - Session state with execution context
  * @returns Enhanced prompt with execute phase context
  */
-function addExecutePhaseContext(prompt: string, session: any): string {
-  const currentTaskIndex = session.payload.current_task_index || 0;
-  const currentTodos = session.payload.current_todos || [];
+function addExecutePhaseContext(prompt: string, session: SessionState): string {
+  const currentTaskIndex =
+    typeof session.payload.current_task_index === 'number' ? session.payload.current_task_index : 0;
+  const currentTodos = Array.isArray(session.payload.current_todos)
+    ? session.payload.current_todos
+    : [];
   const currentTodo = currentTodos[currentTaskIndex];
 
   prompt += `\n\nEXECUTION CONTEXT:\n- Current Task Index: ${currentTaskIndex}\n- Total Tasks: ${currentTodos.length}\n- Current Task: ${currentTodo || 'None'}\n- Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Objective: ${session.initial_objective}`;
@@ -822,26 +877,29 @@ function addExecutePhaseContext(prompt: string, session: any): string {
 
 /**
  * Adds verify phase specific context to system prompts
- * 
+ *
  * This function provides comprehensive context for the VERIFY phase including:
  * - Task completion metrics and breakdown analysis
  * - Critical task tracking and completion status
  * - Verification requirements and success criteria
  * - Previous failure context for debugging
- * 
+ *
  * @param prompt - Base system prompt to enhance
  * @param session - Session state with verification context
  * @returns Enhanced prompt with verify phase context
  */
-function addVerifyPhaseContext(prompt: string, session: any): string {
-  const todos = session.payload.current_todos || [];
+function addVerifyPhaseContext(prompt: string, session: SessionState): string {
+  const todos = Array.isArray(session.payload.current_todos) ? session.payload.current_todos : [];
   const taskBreakdown = calculateTaskBreakdown(todos);
   const completionPercentage = calculateCompletionPercentage(taskBreakdown);
   const criticalTasks = todos.filter(
-    (todo: any) => todo.priority === 'high' || todo.type === 'TaskAgent' || todo.meta_prompt
+    (todo: TodoItem) =>
+      todo.priority === 'high' ||
+      todo.type === 'TaskAgent' ||
+      ('meta_prompt' in todo && todo.meta_prompt)
   );
   const criticalTasksCompleted = criticalTasks.filter(
-    (todo: any) => todo.status === 'completed'
+    (todo: TodoItem) => todo.status === 'completed'
   ).length;
 
   prompt += `\n\nVERIFICATION CONTEXT:\n- Original Objective: ${session.initial_objective}\n- Final Reasoning Effectiveness: ${(session.reasoning_effectiveness * 100).toFixed(1)}%\n- Role Applied: ${session.detected_role}`;
@@ -857,16 +915,16 @@ function addVerifyPhaseContext(prompt: string, session: any): string {
 
 /**
  * Extracts meta-prompt specifications from todo content using regex patterns
- * 
+ *
  * This function parses todo content to extract fractal agent specifications
  * using the format: (ROLE: role) (CONTEXT: context) (PROMPT: prompt) (OUTPUT: output)
- * 
+ *
  * When a meta-prompt is detected, it enables Task() agent spawning in the
  * EXECUTE phase for specialized task delegation.
- * 
+ *
  * @param todoContent - Raw todo text content to parse
  * @returns Extracted meta-prompt object or null if no pattern found
- * 
+ *
  * @example
  * ```typescript
  * const metaPrompt = extractMetaPromptFromTodo(
@@ -896,20 +954,20 @@ export function extractMetaPromptFromTodo(todoContent: string): MetaPrompt | nul
 
 /**
  * Updates session reasoning effectiveness based on task performance
- * 
+ *
  * This function implements adaptive reasoning effectiveness tracking that:
  * - Increases effectiveness on successful task completion
  * - Decreases effectiveness on task failures
  * - Applies different multipliers based on task complexity
  * - Maintains effectiveness bounds (0.3 to 1.0)
- * 
+ *
  * The reasoning effectiveness influences cognitive load calculations
  * and system prompt generation for enhanced performance.
- * 
+ *
  * @param sessionId - Session identifier for state management
  * @param success - Whether the task was completed successfully
  * @param taskComplexity - Task complexity level affecting update magnitude
- * 
+ *
  * @example
  * ```typescript
  * updateReasoningEffectiveness("session123", true, "complex");

@@ -28,6 +28,8 @@ temp-files/
 archive1/
 *.tmp
 *.temp
+lint_output.txt
+iron-manus-sessions/assessment-report.md
 
 # IDE and editor files
 .vscode/
@@ -85,3 +87,4 @@ jest.config.js
 
 # Hooks (unless needed for project)
 hooks/dist/
+# .env file removed from git for security

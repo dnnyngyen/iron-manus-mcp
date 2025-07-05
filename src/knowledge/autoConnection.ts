@@ -1,11 +1,12 @@
 // Auto-connection module for KNOWLEDGE phase
 // Handles API discovery, fetching, and knowledge synthesis
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import pLimit from 'p-limit';
 import { rateLimiter } from '../core/api-registry.js';
-import { APIUsageMetrics } from '../core/types.js';
+// APIUsageMetrics removed as unused
+import logger from '../utils/logger.js';
 import { CONFIG } from '../config.js';
-import { ssrfGuard, validateAndSanitizeURL } from '../security/ssrfGuard.js';
+import { validateAndSanitizeURL } from '../security/ssrfGuard.js';
 
 // Auto-connection configuration using centralized config
 export const AUTO_CONNECTION_CONFIG = {
@@ -66,7 +67,7 @@ export async function autoFetchAPIs(
   // Use p-limit for better concurrency control
   const limit = pLimit(maxConcurrent);
 
-  const fetchPromises = apiUrls.slice(0, 5).map((url, index) =>
+  const fetchPromises = apiUrls.slice(0, 5).map((url, _index) =>
     limit(async () => {
       try {
         const startTime = Date.now();
@@ -217,7 +218,7 @@ export async function autoSynthesize(
   const contradictions: string[] = [];
 
   // Create weighted synthesis
-  validResponses.forEach((response, index) => {
+  validResponses.forEach((response, _index) => {
     const weight =
       response.confidence > 0.7 ? 'High' : response.confidence > 0.5 ? 'Medium' : 'Low';
     contentParts.push(
@@ -345,7 +346,7 @@ export async function autoConnection(
       confidence: synthesisResult.overallConfidence,
     };
   } catch (error) {
-    console.warn('Auto-connection failed:', error);
+    logger.warn('Auto-connection failed:', error);
     return {
       answer: `Auto-connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       contradictions: [],

@@ -2,6 +2,7 @@
 // Intelligent API discovery and selection system with role-based mapping and rate limiting
 
 import { Role } from './types.js';
+import logger from '../utils/logger.js';
 
 /**
  * API Endpoint Interface
@@ -1027,7 +1028,7 @@ export function parseMarkdownAPITable(markdownContent: string): APIEndpoint[] {
       }
     }
   } catch (error) {
-    console.error('Error parsing markdown API table:', error);
+    logger.error('Error parsing markdown API table:', error);
   }
 
   return apis;
@@ -1084,7 +1085,7 @@ function parseMarkdownTableRow(row: string): APIEndpoint | null {
       rate_limits: generateDefaultRateLimits(authType),
     };
   } catch (error) {
-    console.error('Error parsing markdown table row:', error);
+    logger.error('Error parsing markdown table row:', error);
     return null;
   }
 }
@@ -1341,14 +1342,14 @@ export function parseClaudeAPISelection(
     // Extract JSON from Claude's response
     const jsonMatch = claudeResponse.match(/```json\s*([\s\S]*?)\s*```/);
     if (!jsonMatch) {
-      console.warn('No JSON found in Claude response, falling back to hardcoded selection');
+      logger.warn('No JSON found in Claude response, falling back to hardcoded selection');
       return [];
     }
 
     const selectedAPIs = JSON.parse(jsonMatch[1]);
 
     if (!Array.isArray(selectedAPIs)) {
-      console.warn('Claude response is not an array, falling back');
+      logger.warn('Claude response is not an array, falling back');
       return [];
     }
 
@@ -1369,7 +1370,7 @@ export function parseClaudeAPISelection(
 
     return results;
   } catch (error) {
-    console.error('Error parsing Claude API selection:', error);
+    logger.error('Error parsing Claude API selection:', error);
     return [];
   }
 }

@@ -1,31 +1,31 @@
 /**
  * @fileoverview Verification and Metrics System
- * 
+ *
  * This module provides comprehensive task completion validation and performance tracking
  * for the Iron Manus MCP VERIFY phase. It implements strict validation rules to ensure
  * task completion quality and tracks reasoning effectiveness metrics.
- * 
+ *
  * Key Features:
  * - Multi-tier validation rules for task completion
  * - Critical task identification and validation
  * - Performance metrics calculation and tracking
  * - Reasoning effectiveness scoring
  * - Integration with FSM VERIFY phase
- * 
+ *
  * @module verification/metrics
  * @version 0.2.4
  * @since 0.1.0
  */
 
-import { VerificationResult, TodoItem } from '../core/types.js';
+import { VerificationResult, TodoItem, SessionState } from '../core/types.js';
 import { CONFIG } from '../config.js';
 
 /**
  * Interface for task breakdown statistics
- * 
+ *
  * Provides structured data about task completion status across all categories.
  * Used for calculating completion percentages and validation metrics.
- * 
+ *
  * @interface TaskBreakdown
  * @since 0.1.0
  */
@@ -42,12 +42,12 @@ export interface TaskBreakdown {
 
 /**
  * Validates task completion using comprehensive multi-tier validation rules
- * 
+ *
  * This is the primary validation function for the VERIFY phase, implementing
  * strict completion requirements and quality thresholds. It evaluates task
  * completion across multiple dimensions including critical task completion,
  * overall completion percentage, and execution success rates.
- * 
+ *
  * Validation Rules:
  * 1. 100% critical task completion required (high priority, meta-prompt tasks)
  * 2. Minimum overall completion threshold (configurable via CONFIG)
@@ -55,11 +55,11 @@ export interface TaskBreakdown {
  * 4. All in-progress tasks must be resolved
  * 5. Execution success rate must meet threshold
  * 6. Verification payload consistency check
- * 
+ *
  * @param session - Current FSM session containing todos and metadata
  * @param verificationPayload - Verification data from VERIFY phase
  * @returns {VerificationResult} Comprehensive validation result with metrics
- * 
+ *
  * @example
  * ```typescript
  * const result = validateTaskCompletion(session, verificationPayload);
@@ -69,12 +69,16 @@ export interface TaskBreakdown {
  *   console.log(`Validation failed: ${result.reason}`);
  * }
  * ```
- * 
+ *
  * @since 0.1.0
  */
-export function validateTaskCompletion(session: any, verificationPayload: any): VerificationResult {
-  const todos = session.payload.current_todos || [];
-  const currentTaskIndex = session.payload.current_task_index || 0;
+export function validateTaskCompletion(
+  session: SessionState,
+  verificationPayload: Record<string, unknown>
+): VerificationResult {
+  const todos = Array.isArray(session.payload.current_todos)
+    ? (session.payload.current_todos as TodoItem[])
+    : [];
 
   // Calculate task completion metrics
   const taskBreakdown = calculateTaskBreakdown(todos);
@@ -82,10 +86,13 @@ export function validateTaskCompletion(session: any, verificationPayload: any): 
 
   // Identify critical tasks (high priority or meta-prompt tasks)
   const criticalTasks = todos.filter(
-    (todo: any) => todo.priority === 'high' || todo.type === 'TaskAgent' || todo.meta_prompt
+    (todo: TodoItem) =>
+      todo.priority === 'high' ||
+      todo.type === 'TaskAgent' ||
+      ('meta_prompt' in todo && todo.meta_prompt)
   );
   const criticalTasksCompleted = criticalTasks.filter(
-    (todo: any) => todo.status === 'completed'
+    (todo: TodoItem) => todo.status === 'completed'
   ).length;
 
   // Strict validation rules
@@ -112,7 +119,7 @@ export function validateTaskCompletion(session: any, verificationPayload: any): 
 
   // Rule 3: No pending high-priority tasks
   const pendingHighPriority = todos.filter(
-    (todo: any) => todo.status === 'pending' && todo.priority === 'high'
+    (todo: TodoItem) => todo.status === 'pending' && todo.priority === 'high'
   );
   if (pendingHighPriority.length > 0) {
     result.reason = `${pendingHighPriority.length} high-priority tasks still pending.`;
@@ -120,7 +127,7 @@ export function validateTaskCompletion(session: any, verificationPayload: any): 
   }
 
   // Rule 4: All in-progress tasks must be resolved
-  const inProgressTasks = todos.filter((todo: any) => todo.status === 'in_progress');
+  const inProgressTasks = todos.filter((todo: TodoItem) => todo.status === 'in_progress');
   if (inProgressTasks.length > 0) {
     result.reason = `${inProgressTasks.length} tasks still in progress. All tasks must be completed or explicitly marked as pending.`;
     return result;
@@ -151,23 +158,23 @@ export function validateTaskCompletion(session: any, verificationPayload: any): 
 
 /**
  * Calculates detailed task breakdown statistics from todo list
- * 
+ *
  * Analyzes the current todo list to provide comprehensive statistics about
  * task completion status. This function categorizes tasks by their status
  * and provides the foundation for completion percentage calculations.
- * 
+ *
  * @param todos - Array of todo items with status information
  * @returns {TaskBreakdown} Detailed breakdown of task completion statistics
- * 
+ *
  * @example
  * ```typescript
  * const breakdown = calculateTaskBreakdown(session.payload.current_todos);
  * console.log(`${breakdown.completed}/${breakdown.total} tasks completed`);
  * ```
- * 
+ *
  * @since 0.1.0
  */
-export function calculateTaskBreakdown(todos: any[]): TaskBreakdown {
+export function calculateTaskBreakdown(todos: TodoItem[]): TaskBreakdown {
   const breakdown = {
     completed: 0,
     in_progress: 0,
@@ -194,21 +201,21 @@ export function calculateTaskBreakdown(todos: any[]): TaskBreakdown {
 
 /**
  * Calculates completion percentage from task breakdown statistics
- * 
+ *
  * Computes the percentage of completed tasks based on the provided breakdown.
  * Handles edge cases such as empty task lists and rounds to nearest integer
  * for consistent reporting.
- * 
+ *
  * @param breakdown - Task breakdown statistics from calculateTaskBreakdown
  * @returns {number} Completion percentage (0-100, rounded to nearest integer)
- * 
+ *
  * @example
  * ```typescript
  * const breakdown = calculateTaskBreakdown(todos);
  * const percentage = calculateCompletionPercentage(breakdown);
  * console.log(`Project is ${percentage}% complete`);
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export function calculateCompletionPercentage(breakdown: TaskBreakdown): number {
@@ -218,35 +225,35 @@ export function calculateCompletionPercentage(breakdown: TaskBreakdown): number 
 
 /**
  * Updates reasoning effectiveness metrics based on task completion success
- * 
+ *
  * Tracks and adjusts the reasoning effectiveness score based on task completion
  * outcomes. This metric influences future validation decisions and provides
  * feedback on the quality of task execution. The score is adjusted based on
  * success/failure and task complexity.
- * 
+ *
  * Performance Tracking:
  * - Success increases effectiveness (complex tasks have higher impact)
  * - Failure decreases effectiveness (complex tasks have higher penalty)
  * - Bounded by configured min/max effectiveness thresholds
  * - Used in validation rules for execution success rate checks
- * 
+ *
  * @param session - Current FSM session to update effectiveness score
  * @param success - Whether the task was completed successfully
  * @param taskComplexity - Task complexity level affecting score multiplier
- * 
+ *
  * @example
  * ```typescript
  * // Update for successful complex task
  * updateReasoningEffectiveness(session, true, 'complex');
- * 
+ *
  * // Update for failed simple task
  * updateReasoningEffectiveness(session, false, 'simple');
  * ```
- * 
+ *
  * @since 0.1.0
  */
 export function updateReasoningEffectiveness(
-  session: any,
+  session: SessionState,
   success: boolean,
   taskComplexity: 'simple' | 'complex' = 'simple'
 ): void {

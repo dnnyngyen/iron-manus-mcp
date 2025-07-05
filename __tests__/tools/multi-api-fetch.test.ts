@@ -41,7 +41,7 @@ describe('MultiAPIFetch Tool', () => {
   describe('Tool Definition', () => {
     it('should have correct tool metadata', () => {
       expect(tool.name).toBe('MultiAPIFetch');
-      expect(tool.description).toContain('Parallel HTTP requests');
+      expect(tool.description).toContain('Strategic knowledge synthesis');
       expect(tool.inputSchema).toBeDefined();
       expect(tool.inputSchema.type).toBe('object');
       expect(tool.inputSchema.required).toEqual(['api_endpoints']);
