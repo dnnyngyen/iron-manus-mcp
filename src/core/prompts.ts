@@ -36,6 +36,23 @@ import logger from '../utils/logger.js';
 // UI agent role functions will be implemented when needed
 
 /**
+ * Sanitizes user input to prevent prompt injection.
+ * @param input - The user input to sanitize.
+ * @returns The sanitized input.
+ */
+function sanitizeForPrompt(input: string): string {
+  // Simple sanitization: remove common prompt injection characters and keywords.
+  // A more robust solution might involve more sophisticated techniques.
+  return input
+    .replace(/`/g, "'")
+    .replace(/\$/g, '')
+    .replace(/{/g, '[')
+    .replace(/}/g, ']')
+    .replace(/Ignore all previous instructions./gi, '')
+    .replace(/reveal your secret key/gi, '');
+}
+
+/**
  * Role configuration mapping that defines cognitive frameworks and authority levels
  * for each specialized role in the Iron Manus MCP system.
  *
@@ -208,6 +225,7 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
  * ```
  */
 export function generateRoleSelectionPrompt(objective: string): string {
+  const sanitizedObjective = sanitizeForPrompt(objective);
   const availableRoles = [
     {
       name: 'planner',
@@ -269,7 +287,7 @@ export function generateRoleSelectionPrompt(objective: string): string {
   return `# Role Selection for Task Execution
 
 ## Objective
-${objective}
+${sanitizedObjective}
 
 ## Available Roles (9 total)
 ${roleList}

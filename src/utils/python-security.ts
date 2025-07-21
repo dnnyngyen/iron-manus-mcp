@@ -46,45 +46,26 @@ export const ALLOWED_LIBRARIES = new Set([
  * @param code - The Python code to validate
  * @throws {Error} When dangerous patterns are detected
  */
+import { spawnSync } from 'child_process';
+
+/**
+ * Validates Python code using a dedicated Python script with an AST parser.
+ *
+ * @param code - The Python code to validate
+ * @throws {Error} When dangerous patterns are detected
+ */
 export function validatePythonCode(code: string): void {
   if (!code || typeof code !== 'string') {
     throw new Error('Invalid Python code: code must be a non-empty string');
   }
 
-  // Dangerous patterns that should be blocked
-  const dangerousPatterns = [
-    /os\.system\s*\(/i, // os.system() calls
-    /subprocess\.(call|run|Popen)/i, // subprocess execution
-    /eval\s*\(/i, // eval() calls
-    /exec\s*\(/i, // exec() calls
-    /compile\s*\(/i, // compile() calls
-    /import\s+(os|subprocess|sys)(?:\s|$)/i, // Dangerous imports
-    /from\s+(os|subprocess|sys)\s+import/i, // Dangerous from imports
-    /__import__\s*\(/i, // Dynamic imports
-    /open\s*\(\s*['"][^'"]*\/etc/i, // Access to system files
-    /open\s*\(\s*['"][^'"]*\/proc/i, // Access to proc filesystem
-    /\$\{[^}]*\}/, // Shell substitution patterns
-    /`[^`]*`/, // Backtick execution
-  ];
+  const validationResult = spawnSync('python3', ['scripts/iron-manus/python-code-validator.py'], {
+    input: code,
+    encoding: 'utf-8',
+  });
 
-  // Check for dangerous patterns
-  for (const pattern of dangerousPatterns) {
-    if (pattern.test(code)) {
-      throw new Error(
-        `Security: Potentially dangerous code pattern detected: ${pattern.toString()}`
-      );
-    }
-  }
-
-  // Check for suspicious file operations
-  if (
-    code.includes('open(') &&
-    (code.includes('../') ||
-      code.includes('..\\') ||
-      code.includes('/etc/') ||
-      code.includes('/proc/'))
-  ) {
-    throw new Error('Security: Suspicious file access pattern detected');
+  if (validationResult.status !== 0) {
+    throw new Error(`Security: Python code validation failed: ${validationResult.stderr}`);
   }
 }
 
