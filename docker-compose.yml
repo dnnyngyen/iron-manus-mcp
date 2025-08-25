@@ -1,9 +1,11 @@
+version: '3.8'
+
 services:
   iron-manus-mcp:
     build:
       context: .
       dockerfile: Dockerfile
-    image: iron-manus-mcp:latest
+    image: dnnyngyen/iron-manus-mcp:latest
     container_name: iron-manus-mcp
     restart: unless-stopped
     

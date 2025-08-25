@@ -179,9 +179,10 @@ This project uses knowledge graph state management. If you see files like `iron_
 See [LEGACY_PREVENTION.md](./docs/LEGACY_PREVENTION.md) for details.
 
 **For MCP Integration:**
-Add to your MCP client configuration or register with Claude Code:
+
+Local installation with Claude Code:
 ```bash
-# Register with Claude Code (adjust path as needed)
+# From the project directory after building
 claude mcp add iron-manus-mcp node dist/index.js
 
 # Or add to MCP client settings.json:
@@ -291,6 +292,36 @@ docker stop iron-manus-mcp && docker rm iron-manus-mcp
 > **Note**: Source code v0.2.4 includes comprehensive JSDoc documentation improvements.
 > Docker images will be updated to v0.2.4 in the next release.
 
+### MCP Integration with Docker
+
+**Note:** The `claude mcp add` command doesn't support complex Docker arguments. To use Iron Manus MCP with Docker in Claude Code, you need to manually add it to your configuration file.
+
+Edit your Claude Code configuration file (typically `~/.config/claude/claude_config.json` or `~/Library/Application Support/Claude/claude_config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "iron-manus-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "ALLOWED_HOSTS=api.github.com,httpbin.org",
+        "iron-manus-mcp:local"
+      ]
+    }
+  }
+}
+```
+
+**Note:** Replace `iron-manus-mcp:local` with:
+- `iron-manus-mcp:local` - if you built it locally with `docker build -t iron-manus-mcp:local .`
+- `dnnyngyen/iron-manus-mcp:latest` - once the image is published to Docker Hub
+
+After adding this configuration, restart Claude Code for the changes to take effect.
+
 ## Example Usage
 
 **Input:**
@@ -361,6 +392,8 @@ USER_AGENT="Iron-Manus-MCP/0.2.4"    # Service identification
 - ⚡ **Optimized Dev Experience** - Incremental TypeScript compilation with parallel tools
 - 🔧 **Enhanced ESLint Rules** - Strict type checking and code quality enforcement
 - 🚀 **Parallel Script Execution** - Run lint, format, and tests concurrently
+
+See the complete list of configuration options in the [docker-compose.yml](docker-compose.yml) file.
 
 ## Testing
 
