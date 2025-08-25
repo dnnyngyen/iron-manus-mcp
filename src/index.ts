@@ -25,6 +25,104 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { toolRegistry } from './tools/index.js';
 import { validateConfig } from './config.js';
+import { ToolResult } from './tools/base-tool.js';
+import * as fs from 'fs';
+import * as path from 'path';
+
+/**
+ * Legacy File Protection System
+ *
+ * Prevents legacy JSON files from being created by immediately detecting and removing them.
+ * This system runs continuously to protect against any legacy processes or code that might
+ * try to create iron_manus_*.json files.
+ */
+const LEGACY_FILE_PATTERNS = [
+  'iron_manus_component_cognitive_duality.json',
+  'iron_manus_state.json',
+  'iron_manus_unified_constraints.json',
+  'iron_manus_performance_archive.json',
+];
+
+function isLegacyFile(filename: string): boolean {
+  return LEGACY_FILE_PATTERNS.includes(filename) || /^iron_manus_.*\.json$/.test(filename);
+}
+
+async function removeLegacyFile(filePath: string): Promise<void> {
+  try {
+    if (fs.existsSync(filePath)) {
+      await fs.promises.unlink(filePath);
+      console.warn(`🗑️  [RUNTIME PROTECTION] Removed legacy file: ${path.basename(filePath)}`);
+    }
+  } catch (error) {
+    console.error(`❌ [RUNTIME PROTECTION] Could not remove legacy file ${filePath}:`, error);
+  }
+}
+
+async function startLegacyFileProtection(): Promise<void> {
+  const projectRoot = process.cwd();
+
+  // Initial cleanup
+  try {
+    const files = await fs.promises.readdir(projectRoot);
+    await Promise.all(
+      files.map(async file => {
+        if (isLegacyFile(file)) {
+          await removeLegacyFile(path.join(projectRoot, file));
+        }
+      })
+    );
+  } catch (error) {
+    console.error('❌ [RUNTIME PROTECTION] Error during initial cleanup:', error);
+  }
+
+  // Start filesystem watcher
+  try {
+    fs.watch(projectRoot, { persistent: false }, (eventType, filename) => {
+      if (filename && isLegacyFile(filename)) {
+        console.warn(`🚨 [RUNTIME PROTECTION] Legacy file detected: ${filename}`);
+        setTimeout(() => {
+          removeLegacyFile(path.join(projectRoot, filename));
+        }, 100);
+      }
+    });
+
+    console.log('🛡️  [RUNTIME PROTECTION] Legacy file protection active');
+  } catch (error) {
+    console.error('❌ [RUNTIME PROTECTION] Could not start filesystem watcher:', error);
+  }
+
+  // Periodic cleanup every 30 seconds
+  setInterval(async () => {
+    try {
+      const files = await fs.promises.readdir(projectRoot);
+      await Promise.all(
+        files.map(async file => {
+          if (isLegacyFile(file)) {
+            await removeLegacyFile(path.join(projectRoot, file));
+          }
+        })
+      );
+    } catch (error) {
+      // Silent fail for periodic cleanup
+    }
+  }, 30000);
+}
+
+/**
+ * Converts ToolResult to MCP CallToolResult format
+ *
+ * The MCP protocol expects a specific response format that matches our ToolResult interface.
+ * This function ensures type safety while maintaining protocol compliance.
+ *
+ * @param toolResult - The result from tool execution
+ * @returns MCP-compliant response object
+ */
+function convertToolResultToMCPResponse(toolResult: ToolResult) {
+  return {
+    content: toolResult.content,
+    isError: toolResult.isError,
+  };
+}
 
 /**
  * MCP Server Instance
@@ -97,12 +195,12 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
   try {
     // Execute tool through registry
     const result = await toolRegistry.executeTool(name, args);
-    return result as any; // TODO: Fix typing
+    return convertToolResultToMCPResponse(result);
   } catch (error) {
     console.error(`Tool execution error for ${name}:`, error);
 
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return {
+    const errorResult: ToolResult = {
       content: [
         {
           type: 'text',
@@ -111,6 +209,7 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
       ],
       isError: true,
     };
+    return convertToolResultToMCPResponse(errorResult);
   }
 });
 
@@ -150,6 +249,9 @@ export function createServer() {
  * - Logs configuration errors for debugging
  */
 if (process.env.NODE_ENV !== 'test') {
+  // Start legacy file protection immediately
+  startLegacyFileProtection().catch(console.error);
+
   // Validate configuration before starting server
   const configValidation = validateConfig();
   if (!configValidation.valid) {

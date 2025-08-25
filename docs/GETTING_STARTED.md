@@ -1,11 +1,11 @@
-# Getting Started with Iron Manus MCP v0.2.4
+# Getting Started with Iron Manus MCP
 ## Quick Start Guide
 
 ### What You'll Learn
 - How to use the JARVIS FSM controller
 - Understanding the 8-phase workflow (INIT→QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY→DONE)
-- Tool orchestration and API registry usage
-- Testing and development workflow
+- Using unified tools (APITaskAgent, PythonComputationalTool)
+- Basic workflow and development patterns
 
 ---
 
@@ -115,7 +115,9 @@ INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DON
 
 **KNOWLEDGE**:
 - Gathers any needed information (research, documentation, data analysis)
-- Can use WebSearch, WebFetch, or Python analysis
+- Can use APITaskAgent for structured data research
+- Can use PythonComputationalTool for data analysis
+- Can use WebSearch, WebFetch for general research
 - Skips if no research needed
 
 **PLAN**:
@@ -126,6 +128,7 @@ INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DON
 **EXECUTE**:
 - Iterates through tasks one by one
 - Direct execution for simple tasks (Bash, Read, Write, Edit)
+- Uses PythonComputationalTool for all Python operations
 - Spawns Task() agents for meta-prompted tasks
 - Single tool per iteration, reports back each time
 
@@ -219,17 +222,17 @@ Good: "Create a React dashboard with user authentication and real-time data visu
 1. **Setup tasks**: Direct execution (file creation, package initialization)
 2. **Architecture**: ui_architect agent for design decisions
 3. **Implementation**: coder agents for complex features
-4. **Testing**: analyzer agents for quality assessment
+4. **Testing**: PythonComputationalTool or analyzer agents for quality assessment
 
 ### Analysis Projects  
-1. **Data gathering**: Direct execution or research agents
-2. **Analysis**: analyzer agents with statistical methodologies
-3. **Insights**: synthesizer agents for interpretation
+1. **Data gathering**: APITaskAgent for external data, PythonComputationalTool for processing
+2. **Analysis**: PythonComputationalTool for data analysis, analyzer agents for interpretation
+3. **Insights**: synthesizer agents for integration
 4. **Recommendations**: planner agents for action plans
 
 ### Research Projects
-1. **Information gathering**: researcher agents with validation frameworks
-2. **Analysis**: analyzer agents for pattern recognition
+1. **Information gathering**: APITaskAgent for structured data, researcher agents for validation
+2. **Analysis**: PythonComputationalTool for data processing, analyzer agents for patterns
 3. **Synthesis**: synthesizer agents for integration
 4. **Documentation**: Direct execution for final formatting
 

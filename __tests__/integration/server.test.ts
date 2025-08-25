@@ -1,7 +1,7 @@
 // MCP Server Integration Tests - Tests for server startup and basic functionality
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { createServer } from '../../src/index.js';
-import { JARVISTool } from '../../src/tools/jarvis-tool.js';
+import { JARVISTool } from '../../src/tools/orchestration/jarvis-tool.js';
 
 describe('MCP Server Integration', () => {
   let server: any;

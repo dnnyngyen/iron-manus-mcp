@@ -1,6 +1,6 @@
 // JARVIS Tool Tests - Tests for the FSM controller tool integration
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { JARVISTool } from '../../src/tools/jarvis-tool.js';
+import { JARVISTool } from '../../src/tools/orchestration/jarvis-tool.js';
 import { processState } from '../../src/core/fsm.js';
 import { MessageJARVIS, Role, Phase } from '../../src/core/types.js';
 

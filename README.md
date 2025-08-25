@@ -1,9 +1,9 @@
 <img src="banner.png" alt="Iron Manus MCP Banner" width="100%" height="250">
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
-[![Tests](https://img.shields.io/badge/tests-323%2F323-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
+[![Tests](https://img.shields.io/badge/tests-266%2F266-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker Hub](https://img.shields.io/badge/Docker_Hub-v0.2.3-blue.svg)](https://hub.docker.com/r/dnnyngyen/iron-manus-mcp)
 [![GitHub Container Registry](https://img.shields.io/badge/GHCR-v0.2.3-blue.svg)](https://github.com/dnnyngyen/iron-manus-mcp/pkgs/container/iron-manus-mcp)
@@ -11,9 +11,9 @@
 
 # Iron Manus MCP (J.A.R.V.I.S.)
 
-**Claude-code MCP server that spawns agents as tools** - An agent orchestration system that lets Claude autonomously break down complex workflows by structured phases and delegate to subagents with native context management.
+**Model Context Protocol server for AI workflow orchestration** - An 8-phase finite state machine that manages complex AI workflows through structured phases and agent delegation with session state management.
 
-## Fit over 300k+ tokens in one session
+## Extended context management through agent delegation
 
 <div align="center">
 
@@ -32,19 +32,19 @@
 
 ## What It Does
 
-Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages complex workflows through structured phases. It features a complete tool registry with JARVIS FSM controller and intelligent API selection from 65+ endpoints.
+Iron Manus MCP is an 8-phase finite state machine for AI workflow orchestration. The system includes a unified tool registry with JARVIS FSM Controller and API selection from 65+ endpoints.
 
 **8-Phase Workflow**: `INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE`
 
 **Key Features:**
 
-- 🔄 **8-Phase Orchestration Loop** - Structured workflow orchestration with complete FSM states
-- 🧠 **Optimized Context Management** - Subagent delegation enables 300k+ token conversations  
-- 🛠️ **Modular Tool Registry** - 8+ specialized tools with extensible architecture
-- 📡 **65+ API Registry** - Intelligent API discovery and selection system
-- 🔒 **SSRF Protection** - Enterprise-grade security with allowlist validation
-- ✅ **323/323 Tests Passing** - Comprehensive test coverage with Vitest (100% success rate)
-- 📦 **ES Modules** - Modern JavaScript with TypeScript 5.0 support
+- 🔄 **8-Phase Workflow** - Structured workflow orchestration with deterministic state transitions
+- 🧠 **Context Management** - Agent delegation for extended conversation handling
+- 🛠️ **Unified Tool Registry** - APITaskAgent and PythonComputationalTool with supporting tools
+- 📡 **65+ API Registry** - API discovery and selection from available endpoints
+- 🔒 **SSRF Protection** - Production security with allowlist validation
+- ✅ **266 Tests** - Test suite with 100% success rate using Vitest
+- 📦 **ES Modules** - TypeScript 5.0 with modern JavaScript support
 
 ## Quick Start
 
@@ -56,7 +56,7 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system that manages c
 **Docker Hub:**
 ```bash
 # Pull and run from Docker Hub (v0.2.3 - stable)
-docker pull dnnyngyen/iron-manus-mcp:0.2.3
+docker pull dnnyngyen/iron-manus-mcp:0.2.4
 docker run -d --name iron-manus-mcp dnnyngyen/iron-manus-mcp:0.2.3
 
 # Alternative: Use latest tag
@@ -99,7 +99,7 @@ npm install
 # Build TypeScript
 npm run build
 
-# Run tests (optional - 323 tests)
+# Run tests (optional - 266 tests)
 npm test
 
 # Start server
@@ -262,7 +262,7 @@ docker-compose down
 
 ```bash
 # Pull latest stable version (v0.2.3)
-docker pull dnnyngyen/iron-manus-mcp:0.2.3
+docker pull dnnyngyen/iron-manus-mcp:0.2.4
 
 # Run with custom environment variables
 docker run -d \
@@ -336,8 +336,8 @@ await mcp.callTool({
 ```
 
 **8-Phase Flow:**
-1. **INIT** - Initialize session and establish context
-2. **QUERY** - Analyze request and detect role
+1. **INIT** - Session initialization (internal state setup)
+2. **QUERY** - Analyze user objective, initialize workflow, and detect optimal role
 3. **ENHANCE** - Add missing requirements and context
 4. **KNOWLEDGE** - Auto-discover relevant APIs and patterns
 5. **PLAN** - Create structured tasks with meta-prompts
@@ -365,7 +365,7 @@ await mcp.callTool({
 **Available Scripts:**
 ```bash
 npm run build        # TypeScript compilation
-npm test            # Run full test suite (323 tests)
+npm test            # Run full test suite (266 tests)
 npm run test:nocov   # Run tests without coverage
 npm run lint        # ESLint checking (with enhanced rules)
 npm run format      # Prettier formatting
@@ -384,7 +384,7 @@ KNOWLEDGE_TIMEOUT_MS=4000            # Request timeout (1000-30000ms)
 ALLOWED_HOSTS="api.github.com,httpbin.org"  # SSRF whitelist
 ENABLE_SSRF_PROTECTION=true          # Security toggle (required in production)
 MIN_COMPLETION_PERCENT=70            # Quality threshold (50-100)
-USER_AGENT="Iron-Manus-MCP/0.2.4"    # Service identification
+USER_AGENT="Iron-Manus-MCP/0.2.4-AutoFetch"    # Service identification
 ```
 
 **Enhanced Features (v0.2.4+):**
@@ -397,7 +397,7 @@ See the complete list of configuration options in the [docker-compose.yml](docke
 
 ## Testing
 
-Comprehensive test suite with 323 tests using Vitest:
+Comprehensive test suite with 266 tests using Vitest:
 
 ```bash
 # Run all tests
@@ -422,9 +422,9 @@ npm run test:e2e
 
 ## Security
 
-### Enhanced Security with Claude Code Hooks Integration
+### Security with Claude Code Hooks Integration
 
-Iron Manus MCP now features comprehensive security validation through [Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks) integration, providing deterministic security enforcement alongside the cognitive FSM layer.
+Iron Manus MCP includes security validation through [Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks) integration, providing deterministic security enforcement with the finite state machine.
 
 **Built-in Security Features:**
 - Blocks private/localhost IPs (192.168.x.x, 127.x.x.x, etc.)
@@ -433,11 +433,11 @@ Iron Manus MCP now features comprehensive security validation through [Claude Co
 - Request timeout and size limits
 - Rate limiting per API endpoint
 
-**Claude Code Hooks Security Enhancements:**
+**Claude Code Hooks Security Features:**
 - **Command Validation**: PreToolUse hooks block dangerous bash commands (`rm -rf`, etc.)
-- **Enhanced SSRF Protection**: Additional URL validation with allowlist enforcement
+- **SSRF Protection**: URL validation with allowlist enforcement
 - **Code Quality Gates**: Output validation prevents security issues in generated code
-- **Session Monitoring**: Comprehensive tracking of FSM progression and security events
+- **Session Monitoring**: FSM progression and security event tracking
 
 See `.claude/HOOKS_INTEGRATION.md` for complete hook configuration and security implementation details.
 
@@ -445,10 +445,10 @@ See `.claude/HOOKS_INTEGRATION.md` for complete hook configuration and security 
 
 **Core Components:**
 - **FSM Engine** - 8-phase state machine orchestration
-- **Tool Registry** - Modular tool architecture with dependency injection
-- **API Registry** - 65+ APIs with role-based selection
-- **Security Layer** - SSRF guard with comprehensive validation
-- **Type System** - Full TypeScript interfaces and schemas
+- **Tool Registry** - Unified tool architecture with APITaskAgent and PythonComputationalTool
+- **API Registry** - 65+ endpoints with role-based selection
+- **Security Layer** - SSRF protection with input validation
+- **Type System** - TypeScript interfaces and schemas
 
 ## License
 
@@ -458,13 +458,13 @@ MIT - See [LICENSE](LICENSE) file for details.
 
 - **v0.2.4** - (Source) Comprehensive JSDoc documentation, professional standards
 - **v0.2.3** - (Docker) Published Docker images with clean configuration 
-- **v0.2.2** - Stable release with comprehensive test coverage and build improvements
-- **v0.2.1** - Claude Code Hooks integration with enhanced security validation
-- **v0.2.0** - Complete refactor with Jest→Vitest migration, repository flattening, 8-phase FSM
+- **v0.2.2** - Stable release with test coverage and build improvements
+- **v0.2.1** - Claude Code Hooks integration with security validation
+- **v0.2.0** - Refactor with Jest→Vitest migration, repository flattening, 8-phase FSM
 - **v0.1.x** - Initial release with 6-phase workflow
 
 > **Current Status**: Docker images (v0.2.3) provide stable functionality, while source code (v0.2.4) includes the latest documentation improvements.
 
 ---
 
-**Built for modern AI orchestration** - Structured workflows meet intelligent automation.
+**AI workflow orchestration** - Structured workflows with intelligent automation.

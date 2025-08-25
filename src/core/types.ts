@@ -49,6 +49,7 @@ export type Phase =
  * - ui_architect: V0-style UI architecture and systematic design patterns
  * - ui_implementer: V0-style UI implementation with concurrent execution
  * - ui_refiner: V0-style UI refinement with polished aesthetics and UX optimization
+ * - slide_generator: Unified presentation slide generation with template-based specialization
  *
  * Roles are auto-detected from objectives and enhance reasoning effectiveness through
  * specialized thinking methodologies and cognitive frameworks.
@@ -62,7 +63,8 @@ export type Role =
   | 'synthesizer' // Integration and optimization
   | 'ui_architect' // V0-Style UI architecture and systematic design
   | 'ui_implementer' // V0-Style UI implementation with concurrent execution
-  | 'ui_refiner'; // V0-Style UI refinement with polished aesthetics
+  | 'ui_refiner' // V0-Style UI refinement with polished aesthetics
+  | 'slide_generator'; // Unified presentation slide generation with template-based specialization
 
 /**
  * Complexity level enumeration for validation and processing
@@ -396,7 +398,7 @@ export interface MessageJARVIS {
  * const response: FromJARVIS = {
  *   next_phase: "EXECUTE",
  *   system_prompt: "You are a ui_architect. Focus on component creation with accessibility...",
- *   allowed_next_tools: ["WebSearch", "PythonExecutor"],
+ *   allowed_next_tools: ["WebSearch", "PythonComputationalTool"],
  *   payload: {
  *     current_todos: [...],
  *     detected_apis: [...],
@@ -529,7 +531,14 @@ export interface SessionState {
   /** Auto-detected role from initial_objective for cognitive enhancement */
   detected_role: Role;
   /** Event stream simulation payload containing current task state and phase data */
-  payload: Record<string, unknown>;
+  payload: Record<string, unknown> & {
+    // Parallel slide execution tracking fields
+    parallel_slide_execution_started?: boolean;
+    slide_tasks_pending?: number;
+    slide_tasks_completed?: number;
+    parallel_slide_tasks?: TodoItem[];
+    remaining_regular_tasks?: TodoItem[];
+  };
   /** Performance tracking metric for reasoning effectiveness (0-1 scale) */
   reasoning_effectiveness: number;
   /** Timestamp of last session activity for state management */
@@ -542,6 +551,18 @@ export interface SessionState {
   ecosystem_mapping?: EcosystemSessionMapping;
   /** Cross-mode performance tracking and optimization metrics */
   performance_metrics?: DualityPerformanceMetrics;
+
+  // Presentation Pipeline Extensions
+  /** Presentation mode flag indicating specialized pipeline is active */
+  presentation_mode?: boolean;
+  /** Detailed slide outline for presentation structure */
+  slide_outline?: SlideOutline[];
+  /** Presentation project directory path */
+  presentation_directory?: string;
+  /** Batch execution plan for parallelized slide generation */
+  batch_execution_plan?: BatchExecutionPlan;
+  /** Presentation assets tracking (images, diagrams, etc.) */
+  presentation_assets?: PresentationAssets;
 }
 
 // V0 Ecosystem mapping for session-level duality
@@ -564,6 +585,65 @@ export interface DualityPerformanceMetrics {
   dualityUtilization: number; // % time in unified mode
   modeSwitch_frequency: number; // Switches per session
   modeSwitch_latency: number; // Average switch time (ms)
+}
+
+// ================================
+// PRESENTATION PIPELINE TYPES
+// Supporting types for presentation-focused workflows
+// ================================
+
+/** Individual slide specification in presentation outline */
+export interface SlideOutline {
+  /** Slide number in sequence */
+  slide_number: number;
+  /** Slide title */
+  title: string;
+  /** Slide content description */
+  description: string;
+  /** Content type for template selection */
+  content_type: 'title' | 'agenda' | 'intro' | 'content' | 'diagram' | 'conclusion';
+  /** Visual requirements (charts, images, etc.) */
+  visual_requirements?: string[];
+  /** Batch group assignment for parallel execution */
+  batch_group?: number;
+}
+
+/** Batch execution plan for parallelized presentation generation */
+export interface BatchExecutionPlan {
+  /** Total number of slides to generate */
+  total_slides: number;
+  /** Batch groupings for parallel execution */
+  batch_groups: BatchGroup[];
+  /** Asset preparation tasks */
+  asset_tasks: string[];
+  /** Setup tasks (directory creation, etc.) */
+  setup_tasks: string[];
+}
+
+/** Individual batch group for parallel slide generation */
+export interface BatchGroup {
+  /** Batch identifier */
+  batch_id: number;
+  /** Slide numbers in this batch */
+  slide_numbers: number[];
+  /** Batch description */
+  description: string;
+  /** Estimated execution time */
+  estimated_time?: number;
+}
+
+/** Presentation assets tracking */
+export interface PresentationAssets {
+  /** Project directory path */
+  project_directory: string;
+  /** Image assets and their paths */
+  images: { [key: string]: string };
+  /** Generated diagrams */
+  diagrams: { [key: string]: string };
+  /** Custom assets */
+  custom_assets: { [key: string]: string };
+  /** Asset status tracking */
+  asset_status: { [key: string]: 'pending' | 'downloaded' | 'generated' | 'ready' };
 }
 
 // ================================

@@ -649,10 +649,10 @@ Iron Manus MCP: Complete 8-Phase FSM Architecture & Live Demonstration
 
 # Phase 4: KNOWLEDGE → PLAN
 
-  ⏺ iron-manus-mcp:APISearch (objective: "Build production-ready secure authentication...", user_role: "coder")
+  ⏺ iron-manus-mcp:APITaskAgent (objective: "Build production-ready secure authentication...", user_role: "coder")
     ⎿ 🔍 API Discovery Results: 5 APIs found, Ciprand API (58.0% relevance)
 
-  ⏺ iron-manus-mcp:MultiAPIFetch (api_endpoints: ["https://github.com/polarspetroll/ciprand"...])
+  ⏺ iron-manus-mcp:APITaskAgent (api_endpoints: ["https://github.com/polarspetroll/ciprand"...])
     ⎿ 📡 Multi-API Fetch Results: 2 APIs queried, 100% success rate
 
   ⏺ iron-manus-mcp:JARVIS (phase_completed: "KNOWLEDGE", payload: {"knowledge_gathered": "Gathered development resources..."})

@@ -16,7 +16,7 @@ Iron Manus MCP is a comprehensive FSM-driven orchestration system with 8-phase a
 
 ```bash
 npm run build        # TypeScript compilation
-npm test            # Run full test suite (323 tests)
+npm test            # Run full test suite (266 tests)
 npm run lint        # ESLint checking
 npm run dev         # Build and start server
 npm start          # Start compiled server
@@ -25,7 +25,7 @@ npm start          # Start compiled server
 ## Important Notes
 
 - Uses MCP SDK v1.13.2 with correct import paths
-- 323/323 tests passing (100% success rate)
+- 266/266 tests passing (100% success rate)
 - Claude Code Hooks integration for enhanced security
 - TypeScript strict mode enabled
 - ESM modules with proper .js extensions
@@ -33,14 +33,21 @@ npm start          # Start compiled server
 
 ## Recent Updates
 
-- **v0.2.5**: Metaprompting-First Design Transformation
+- **v0.2.5**: System Prompt Initialization Fix
+  - Fixed confusing system prompt that showed "You are in the QUERY phase" during initialization
+  - Simplified prompt logic by combining INIT and QUERY phases  
+  - Updated QUERY phase prompt to clearly indicate "analyzing user objective and initializing workflow"
+  - Removed complex conditional logic that caused timing issues
+  - Improved user experience with clearer initialization messaging
+
+- **v0.2.4**: Metaprompting-First Design Transformation
   - Tool descriptions rewritten as strategic metaprompts that guide intelligent thinking
   - Parameter names transformed into cognitive guides (e.g., `knowledge_sources`, `synthesis_bandwidth`)
   - Error messages enhanced with strategic self-reflection frameworks
   - Documentation updated to teach thinking patterns rather than just usage
   - All tools now prompt intelligence rather than constraining it
 
-- **v0.2.4**: Claude Code Hooks integration with security validation
+- **v0.2.3**: Claude Code Hooks integration with security validation
 - Fixed all test issues achieving 100% success rate
 - Enhanced SSRF protection with hooks validation
 - Added intelligent output validation and rollback signaling
@@ -51,7 +58,7 @@ npm start          # Start compiled server
 ✅ Core FSM functionality working
 ✅ Tool registry operational
 ✅ Build pipeline functional
-✅ Test suite 100% passing (323/323)
+✅ Test suite 100% passing (266/266)
 ✅ MCP SDK v1.13.2 fully compatible
 ✅ Claude Code Hooks integrated
 ✅ Production ready

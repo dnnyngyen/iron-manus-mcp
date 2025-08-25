@@ -101,12 +101,6 @@ export const ConfigSchema = z.object({
 });
 
 // Tool input validation schemas
-export const PythonExecutorArgsSchema = z.object({
-  code: z.string().min(1, 'Code cannot be empty'),
-  setup_libraries: z.array(z.string()).optional(),
-  description: z.string().optional(),
-});
-
 export const EnhancedPythonDataScienceArgsSchema = z.object({
   operation: z.enum([
     'web_scraping',
@@ -229,7 +223,6 @@ export type APIFetchResult = z.infer<typeof APIFetchResultSchema>;
 export type VerificationResult = z.infer<typeof VerificationResultSchema>;
 
 // Tool argument types
-export type PythonExecutorArgs = z.infer<typeof PythonExecutorArgsSchema>;
 export type EnhancedPythonDataScienceArgs = z.infer<typeof EnhancedPythonDataScienceArgsSchema>;
 export type MultiAPIFetchArgs = z.infer<typeof MultiAPIFetchArgsSchema>;
 export type APIValidatorArgs = z.infer<typeof APIValidatorArgsSchema>;

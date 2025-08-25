@@ -88,3 +88,6 @@ jest.config.js
 # Hooks (unless needed for project)
 hooks/dist/
 # .env file removed from git for security
+
+# Claude local settings
+.claude/settings.local.json

@@ -183,6 +183,33 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
     ],
     authorityLevel: 'REFINE_AND_POLISH',
   },
+  // Unified Presentation Role - Template-Based Specialization
+  slide_generator: {
+    defaultOutput: 'complete_slide_with_template',
+    focus: 'unified_slide_generation_with_templates',
+    complexityLevel: 'complex',
+    suggestedFrameworks: [
+      'template_system',
+      'content_generation',
+      'visual_design',
+      'narrative_flow',
+    ],
+    validationRules: [
+      'template_compliance',
+      'content_quality',
+      'visual_clarity',
+      'audience_alignment',
+    ],
+    thinkingMethodology: [
+      'Analyze slide requirements and select appropriate template type from 12 available options',
+      'Generate compelling content appropriate for the specific template structure',
+      'Apply visual design principles while maintaining template consistency',
+      'Ensure content supports overall presentation narrative and audience needs',
+      'Validate output against template specifications and accessibility standards',
+    ],
+    authorityLevel: 'GENERATE_AND_IMPLEMENT',
+    cognitiveFrameworks: ['template_selection', 'content_optimization', 'visual_hierarchy'],
+  },
 };
 
 /**
@@ -247,13 +274,19 @@ export function generateRoleSelectionPrompt(objective: string): string {
     {
       name: 'ui_implementer',
       description: 'UI implementation, component building, frontend development',
-
       best_for: 'Frontend development, UI component implementation, interface building',
     },
     {
       name: 'ui_refiner',
       description: 'UI refinement, styling, aesthetics, polish, optimization',
       best_for: 'UI polish, styling refinement, aesthetic improvements, UX optimization',
+    },
+    {
+      name: 'slide_generator',
+      description:
+        'Unified slide generation with template-based specialization (12 templates available)',
+      best_for:
+        'Creating complete slides using templates, presentation generation, content and visual integration',
     },
   ];
 
@@ -271,7 +304,7 @@ export function generateRoleSelectionPrompt(objective: string): string {
 ## Objective
 ${objective}
 
-## Available Roles (9 total)
+## Available Roles (6 total)
 ${roleList}
 
 ## Your Task
@@ -348,6 +381,7 @@ export function parseClaudeRoleSelection(claudeResponse: string, objective: stri
       'ui_architect',
       'ui_implementer',
       'ui_refiner',
+      'slide_generator',
     ];
 
     if (validRoles.includes(selection.selected_role as Role)) {
@@ -452,7 +486,19 @@ export function detectRole(objective: string): Role {
     if (explicitRole === 'synthesizer') return 'synthesizer';
   }
 
-  // First check for UI-specific roles in content
+  // First check for presentation-specific roles in content
+  if (
+    lowerObjective.includes('presentation') ||
+    lowerObjective.includes('slide') ||
+    lowerObjective.includes('template') ||
+    lowerObjective.includes('deck') ||
+    lowerObjective.includes('powerpoint') ||
+    lowerObjective.includes('keynote')
+  ) {
+    return 'slide_generator';
+  }
+
+  // Check for UI-specific roles in content
   if (
     lowerObjective.includes('ui') &&
     (lowerObjective.includes('architect') || lowerObjective.includes('design system'))
@@ -609,13 +655,18 @@ Apply these thinking steps systematically to improve reasoning quality and thoro
  * - Session workspace coordination patterns
  * - Quality assessment and validation criteria
  *
+ * System Prompt Approach:
+ * - INIT: Internal state setup (not user-facing)
+ * - QUERY: Combined initialization and analysis (user-facing entry point)
+ * - Other phases: Specific workflow steps with clear context
+ *
  * @type {Record<Phase, string>}
  * @constant
  */
 const BASE_PHASE_PROMPTS: Record<Phase, string> = {
-  INIT: `You are initializing a new task. This should not be reached - call JARVIS immediately.`,
+  INIT: `You are initializing a new project session. Assess the user's objective and prepare to begin the 8-phase workflow (QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE).`,
 
-  QUERY: `You are in the QUERY phase (Manus: "Analyze Events"). Your task:
+  QUERY: `You are analyzing the user's objective and initializing the project workflow. Your task:
 
 Think through your analysis approach before proceeding. Consider:
 - What is the user really asking for at its core?
@@ -686,12 +737,12 @@ Think strategically about your research approach. Consider:
 **Core Research Agents:**
 - Primary Researcher: "(ROLE: researcher) (CONTEXT: primary_domain_research) (PROMPT: Conduct comprehensive research on core topic requirements using PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/WebFetch calls in a single response for maximum speed, then write detailed findings to ./iron-manus-sessions/{{session_id}}/primary_research.md) (OUTPUT: research_report)"
 
-- Data Analyzer: "(ROLE: analyzer) (CONTEXT: quantitative_analysis) (PROMPT: Research and analyze quantitative aspects, metrics, performance data using PARALLEL SEARCH OPTIMIZATION: batch multiple APISearch/MultiAPIFetch calls simultaneously for faster data gathering, then write analytical insights to ./iron-manus-sessions/{{session_id}}/analysis_data.md) (OUTPUT: analytical_insights)"
+- Data Analyzer: "(ROLE: analyzer) (CONTEXT: quantitative_analysis) (PROMPT: Research and analyze quantitative aspects, metrics, performance data using PARALLEL SEARCH OPTIMIZATION: batch multiple APITaskAgent calls simultaneously for faster data gathering, then write analytical insights to ./iron-manus-sessions/{{session_id}}/analysis_data.md) (OUTPUT: analytical_insights)"
 
 - Technical Specialist: "(ROLE: coder) (CONTEXT: technical_implementation) (PROMPT: Research technical approaches, frameworks, tools using PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/WebFetch calls in parallel for rapid information gathering, then write specifications to ./iron-manus-sessions/{{session_id}}/technical_specs.md) (OUTPUT: technical_specifications)"
 
 **Optional Specialized Agents** (based on objective complexity):
-- Domain Expert: "(ROLE: critic) (CONTEXT: domain_expertise) (PROMPT: Research best practices, security considerations using PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/APISearch calls for comprehensive coverage, then write expert recommendations to ./iron-manus-sessions/{{session_id}}/expert_review.md) (OUTPUT: expert_recommendations)"
+- Domain Expert: "(ROLE: critic) (CONTEXT: domain_expertise) (PROMPT: Research best practices, security considerations using PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/APITaskAgent calls for comprehensive coverage, then write expert recommendations to ./iron-manus-sessions/{{session_id}}/expert_review.md) (OUTPUT: expert_recommendations)"
 
 3. **COORDINATION PROTOCOL**:
    - Each agent writes findings to designated session workspace files
@@ -700,7 +751,7 @@ Think strategically about your research approach. Consider:
 
 4. **SYNTHESIS PHASE**:
    After all research agents complete, spawn synthesis agent:
-   "(ROLE: synthesizer) (CONTEXT: knowledge_integration) (PROMPT: Read all research files from ./iron-manus-sessions/{{session_id}}/ directory, cross-validate findings, resolve contradictions, and if additional research is needed use PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/APISearch calls for gap-filling, then write comprehensive synthesized knowledge to ./iron-manus-sessions/{{session_id}}/synthesized_knowledge.md) (OUTPUT: synthesized_knowledge)"
+   "(ROLE: synthesizer) (CONTEXT: knowledge_integration) (PROMPT: Read all research files from ./iron-manus-sessions/{{session_id}}/ directory, cross-validate findings, resolve contradictions, and if additional research is needed use PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/APITaskAgent calls for gap-filling, then write comprehensive synthesized knowledge to ./iron-manus-sessions/{{session_id}}/synthesized_knowledge.md) (OUTPUT: synthesized_knowledge)"
 
 5. **INTEGRATION AND COMPLETION**:
    - Read the synthesized_knowledge.md file from ./iron-manus-sessions/{{session_id}}/
@@ -710,7 +761,7 @@ Think strategically about your research approach. Consider:
 **🔄 FALLBACK TO TRADITIONAL RESEARCH:**
 If Task() agent spawning isn't suitable for the objective, use traditional tools:
 - WebSearch/WebFetch for supplementary research  
-- APISearch/MultiAPIFetch for specific data sources
+- APITaskAgent for structured data source research
 - For knowledge integration: spawn synthesizer agent: "(ROLE: synthesizer) (CONTEXT: knowledge_integration) (PROMPT: Synthesize findings from research using systematic integration methodologies) (OUTPUT: integrated_knowledge)"
 
 **📋 CRITICAL AGENT COMMUNICATION RULES:**
@@ -780,7 +831,7 @@ Task() with parameters:
 Include in Task() prompts: "Write your results to ./iron-manus-sessions/{{session_id}}/agent_[role]_output.md"
 
 **PARALLEL SEARCH OPTIMIZATION for Task Agents:**
-Include in Task() prompts: "Use PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/WebFetch/APISearch calls in a single response for maximum research speed"
+Include in Task() prompts: "Use PARALLEL SEARCH OPTIMIZATION: batch multiple WebSearch/WebFetch/APITaskAgent calls in a single response for maximum research speed"
 
 The Task() tool creates an independent Claude instance that:
 - Starts with fresh context
@@ -1261,6 +1312,14 @@ function generateRoleSpecificThinkGuidance(role: Role, _config: RoleConfig): str
 - User interaction feedback and micro-interactions
 - Cross-browser compatibility and testing
 - Accessibility compliance and usability testing`,
+
+    slide_generator: `SLIDE GENERATION REASONING REQUIRED: Think comprehensively about template-based slide creation:
+- Template selection from 12 available types based on content requirements
+- Content generation appropriate for chosen template structure and layout
+- Visual design principles application within template constraints
+- Audience-appropriate language and presentation flow integration
+- Template compliance validation and accessibility standards adherence
+- Narrative coherence across slide sequence and presentation objectives`,
   };
 
   return roleSpecificThinking[role];
@@ -1288,14 +1347,11 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
     'Task',
     'WebSearch',
     'WebFetch',
-    'APISearch',
-    'MultiAPIFetch',
+    'APITaskAgent',
     'mcp__ide__executeCode',
-    'PythonDataAnalysis',
-    'PythonExecutor',
-    'EnhancedPythonDataScience',
+    'PythonComputationalTool',
     'JARVIS',
-  ], // Parallel agent spawning + research tools + API tools + data processing + Python analysis
+  ], // Parallel agent spawning + research tools + specialized API agent + data processing + Python analysis
   PLAN: ['TodoWrite'], // Natural thinking + planning tools
   EXECUTE: [
     'TodoRead',
@@ -1307,17 +1363,9 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
     'Edit',
     'Browser',
     'mcp__ide__executeCode',
-    'PythonDataAnalysis',
-    'PythonExecutor',
-    'EnhancedPythonDataScience',
+    'PythonComputationalTool',
   ], // Natural thinking + execution tools + Python execution + data science
-  VERIFY: [
-    'TodoRead',
-    'Read',
-    'mcp__ide__executeCode',
-    'PythonDataAnalysis',
-    'EnhancedPythonDataScience',
-  ], // Natural thinking + verification tools + analysis + data validation
+  VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode', 'PythonComputationalTool'], // Natural thinking + verification tools + analysis + data validation
   DONE: [], // No tools needed
 };
 
@@ -1337,12 +1385,12 @@ export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
   ENHANCE:
     'Think through enhancement opportunities, then call JARVIS with phase_completed: "ENHANCE"',
   KNOWLEDGE:
-    'Think through knowledge needs, then choose: Task (spawn parallel research agents), WebSearch/WebFetch (traditional research), PythonDataAnalysis/EnhancedPythonDataScience (data science code generation), mcp__ide__executeCode (direct Python execution), JARVIS (skip research)',
+    'Think through knowledge needs, then choose: Task (spawn parallel research agents), WebSearch/WebFetch (traditional research), PythonComputationalTool (unified Python and data science), mcp__ide__executeCode (direct Python execution), JARVIS (skip research)',
   PLAN: 'Think through strategic planning, then use TodoWrite to create todos, then call JARVIS with phase_completed: "PLAN"',
   EXECUTE:
-    'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), EnhancedPythonDataScience (complete data science workflows), PythonExecutor (Python code with auto-install), mcp__ide__executeCode (direct Python execution)',
+    'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), PythonComputationalTool (unified Python and data science), mcp__ide__executeCode (direct Python execution)',
   VERIFY:
-    'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), PythonDataAnalysis/EnhancedPythonDataScience (data validation and analysis), mcp__ide__executeCode (analytical verification)',
+    'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), PythonComputationalTool (data validation and analysis), mcp__ide__executeCode (analytical verification)',
   DONE: 'No action needed',
 };
 
@@ -1363,7 +1411,7 @@ function getRoleSpecificAPIGuidance(role: Role): string {
     researcher: `
 **📚 RESEARCHER API PREFERENCES:**
 - **Primary Categories**: Books, academic papers, scientific data, educational resources
-- **Recommended Workflow**: APISearch → academic/reference APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive academic/reference data research → synthesizer agent for integration
 - **Key APIs**: Open Library, Google Books, NASA API, academic databases
 - **Confidence Threshold**: 0.8+ (high confidence for research accuracy)
 - **Synthesis Mode**: 'consensus' for academic validation, 'hierarchical' for authoritative sources
@@ -1372,7 +1420,7 @@ function getRoleSpecificAPIGuidance(role: Role): string {
     analyzer: `
 ANALYZER API PREFERENCES:
 - **Primary Categories**: Financial data, cryptocurrency, business metrics, statistical APIs
-- **Recommended Workflow**: APISearch → financial/data APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive financial/data source research → synthesizer agent for integration
 - **Key APIs**: Alpha Vantage, CoinGecko, business analytics, market data sources
 - **Confidence Threshold**: 0.7+ (balance between accuracy and data availability)
 - **Synthesis Mode**: 'weighted' for reliability-based analysis, 'conflict_resolution' for market data
@@ -1381,7 +1429,7 @@ ANALYZER API PREFERENCES:
     ui_architect: `
 UI ARCHITECT API PREFERENCES:
 - **Primary Categories**: Design inspiration, color palettes, typography, visual frameworks
-- **Recommended Workflow**: APISearch → design/visual APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive design/visual data research → synthesizer agent for integration
 - **Key APIs**: Unsplash, Colormind, design systems, font APIs, visual inspiration platforms
 - **Confidence Threshold**: 0.6+ (balance creativity with reliability)
 - **Synthesis Mode**: 'consensus' for design standards, 'weighted' for aesthetic choices
@@ -1390,7 +1438,7 @@ UI ARCHITECT API PREFERENCES:
     ui_implementer: `
 **⚙️ UI IMPLEMENTER API PREFERENCES:**
 - **Primary Categories**: Component libraries, CSS frameworks, development tools, design tokens
-- **Recommended Workflow**: APISearch → implementation APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive implementation data research → synthesizer agent for integration
 - **Key APIs**: Design system APIs, CSS framework documentation, component libraries
 - **Confidence Threshold**: 0.7+ (implementation accuracy critical)
 - **Synthesis Mode**: 'hierarchical' for official documentation, 'consensus' for best practices
@@ -1399,7 +1447,7 @@ UI ARCHITECT API PREFERENCES:
     ui_refiner: `
 **✨ UI REFINER API PREFERENCES:**
 - **Primary Categories**: Accessibility standards, performance optimization, user experience metrics
-- **Recommended Workflow**: APISearch → optimization/UX APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive optimization/UX data research → synthesizer agent for integration
 - **Key APIs**: Accessibility checkers, performance monitoring, user experience analytics
 - **Confidence Threshold**: 0.8+ (refinement requires high precision)
 - **Synthesis Mode**: 'hierarchical' for standards compliance, 'conflict_resolution' for UX trade-offs
@@ -1408,7 +1456,7 @@ UI ARCHITECT API PREFERENCES:
     coder: `
 **💻 CODER API PREFERENCES:**
 - **Primary Categories**: Development tools, documentation, code examples, testing frameworks
-- **Recommended Workflow**: APISearch → dev tool APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive dev tool data research → synthesizer agent for integration
 - **Key APIs**: GitHub, Stack Overflow, documentation sites, package repositories
 - **Confidence Threshold**: 0.7+ (balance between completeness and accuracy)
 - **Synthesis Mode**: 'consensus' for best practices, 'weighted' for framework-specific guidance
@@ -1417,7 +1465,7 @@ UI ARCHITECT API PREFERENCES:
     planner: `
 **📋 PLANNER API PREFERENCES:**
 - **Primary Categories**: Project management, scheduling, productivity tools, organizational systems
-- **Recommended Workflow**: APISearch → planning/productivity APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive planning/productivity data research → synthesizer agent for integration
 - **Key APIs**: Calendar systems, project management platforms, productivity metrics APIs
 - **Confidence Threshold**: 0.7+ (planning accuracy important for execution)
 - **Synthesis Mode**: 'hierarchical' for methodology frameworks, 'consensus' for timeline estimation
@@ -1426,7 +1474,7 @@ UI ARCHITECT API PREFERENCES:
     critic: `
 **🔍 CRITIC API PREFERENCES:**
 - **Primary Categories**: Security scanners, quality metrics, testing frameworks, compliance data
-- **Recommended Workflow**: APISearch → security/quality APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive security/quality data research → synthesizer agent for integration
 - **Key APIs**: Security vulnerability databases, code quality metrics, compliance checkers
 - **Confidence Threshold**: 0.9+ (security and quality require highest confidence)
 - **Synthesis Mode**: 'conflict_resolution' for security findings, 'hierarchical' for compliance standards
@@ -1435,11 +1483,20 @@ UI ARCHITECT API PREFERENCES:
     synthesizer: `
 **🔄 SYNTHESIZER API PREFERENCES:**
 - **Primary Categories**: Integration platforms, data transformation, workflow automation, cross-domain APIs
-- **Recommended Workflow**: APISearch → integration APIs → MultiAPIFetch → synthesizer agent for integration
+- **Recommended Workflow**: APITaskAgent for comprehensive integration data research → synthesizer agent for integration
 - **Key APIs**: Data transformation services, workflow platforms, integration frameworks
 - **Confidence Threshold**: 0.7+ (balance integration complexity with reliability)
 - **Synthesis Mode**: 'weighted' for integration patterns, 'consensus' for compatibility standards
 - **Evidence Standards**: Tested integration patterns, compatibility matrices, performance benchmarks`,
+
+    slide_generator: `
+**🎪 SLIDE GENERATOR API PREFERENCES:**
+- **Primary Categories**: Presentation templates, content generation, visual assets, design resources
+- **Recommended Workflow**: APITaskAgent for comprehensive presentation/design data research → synthesizer agent for integration
+- **Key APIs**: Template libraries, content generation tools, visual asset APIs, design frameworks
+- **Confidence Threshold**: 0.8+ (slide quality and template compliance critical)
+- **Synthesis Mode**: 'consensus' for template standards, 'weighted' for content quality
+- **Evidence Standards**: Proven template systems, high-quality visual assets, validated design patterns`,
   };
 
   return roleGuidance[role] || roleGuidance.researcher; // Default to researcher if role not found

@@ -84,7 +84,7 @@ mcp__other-orchestrator-mcp__JARVIS
   "mcpServers": {
     "iron-manus-mcp": {
       "priority": 1,
-      "tools": ["JARVIS", "APISearch", "MultiAPIFetch"]
+      "tools": ["JARVIS", "APITaskAgent"]
     },
     "specialized-api-mcp": {
       "priority": 2,
@@ -104,7 +104,7 @@ Tool Selection Logic:
 1. iron-manus-mcp__JARVIS (Primary orchestration)
    ├── Delegates frontend: react-mcp__ComponentBuilder
    ├── Delegates database: database-mcp__SchemaDesigner
-   └── Coordinates integration: iron-manus-mcp__APIValidator
+   └── Coordinates integration: iron-manus-mcp__APITaskAgent
 
 2. Cross-server coordination through meta-prompts:
    (ROLE: external_specialist) (CONTEXT: react_components) 

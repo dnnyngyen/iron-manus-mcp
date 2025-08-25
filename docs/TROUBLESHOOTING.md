@@ -133,10 +133,10 @@ Expected: Tool responds with phase progression (QUERY -> ENHANCE -> KNOWLEDGE ->
 **Check Available Tools:**
 Look for these tool names:
 - `mcp__iron-manus-mcp__JARVIS`
-- `mcp__iron-manus-mcp__APISearch`
-- `mcp__iron-manus-mcp__MultiAPIFetch`
+- `mcp__iron-manus-mcp__APITaskAgent`
+- `mcp__iron-manus-mcp__PythonComputationalTool`
 - `mcp__iron-manus-mcp__KnowledgeSynthesize`
-- `mcp__iron-manus-mcp__APIValidator`
+- `mcp__iron-manus-mcp__IronManusStateGraph`
 
 ## Environment-Specific Issues
 

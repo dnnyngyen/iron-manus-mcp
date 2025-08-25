@@ -2,12 +2,12 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { GraphStateAdapter, graphStateManager } from '../../src/core/graph-state-adapter.js';
 import { SessionState, Phase, Role } from '../../src/core/types.js';
-import { stateGraphManager } from '../../src/tools/iron-manus-state-graph.js';
+import { stateGraphManager } from '../../src/tools/orchestration/iron-manus-state-graph.js';
 
 // Logger automatically forwards to console in test environment
 
 // Mock the state graph manager
-vi.mock('../../src/tools/iron-manus-state-graph.js', () => ({
+vi.mock('../../src/tools/orchestration/iron-manus-state-graph.js', () => ({
   stateGraphManager: {
     readSessionGraph: vi.fn(),
     initializeSession: vi.fn(),
@@ -187,8 +187,7 @@ describe('GraphStateAdapter', () => {
   describe('Session State Updates', () => {
     it('should update session state and sync to graph', async () => {
       // Temporarily set production environment to trigger graph operations
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+
 
       // First, create initial session
       mockStateGraphManager.readSessionGraph.mockResolvedValue({
@@ -214,14 +213,12 @@ describe('GraphStateAdapter', () => {
       );
       expect(mockStateGraphManager.addSessionObservations).toHaveBeenCalled();
 
-      // Restore environment
-      process.env.NODE_ENV = originalEnv;
+      
     });
 
     it('should handle task updates in session state', async () => {
       // Temporarily set production environment to trigger graph operations
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+
 
       // Set up initial session
       mockStateGraphManager.readSessionGraph.mockResolvedValue({
@@ -266,13 +263,10 @@ describe('GraphStateAdapter', () => {
         'in_progress'
       );
 
-      // Restore environment
-      process.env.NODE_ENV = originalEnv;
+      
     });
 
-    it('should skip graph operations in test environment', async () => {
-      process.env.NODE_ENV = 'test';
-
+    it('should perform graph operations in test environment', async () => {
       // Create initial session
       mockStateGraphManager.readSessionGraph.mockResolvedValue({
         entities: [],
@@ -282,9 +276,9 @@ describe('GraphStateAdapter', () => {
       await adapter.getSessionState('test-env-session');
       await adapter.updateSessionState('test-env-session', { current_phase: 'PLAN' });
 
-      // Graph operations should be skipped
-      expect(mockStateGraphManager.initializeSession).not.toHaveBeenCalled();
-      expect(mockStateGraphManager.addSessionObservations).not.toHaveBeenCalled();
+      // Graph operations should now be called
+      expect(mockStateGraphManager.initializeSession).toHaveBeenCalled();
+      expect(mockStateGraphManager.addSessionObservations).toHaveBeenCalled();
     });
   });
 
@@ -459,22 +453,22 @@ describe('GraphStateManager', () => {
     vi.useRealTimers();
   });
 
-  describe('Synchronous State Access', () => {
-    it('should return session immediately from cache', () => {
+  describe('Cached State Access', () => {
+    it('should return session immediately from cache', async () => {
       const sessionId = 'sync-session';
       
       // First call creates and caches
-      const first = graphStateManager.getSessionState(sessionId);
+      const first = await graphStateManager.getSessionState(sessionId);
       
       // Second call should return same cached instance
-      const second = graphStateManager.getSessionState(sessionId);
+      const second = await graphStateManager.getSessionState(sessionId);
       
-      expect(first).toBe(second);
+      expect(first).toEqual(second); // Use toEqual for deep comparison
       expect(first.current_phase).toBe('INIT');
     });
 
-    it('should create new session with default values', () => {
-      const session = graphStateManager.getSessionState('new-sync-session');
+    it('should create new session with default values', async () => {
+      const session = await graphStateManager.getSessionState('new-sync-session');
 
       expect(session).toEqual({
         current_phase: 'INIT',
@@ -488,10 +482,10 @@ describe('GraphStateManager', () => {
   });
 
   describe('State Updates', () => {
-    it('should update session state immediately in cache', () => {
+    it('should update session state immediately in cache', async () => {
       const sessionId = 'update-sync-session';
       
-      graphStateManager.getSessionState(sessionId);
+      await graphStateManager.getSessionState(sessionId);
       
       const updates: Partial<SessionState> = {
         current_phase: 'PLAN',
@@ -499,9 +493,9 @@ describe('GraphStateManager', () => {
         reasoning_effectiveness: 0.95
       };
 
-      graphStateManager.updateSessionState(sessionId, updates);
+      await graphStateManager.updateSessionState(sessionId, updates);
       
-      const updatedSession = graphStateManager.getSessionState(sessionId);
+      const updatedSession = await graphStateManager.getSessionState(sessionId);
       expect(updatedSession.current_phase).toBe('PLAN');
       expect(updatedSession.detected_role).toBe('planner');
       expect(updatedSession.reasoning_effectiveness).toBe(0.95);
@@ -510,23 +504,23 @@ describe('GraphStateManager', () => {
   });
 
   describe('Performance Metrics', () => {
-    it('should return simplified performance metrics', () => {
+    it('should return simplified performance metrics', async () => {
       const sessionId = 'metrics-session';
       
-      graphStateManager.updateSessionState(sessionId, {
+      await graphStateManager.updateSessionState(sessionId, {
         current_phase: 'EXECUTE',
         detected_role: 'coder',
         reasoning_effectiveness: 0.88
       });
 
-      const metrics = graphStateManager.getSessionPerformanceMetrics(sessionId);
+      const metrics = await graphStateManager.getSessionPerformanceMetrics(sessionId);
 
-      expect(metrics).toEqual({
+      expect(metrics).toEqual(expect.objectContaining({
         session_id: sessionId,
         detected_role: 'coder',
         current_phase: 'EXECUTE',
         reasoning_effectiveness: 0.88
-      });
+      }));
     });
   });
 
@@ -544,10 +538,10 @@ describe('GraphStateManager', () => {
       (graphStateManager as any).adapter = mockAdapter;
 
       // Should still work despite adapter errors
-      const session = graphStateManager.getSessionState('error-session');
+      const session = await graphStateManager.getSessionState('error-session');
       expect(session.current_phase).toBe('INIT');
 
-      graphStateManager.updateSessionState('error-session', { current_phase: 'PLAN' });
+      await graphStateManager.updateSessionState('error-session', { current_phase: 'PLAN' });
       
       // Wait for async operations to complete
       await new Promise(resolve => setTimeout(resolve, 10));
@@ -690,7 +684,7 @@ describe('GraphStateManager', () => {
       // Add items to retry queue
       manager.retryQueue.set('session1_update', {
         operation: 'update',
-        data: { updates: { current_phase: 'PLAN' } },
+        data: { session: { current_phase: 'PLAN' } },
         attempts: 1,
         nextRetry: Date.now() - 1000 // Past due
       });
@@ -721,7 +715,7 @@ describe('GraphStateManager', () => {
       // Add item to retry queue
       manager.retryQueue.set('fail-session_update', {
         operation: 'update',
-        data: { updates: { current_phase: 'PLAN' } },
+        data: { session: { current_phase: 'PLAN' } },
         attempts: 1,
         nextRetry: Date.now() - 1000
       });

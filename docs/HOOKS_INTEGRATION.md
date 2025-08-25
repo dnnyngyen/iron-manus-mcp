@@ -80,7 +80,7 @@ This separation ensures that:
 # Hook Configuration
 {
   "hook_type": "PreToolUse",
-  "target_tools": ["Bash", "mcp__iron-manus-mcp__MultiAPIFetch"],
+  "target_tools": ["Bash", "mcp__iron-manus-mcp__APITaskAgent"],
   "command": "scripts/iron-manus/security-validator.py"
 }
 ```
@@ -171,7 +171,7 @@ ls -la /safe/directory
 ```json
 {
   "hook_type": "PreToolUse",
-  "target_tools": ["mcp__iron-manus-mcp__MultiAPIFetch"],
+  "target_tools": ["mcp__iron-manus-mcp__APITaskAgent"],
   "command": "scripts/iron-manus/api-validator.py"
 }
 ```
@@ -312,7 +312,7 @@ ls -la scripts/iron-manus/
 ```bash
 cp .claude/hooks-example.json ~/.claude/settings.json
 # Update absolute paths to match your installation
-sed -i "" "s|/Users/dannynguyen/iron-manus-mcp|$(pwd)|g" ~/.claude/settings.json
+sed -i "" "s|/path/to/iron-manus-mcp|$(pwd)|g" ~/.claude/settings.json
 ```
 
 **Option B: Add to Existing Settings**
@@ -329,7 +329,7 @@ nano ~/.claude/settings.json
 # For project-specific hooks (recommended for development)
 cp .claude/hooks-example.json .claude/settings.json
 # Update paths if needed
-sed -i "" "s|/Users/dannynguyen/iron-manus-mcp|$(pwd)|g" .claude/settings.json
+sed -i "" "s|/path/to/iron-manus-mcp|$(pwd)|g" .claude/settings.json
 ```
 
 ### Step 4: Test Installation
@@ -375,7 +375,7 @@ claude-code
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|mcp__iron-manus-mcp__MultiAPIFetch",
+        "matcher": "Bash|mcp__iron-manus-mcp__APITaskAgent",
         "hooks": [
           {
             "type": "command",
@@ -384,7 +384,7 @@ claude-code
         ]
       },
       {
-        "matcher": "mcp__iron-manus-mcp__MultiAPIFetch",
+        "matcher": "mcp__iron-manus-mcp__APITaskAgent",
         "hooks": [
           {
             "type": "command",
@@ -413,7 +413,7 @@ claude-code
         ]
       },
       {
-        "matcher": "mcp__iron-manus-mcp__MultiAPIFetch",
+        "matcher": "mcp__iron-manus-mcp__APITaskAgent",
         "hooks": [
           {
             "type": "command",
