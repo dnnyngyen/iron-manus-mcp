@@ -75,12 +75,27 @@ export const ROLE_API_MAPPING: Record<Role, string[]> = {
 
   // Integration and optimization roles
   synthesizer: ['integration', 'optimization', 'data', 'transformation', 'workflow', 'automation'],
+
+  // Unified presentation role
+  slide_generator: [
+    'presentation',
+    'slides',
+    'templates',
+    'content',
+    'design',
+    'visual',
+    'storytelling',
+    'narrative',
+    'audience',
+    'charts',
+    'graphics',
+  ],
 };
 
 /**
  * Comprehensive API Registry Data
  * No-authentication APIs from public-api-lists and curated sources
- * Total: 65+ APIs across 25+ categories, all no-authentication required
+ * Total: 63 APIs across 25+ categories, all no-authentication required
  */
 export const SAMPLE_API_REGISTRY: APIEndpoint[] = [
   // Animals - No Auth Required

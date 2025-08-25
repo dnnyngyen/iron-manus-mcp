@@ -1,9 +1,11 @@
+version: '3.8'
+
 services:
   iron-manus-mcp:
     build:
       context: .
       dockerfile: Dockerfile
-    image: iron-manus-mcp:latest
+    image: dnnyngyen/iron-manus-mcp:latest
     container_name: iron-manus-mcp
     restart: unless-stopped
     
@@ -55,13 +57,13 @@ services:
           cpus: '0.5'
           memory: 256M
     
-    # Health check
+    # Health check - Validates actual application health
     healthcheck:
-      test: ["CMD", "node", "-e", "process.exit(0)"]
+      test: ["CMD", "node", "/app/healthcheck.js"]
       interval: 30s
-      timeout: 10s
+      timeout: 15s
       retries: 3
-      start_period: 40s
+      start_period: 60s
 
 # Optional: Create a network for multi-service deployments
 networks:

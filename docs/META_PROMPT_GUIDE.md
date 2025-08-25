@@ -554,7 +554,7 @@ Enhanced Meta-Prompt with Batch Optimization:
 **Parallel Search Techniques:**
 - **WebSearch Batching**: Multiple search queries in one tool call batch
 - **WebFetch Parallel**: Simultaneous URL fetching from multiple sources  
-- **APISearch + MultiAPIFetch**: Combined API discovery and parallel data gathering
+- **APITaskAgent**: Unified API research workflow with discovery, validation, and data gathering
 - **Cross-Domain Research**: Batch searches across different knowledge domains
 
 **Example Optimized Research Pattern:**
@@ -664,7 +664,7 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
   INIT: ['JARVIS'],
   QUERY: ['JARVIS'],
   ENHANCE: ['JARVIS'],
-  KNOWLEDGE: ['WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'KnowledgeSynthesize', 'JARVIS'],
+  KNOWLEDGE: ['WebSearch', 'WebFetch', 'APITaskAgent', 'KnowledgeSynthesize', 'JARVIS'],
   PLAN: ['TodoWrite'],
   EXECUTE: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser'],
   VERIFY: ['TodoRead', 'Read'],

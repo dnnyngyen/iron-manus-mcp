@@ -1,5 +1,6 @@
 // SSRF protection module
 import { CONFIG } from '../config.js';
+import { SSRF_GUARD_CONFIG } from '../config/tool-constants.js';
 
 /**
  * SSRF Guard - prevents Server-Side Request Forgery attacks
@@ -158,7 +159,7 @@ export function isValidSessionId(sessionId: string): boolean {
   }
 
   // Check for reasonable length (prevent extremely long paths)
-  if (sessionId.length > 200) {
+  if (sessionId.length > SSRF_GUARD_CONFIG.SESSION_ID_MAX_LENGTH) {
     return false;
   }
 

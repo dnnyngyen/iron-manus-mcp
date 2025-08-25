@@ -74,3 +74,17 @@ __pycache__/
 .claude/
 iron_manus_*.json
 banner.png
+
+# Session files
+iron-manus-sessions/
+
+# Additional security exclusions
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+.env.local
+.env.production
+.env.staging
+.env.development

@@ -7,6 +7,7 @@ import { rateLimiter } from '../core/api-registry.js';
 import logger from '../utils/logger.js';
 import { CONFIG } from '../config.js';
 import { validateAndSanitizeURL } from '../security/ssrfGuard.js';
+import { AUTO_CONNECTION_CONFIG as AUTO_CONNECTION_CONSTANTS } from '../config/tool-constants.js';
 
 // Auto-connection configuration using centralized config
 export const AUTO_CONNECTION_CONFIG = {
@@ -67,77 +68,79 @@ export async function autoFetchAPIs(
   // Use p-limit for better concurrency control
   const limit = pLimit(maxConcurrent);
 
-  const fetchPromises = apiUrls.slice(0, 5).map((url, _index) =>
-    limit(async () => {
-      try {
-        const startTime = Date.now();
-
-        // SSRF protection - validate URL before making request
-        const sanitizedUrl = validateAndSanitizeURL(url);
-        if (!sanitizedUrl) {
-          throw new Error('URL blocked by SSRF protection');
-        }
-
-        const hostname = new URL(sanitizedUrl).hostname;
-
-        // Check rate limiting using config
-        if (
-          !rateLimiter.canMakeRequest(
-            hostname,
-            CONFIG.RATE_LIMIT_REQUESTS_PER_MINUTE,
-            CONFIG.RATE_LIMIT_WINDOW_MS
-          )
-        ) {
-          throw new Error('Rate limit exceeded');
-        }
-
-        const response = await axiosInstance.get(sanitizedUrl);
-        const duration = Date.now() - startTime;
-
-        // Sanitize and truncate response data
-        let sanitizedData = response.data;
-        if (typeof sanitizedData === 'string') {
-          sanitizedData = sanitizedData.substring(0, AUTO_CONNECTION_CONFIG.max_response_size);
-        } else if (typeof sanitizedData === 'object') {
-          sanitizedData = JSON.stringify(sanitizedData).substring(
-            0,
-            AUTO_CONNECTION_CONFIG.max_response_size
-          );
-        }
-
-        // Calculate confidence based on response quality
-        const confidence = calculateResponseConfidence(response.status, sanitizedData, duration);
-
-        return {
-          source: hostname,
-          data: sanitizedData,
-          confidence,
-          success: true,
-          duration,
-        };
-      } catch (error) {
-        const duration = Date.now() - Date.now();
-        let hostname = 'unknown';
-
+  const fetchPromises = apiUrls
+    .slice(0, AUTO_CONNECTION_CONSTANTS.MAX_API_URLS)
+    .map((url, _index) =>
+      limit(async () => {
         try {
-          hostname = new URL(url).hostname;
-        } catch {
-          // URL parsing failed, keep 'unknown'
+          const startTime = Date.now();
+
+          // SSRF protection - validate URL before making request
+          const sanitizedUrl = validateAndSanitizeURL(url);
+          if (!sanitizedUrl) {
+            throw new Error('URL blocked by SSRF protection');
+          }
+
+          const hostname = new URL(sanitizedUrl).hostname;
+
+          // Check rate limiting using config
+          if (
+            !rateLimiter.canMakeRequest(
+              hostname,
+              CONFIG.RATE_LIMIT_REQUESTS_PER_MINUTE,
+              CONFIG.RATE_LIMIT_WINDOW_MS
+            )
+          ) {
+            throw new Error('Rate limit exceeded');
+          }
+
+          const response = await axiosInstance.get(sanitizedUrl);
+          const duration = Date.now() - startTime;
+
+          // Sanitize and truncate response data
+          let sanitizedData = response.data;
+          if (typeof sanitizedData === 'string') {
+            sanitizedData = sanitizedData.substring(0, AUTO_CONNECTION_CONFIG.max_response_size);
+          } else if (typeof sanitizedData === 'object') {
+            sanitizedData = JSON.stringify(sanitizedData).substring(
+              0,
+              AUTO_CONNECTION_CONFIG.max_response_size
+            );
+          }
+
+          // Calculate confidence based on response quality
+          const confidence = calculateResponseConfidence(response.status, sanitizedData, duration);
+
+          return {
+            source: hostname,
+            data: sanitizedData,
+            confidence,
+            success: true,
+            duration,
+          };
+        } catch (error) {
+          const duration = Date.now() - Date.now();
+          let hostname = 'unknown';
+
+          try {
+            hostname = new URL(url).hostname;
+          } catch {
+            // URL parsing failed, keep 'unknown'
+          }
+
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+          return {
+            source: hostname,
+            data: '',
+            confidence: 0.0,
+            success: false,
+            duration,
+            error: errorMessage,
+          };
         }
-
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-        return {
-          source: hostname,
-          data: '',
-          confidence: 0.0,
-          success: false,
-          duration,
-          error: errorMessage,
-        };
-      }
-    })
-  );
+      })
+    );
 
   const allResults = await Promise.allSettled(fetchPromises);
 
@@ -158,20 +161,25 @@ export async function autoFetchAPIs(
  * @returns Confidence score between 0 and 1
  */
 function calculateResponseConfidence(status: number, data: string, duration: number): number {
-  let confidence = 0.5; // Base confidence
+  let confidence = AUTO_CONNECTION_CONSTANTS.BASE_CONFIDENCE;
 
   // Status code contribution
-  if (status === 200) confidence += 0.3;
-  else if (status >= 200 && status < 300) confidence += 0.2;
-  else confidence -= 0.2;
+  if (status === 200) confidence += AUTO_CONNECTION_CONSTANTS.STATUS_200_BOOST;
+  else if (status >= 200 && status < 300)
+    confidence += AUTO_CONNECTION_CONSTANTS.STATUS_SUCCESS_BOOST;
+  else confidence -= AUTO_CONNECTION_CONSTANTS.STATUS_FAILURE_PENALTY;
 
   // Data quality contribution
-  if (data && data.length > 100) confidence += 0.2;
-  else if (data && data.length > 10) confidence += 0.1;
+  if (data && data.length > AUTO_CONNECTION_CONSTANTS.DATA_QUALITY_LARGE_THRESHOLD)
+    confidence += AUTO_CONNECTION_CONSTANTS.DATA_QUALITY_LARGE_BOOST;
+  else if (data && data.length > AUTO_CONNECTION_CONSTANTS.DATA_QUALITY_SMALL_THRESHOLD)
+    confidence += AUTO_CONNECTION_CONSTANTS.DATA_QUALITY_SMALL_BOOST;
 
   // Response time contribution (faster is better)
-  if (duration < 1000) confidence += 0.1;
-  else if (duration > 5000) confidence -= 0.1;
+  if (duration < AUTO_CONNECTION_CONSTANTS.RESPONSE_TIME_FAST_THRESHOLD)
+    confidence += AUTO_CONNECTION_CONSTANTS.RESPONSE_TIME_FAST_BOOST;
+  else if (duration > AUTO_CONNECTION_CONSTANTS.RESPONSE_TIME_SLOW_THRESHOLD)
+    confidence -= AUTO_CONNECTION_CONSTANTS.RESPONSE_TIME_SLOW_PENALTY;
 
   return Math.max(0.0, Math.min(1.0, confidence));
 }
@@ -230,7 +238,7 @@ export async function autoSynthesize(
   for (let i = 0; i < validResponses.length; i++) {
     for (let j = i + 1; j < validResponses.length; j++) {
       const similarity = calculateSimpleSimilarity(validResponses[i].data, validResponses[j].data);
-      if (similarity < 0.3) {
+      if (similarity < AUTO_CONNECTION_CONSTANTS.SIMILARITY_THRESHOLD) {
         contradictions.push(
           `Potential conflict between ${validResponses[i].source} and ${validResponses[j].source}`
         );

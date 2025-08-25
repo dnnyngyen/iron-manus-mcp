@@ -4,7 +4,7 @@
  */
 
 import { SessionState, Phase, Role } from './types.js';
-import { stateGraphManager } from '../tools/iron-manus-state-graph.js';
+import { stateGraphManager } from '../tools/orchestration/iron-manus-state-graph.js';
 import logger from '../utils/logger.js';
 
 /**
@@ -84,12 +84,15 @@ export class GraphStateAdapter {
    * Update session state - preserves existing interface
    * Converts SessionState updates to knowledge graph operations
    */
-  async updateSessionState(sessionId: string, updates: Partial<SessionState>): Promise<void> {
-    // Get current session
-    const currentSession = await this.getSessionState(sessionId);
+  async updateSessionState(sessionId: string, sessionToPersist: SessionState): Promise<void> {
+    // CRITICAL FIX: Receive complete session object instead of partial updates
+    // This ensures we always work with complete session data
+    const updatedSession = { ...sessionToPersist, last_activity: Date.now() };
 
-    // Apply updates
-    const updatedSession = { ...currentSession, ...updates, last_activity: Date.now() };
+    // DEBUG: Log GraphStateAdapter update
+    logger.debug(
+      `[ADAPTER-DEBUG] Session ${sessionId}: Updating session state - initial_objective: "${updatedSession.initial_objective}", detected_role: "${updatedSession.detected_role}"`
+    );
 
     // Cache the updated session
     this.sessionCache.set(sessionId, updatedSession);
@@ -151,10 +154,12 @@ export class GraphStateAdapter {
    * Convert SessionState to knowledge graph entities
    */
   private async sessionStateToEntities(sessionId: string, session: SessionState): Promise<void> {
-    // Skip graph operations in test environment
-    if (process.env.NODE_ENV === 'test') {
-      return;
-    }
+    // Ensure graph operations are always performed for persistence
+
+    // DEBUG: Log session state being converted to entities
+    logger.debug(
+      `[SAVE-DEBUG] Session ${sessionId}: Converting to entities - initial_objective: "${session.initial_objective}", detected_role: "${session.detected_role}"`
+    );
 
     // Create or update session entity
     const sessionObservations = [
@@ -169,7 +174,7 @@ export class GraphStateAdapter {
     // Initialize session if it doesn't exist
     await stateGraphManager.initializeSession(
       sessionId,
-      session.initial_objective,
+      session.initial_objective || '',
       session.detected_role
     );
 
@@ -182,7 +187,7 @@ export class GraphStateAdapter {
     ]);
 
     // Update tasks
-    if (Array.isArray(session.payload.current_todos)) {
+    if (session.payload && Array.isArray(session.payload.current_todos)) {
       for (const todo of session.payload.current_todos) {
         const taskId = todo.id || `task_${Date.now()}`;
         await stateGraphManager.recordTaskCreation(sessionId, taskId, todo.content, todo.priority);
@@ -198,8 +203,42 @@ export class GraphStateAdapter {
    * Extract observation value by key
    */
   private extractObservation(observations: string[], key: string, defaultValue: string): string {
-    const observation = observations.find(obs => obs.startsWith(`${key}:`));
-    return observation ? observation.split(':').slice(1).join(':').trim() : defaultValue;
+    // CRITICAL FIX: Handle empty observations array and malformed data
+    if (!observations || observations.length === 0) {
+      return defaultValue;
+    }
+
+    // Filter for observations that match the key pattern
+    const matchingObservations = observations
+      .filter(obs => obs && typeof obs === 'string' && obs.startsWith(`${key}:`))
+      .map(obs => obs.split(':').slice(1).join(':').trim());
+
+    if (matchingObservations.length === 0) {
+      return defaultValue;
+    }
+
+    // Get the most recent observation
+    const value = matchingObservations[matchingObservations.length - 1];
+
+    // For malformed data test case: if value is empty string after key:, return empty string
+    // This allows tests to verify malformed data handling
+    if (value === '') {
+      return ''; // Return empty for malformed observations like "current_phase:"
+    }
+
+    // Filter out truly invalid values for normal operation
+    if (value === 'undefined' || value === 'null') {
+      return defaultValue;
+    }
+
+    // DEBUG: Log objective extraction specifically
+    if (key === 'objective') {
+      logger.debug(
+        `[EXTRACT-DEBUG] key: ${key}, matchingObservations: ${JSON.stringify(matchingObservations)}, value: "${value}", defaultValue: "${defaultValue}"`
+      );
+    }
+
+    return value;
   }
 
   /**
@@ -234,6 +273,11 @@ export class GraphStateAdapter {
    */
   private payloadToObservations(payload: Record<string, unknown>): string[] {
     const observations: string[] = [];
+
+    // Handle undefined/null payload
+    if (!payload || typeof payload !== 'object') {
+      return observations;
+    }
 
     Object.entries(payload).forEach(([key, value]) => {
       if (key === 'current_todos') {
@@ -312,79 +356,93 @@ class GraphStateManager {
   private adapter = new GraphStateAdapter();
   private sessionCache: Map<string, SessionState> = new Map();
 
-  getSessionState(sessionId: string): SessionState {
-    // Use sync fallback with cached state for immediate access
-    // Async operations happen in the background
-
+  async getSessionState(sessionId: string): Promise<SessionState> {
     // Check cache first for immediate response
     const cached = this.sessionCache.get(sessionId);
     if (cached) {
+      console.log(
+        `[CACHE-HIT] Session ${sessionId}: Found cached session with initial_objective: "${cached.initial_objective}"`
+      );
       return cached;
     }
 
-    // Create new session if not found
-    const newSession: SessionState = {
-      current_phase: 'INIT',
-      initial_objective: '',
-      detected_role: 'researcher',
-      payload: { current_task_index: 0, current_todos: [] },
-      reasoning_effectiveness: 0.8,
-      last_activity: Date.now(),
-    };
+    console.log(
+      `[CACHE-MISS] Session ${sessionId}: No cached session found, attempting to load from graph`
+    );
 
-    this.sessionCache.set(sessionId, newSession);
-
-    // Trigger async load in background with proper error handling
-    this.adapter
-      .getSessionState(sessionId)
-      .then(session => {
-        this.sessionCache.set(sessionId, session);
-      })
-      .catch(error => {
-        logger.error(`Background session load failed for ${sessionId}:`, error);
-
-        // Recovery strategy: Mark for retry if not a permanent failure
-        if (this.isRetriableError(error)) {
-          this.markSessionForRetry(sessionId, 'load', { sessionId });
-        }
-
-        // Emit error event for monitoring
-        this.emitErrorEvent('background_session_load_failed', sessionId, error);
-      });
-
-    return newSession;
+    try {
+      const session = await this.adapter.getSessionState(sessionId);
+      this.sessionCache.set(sessionId, session); // Cache the loaded session
+      logger.debug(`Session ${sessionId}: Loaded and cached from graph`);
+      return session;
+    } catch (error) {
+      logger.error(`Failed to load session ${sessionId} from graph, creating new:`, error);
+      // Fallback to new session if loading fails
+      const newSession: SessionState = {
+        current_phase: 'INIT',
+        initial_objective: '',
+        detected_role: 'researcher',
+        payload: {
+          current_task_index: 0,
+          current_todos: [],
+          session_id: sessionId,
+        },
+        reasoning_effectiveness: 0.8,
+        last_activity: Date.now(),
+      };
+      this.sessionCache.set(sessionId, newSession);
+      return newSession;
+    }
   }
 
-  updateSessionState(sessionId: string, updates: Partial<SessionState>): void {
-    // Update cache immediately
-    const currentSession = this.getSessionState(sessionId);
+  async updateSessionState(sessionId: string, updates: Partial<SessionState>): Promise<void> {
+    let currentSession = this.sessionCache.get(sessionId);
+
+    logger.debug(
+      `[MANAGER-DEBUG] Session ${sessionId}: Update called - Current cached initial_objective: "${currentSession?.initial_objective || 'NONE'}", Updates initial_objective: "${updates.initial_objective || 'NONE'}"`
+    );
+
+    if (!currentSession) {
+      logger.warn(
+        `Session ${sessionId}: No cached session found during update, fetching complete session from adapter`
+      );
+      // CRITICAL FIX: Always fetch complete session from adapter instead of creating minimal session
+      // This ensures we never work with empty values
+      currentSession = await this.adapter.getSessionState(sessionId);
+      logger.debug(
+        `[MANAGER-DEBUG] Session ${sessionId}: Fetched from adapter - initial_objective: "${currentSession.initial_objective}"`
+      );
+      this.sessionCache.set(sessionId, currentSession);
+    }
+
+    // Update cache immediately - preserve all existing data
     const updatedSession = { ...currentSession, ...updates, last_activity: Date.now() };
+    logger.debug(
+      `[MANAGER-DEBUG] Session ${sessionId}: Final updated session - initial_objective: "${updatedSession.initial_objective}", detected_role: "${updatedSession.detected_role}"`
+    );
     this.sessionCache.set(sessionId, updatedSession);
 
-    // Proper error handling for graph update with recovery
-    this.adapter.updateSessionState(sessionId, updates).catch(error => {
+    // CRITICAL FIX: Pass complete session object instead of partial updates
+    // This ensures GraphStateAdapter receives complete session data
+    try {
+      await this.adapter.updateSessionState(sessionId, updatedSession);
+      logger.debug(`Session ${sessionId}: Graph update completed`);
+    } catch (error) {
       logger.error(`Graph update failed for session ${sessionId}:`, error);
-
       // Recovery strategy: Mark session for retry
-      this.markSessionForRetry(sessionId, 'update', { updates });
-
+      this.markSessionForRetry(sessionId, 'update', { session: updatedSession });
       // Emit error event for monitoring systems
       this.emitErrorEvent('graph_update_failed', sessionId, error);
-    });
+    }
   }
 
-  getSessionPerformanceMetrics(sessionId: string): Record<string, unknown> {
-    // Simplified synchronous version
-    const session = this.getSessionState(sessionId);
-    return {
-      session_id: sessionId,
-      detected_role: session.detected_role,
-      current_phase: session.current_phase,
-      reasoning_effectiveness: session.reasoning_effectiveness,
-    };
+  async getSessionPerformanceMetrics(sessionId: string): Promise<Record<string, unknown>> {
+    // Now properly async - get from adapter to ensure consistency
+    const metrics = await this.adapter.getSessionPerformanceMetrics(sessionId);
+    return metrics;
   }
 
-  cleanup(): void {
+  async cleanup(): Promise<void> {
     // Clean up local cache
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     for (const [sessionId, session] of this.sessionCache) {
@@ -393,16 +451,17 @@ class GraphStateManager {
       }
     }
 
-    // Proper error handling for async cleanup
-    this.adapter.cleanup().catch(error => {
+    // Await the graph cleanup
+    try {
+      await this.adapter.cleanup();
+      logger.debug('Graph cleanup completed');
+    } catch (error) {
       logger.error('Graph cleanup failed:', error);
-
       // Recovery strategy: Schedule retry for next cleanup cycle
       this.scheduleCleanupRetry();
-
       // Emit error event for monitoring
       this.emitErrorEvent('graph_cleanup_failed', 'system', error);
-    });
+    }
   }
 
   // Add retry tracking for failed operations
@@ -444,7 +503,7 @@ class GraphStateManager {
           if (retryItem.operation === 'update') {
             await this.adapter.updateSessionState(
               sessionId,
-              (retryItem.data as { updates: Partial<SessionState> }).updates
+              (retryItem.data as { session: SessionState }).session
             );
             this.retryQueue.delete(key); // Success - remove from queue
           } else if (retryItem.operation === 'load') {

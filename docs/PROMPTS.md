@@ -36,18 +36,18 @@ INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DON
 Each phase has specialized prompts that define behavior through natural language programming:
 
 ### Phase 1: INIT
-**Purpose**: System initialization (should not be reached - immediate JARVIS call)
+**Purpose**: Internal session state setup and initialization
 ```typescript
-INIT: "You are initializing a new task. This should not be reached - call JARVIS immediately."
+INIT: "You are initializing a new project session. Assess the user's objective and prepare to begin the 8-phase workflow (QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE)."
 ```
 
-### Phase 2: QUERY
-**Purpose**: Goal analysis and role selection with Claude-powered intelligent role detection
+### Phase 2: QUERY  
+**Purpose**: User-facing objective analysis, workflow initialization, and role selection with Claude-powered intelligent role detection
 
-**Claude Role Selection**: The system now uses Claude's natural language understanding for intelligent role selection instead of keyword matching:
+**Combined Initialization & Analysis**: The QUERY phase now handles both initialization messaging and objective analysis in a single, clear prompt:
 
 ```typescript
-const QUERY_PROMPT = `You are in the QUERY phase (Manus: "Analyze Events"). Your task:
+const QUERY_PROMPT = `You are analyzing the user's objective and initializing the project workflow. Your task:
 
 Think through your analysis approach before proceeding. Consider:
 - What is the user really asking for at its core?
@@ -91,11 +91,11 @@ AUTOMATED WORKFLOW COMPLETED:
 3. ✓ Knowledge Synthesis - Information cross-validated and synthesized
 4. ✓ Quality Assessment - Confidence scoring and contradiction detection
 
-**🔄 MANUAL OVERRIDE OPTIONS:**
-- APISearch to discover additional relevant APIs
-- MultiAPIFetch to gather data from specific sources
-- KnowledgeSynthesize to process custom API responses
-- WebSearch/WebFetch for supplementary research`;
+**🔄 AVAILABLE RESEARCH TOOLS:**
+- APITaskAgent for structured API research workflows
+- PythonComputationalTool for data processing and analysis
+- WebSearch/WebFetch for general web research
+- Task agents for specialized research domains`;
 ```
 
 ### Phase 5: PLAN
@@ -234,13 +234,13 @@ function generateRoleSpecificThinkGuidance(role: Role, config: RoleConfig): stri
 - Statistical pattern recognition and data correlation significance
 - Data validation methodologies and quality assurance protocols
 - Pattern verification strategies and anomaly detection approaches
-- **Python Analysis**: Use PythonDataAnalysis (code generation), EnhancedPythonDataScience (complete workflows), or mcp__ide__executeCode for statistical analysis`,
+- **Python Analysis**: Use PythonComputationalTool for unified data analysis, visualization, and statistical operations, or mcp__ide__executeCode for direct execution`,
     
     coder: `**IMPLEMENTATION REASONING REQUIRED:** Think through the implementation:
 - Modular architecture design patterns and component boundaries
 - Test-driven development approach and testing strategy
 - Error handling, edge cases, and robustness considerations
-- **Python Execution**: For complex algorithms, calculations, or code generation, use EnhancedPythonDataScience, PythonExecutor, or mcp__ide__executeCode`
+- **Python Execution**: For complex algorithms, calculations, or code generation, use PythonComputationalTool or mcp__ide__executeCode`
     // ... more roles
   };
 }
@@ -258,14 +258,10 @@ Iron Manus MCP v0.2.4 implements advanced Software 3.0:
 - **mcp__ide__executeCode** - Direct Python execution in Jupyter kernel
 - Used for: Immediate calculations, quick analysis, interactive development
 
-#### Tier 2: Code Generation with Auto-Install
-- **PythonExecutor** - Generates and executes Python code with automatic package installation
-- **PythonDataAnalysis** - Specialized for generating statistical analysis and data processing code
-- Used for: Complex algorithms, statistical analysis, data processing workflows
-
-#### Tier 3: Complete Workflow Automation
-- **EnhancedPythonDataScience** - Complete data science workflow automation with intelligent code generation
-- Used for: End-to-end data science projects, complex analytical workflows, research automation
+#### Unified Python Operations
+- **PythonComputationalTool** - Consolidated tool handling all Python operations through operation-specific workflows
+- Operations: web_scraping, data_analysis, visualization, machine_learning, custom
+- Used for: All Python needs from simple scripts to complex data science workflows
 
 ### Python Integration in Role Enhancement
 
@@ -292,9 +288,9 @@ function requiresPythonExecution(objective: string, role: Role): boolean {
 
 Python tools are available in specific phases:
 
-- **KNOWLEDGE**: `PythonDataAnalysis`, `EnhancedPythonDataScience`, `mcp__ide__executeCode` for data collection and research automation
+- **KNOWLEDGE**: `PythonComputationalTool`, `mcp__ide__executeCode` for data collection and research automation
 - **EXECUTE**: Full Python tool suite for implementation and processing
-- **VERIFY**: `PythonDataAnalysis`, `EnhancedPythonDataScience` for analytical verification and data validation
+- **VERIFY**: `PythonComputationalTool` for analytical verification and data validation
 
 ---
 
@@ -316,16 +312,16 @@ export const PHASE_ALLOWED_TOOLS: Record<Phase, string[]> = {
   QUERY: ['JARVIS'],
   ENHANCE: ['JARVIS'],
   KNOWLEDGE: [
-    'WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'KnowledgeSynthesize',
-    'mcp__ide__executeCode', 'PythonDataAnalysis', 'PythonExecutor', 'EnhancedPythonDataScience',
+    'WebSearch', 'WebFetch', 'APITaskAgent', 'KnowledgeSynthesize',
+    'mcp__ide__executeCode', 'PythonComputationalTool',
     'JARVIS'
   ],
   PLAN: ['TodoWrite'],
   EXECUTE: [
     'TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser',
-    'mcp__ide__executeCode', 'PythonDataAnalysis', 'PythonExecutor', 'EnhancedPythonDataScience'
+    'mcp__ide__executeCode', 'PythonComputationalTool'
   ],
-  VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'EnhancedPythonDataScience'],
+  VERIFY: ['TodoRead', 'Read', 'mcp__ide__executeCode', 'PythonComputationalTool'],
   DONE: []
 };
 ```
@@ -336,11 +332,11 @@ Natural language guidance for tool selection:
 
 ```typescript
 export const PHASE_TOOL_GUIDANCE: Record<Phase, string> = {
-  KNOWLEDGE: 'Think through knowledge needs, then choose: WebSearch/WebFetch (research), PythonDataAnalysis/EnhancedPythonDataScience (intelligent data science code generation), mcp__ide__executeCode (direct Python execution), JARVIS (skip research)',
+  KNOWLEDGE: 'Think through knowledge needs, then choose: WebSearch/WebFetch (research), APITaskAgent (structured API research), PythonComputationalTool (data analysis and processing), mcp__ide__executeCode (direct Python execution), JARVIS (skip research)',
   
-  EXECUTE: 'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), EnhancedPythonDataScience (complete data science workflows), PythonExecutor (Python code with auto-install), mcp__ide__executeCode (direct Python execution)',
+  EXECUTE: 'Think through execution approach, then choose: TodoRead (check todos), Task (spawn agent), Bash/Browser (direct execution), PythonComputationalTool (unified Python operations), mcp__ide__executeCode (direct Python execution)',
   
-  VERIFY: 'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), PythonDataAnalysis/EnhancedPythonDataScience (data validation and analysis), mcp__ide__executeCode (analytical verification)'
+  VERIFY: 'Think through quality assessment, then choose: TodoRead (check completion), Read (verify output), PythonComputationalTool (data validation and analysis), mcp__ide__executeCode (analytical verification)'
 };
 ```
 
@@ -353,13 +349,13 @@ function getRoleSpecificAPIGuidance(role: Role): string {
   const roleGuidance: Record<Role, string> = {
     analyzer: `**ANALYZER API PREFERENCES:**
 - **Primary Categories**: Financial data, cryptocurrency, business metrics, statistical APIs
-- **Recommended Workflow**: APISearch → financial/data APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APITaskAgent for complete financial data research workflow
 - **Key APIs**: Alpha Vantage, CoinGecko, business analytics, market data sources
 - **Confidence Threshold**: 0.7+ (balance between accuracy and data availability)`,
     
     researcher: `**RESEARCHER API PREFERENCES:**
 - **Primary Categories**: Books, academic papers, scientific data, educational resources
-- **Recommended Workflow**: APISearch → academic/reference APIs → MultiAPIFetch → KnowledgeSynthesize
+- **Recommended Workflow**: APITaskAgent for complete academic research workflow
 - **Key APIs**: Open Library, Google Books, NASA API, academic databases
 - **Confidence Threshold**: 0.8+ (high confidence for research accuracy)`
     // ... more roles
@@ -514,7 +510,7 @@ if (needsDataAnalysis(task) && role === 'analyzer') {
 **Software 3.0:**
 ```typescript
 const PYTHON_INTEGRATION = `
-**Python Analysis**: Use PythonDataAnalysis (code generation), EnhancedPythonDataScience (complete workflows), or mcp__ide__executeCode for statistical analysis, data processing, performance metrics calculation, and visualization
+**Python Analysis**: Use PythonComputationalTool for unified data analysis, statistical operations, visualization, and processing, or mcp__ide__executeCode for direct execution
 `;
 ```
 

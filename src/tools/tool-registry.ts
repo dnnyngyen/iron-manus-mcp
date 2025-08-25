@@ -3,15 +3,23 @@
  * Centralized registration and management of all MCP tools
  */
 
-import { BaseTool, ToolDefinition } from './base-tool.js';
-import { JARVISTool } from './jarvis-tool.js';
-import { MultiAPIFetchTool } from './multi-api-fetch.js';
-import { APISearchTool } from './api-search.js';
-import { APIValidatorTool } from './api-validator.js';
-import { PythonDataAnalysisTool } from './python-data-analysis.js';
-import { PythonExecutorTool, EnhancedPythonDataScienceTool } from './python-executor.js';
-import { IronManusStateGraphTool } from './iron-manus-state-graph.js';
-import { HealthCheckTool } from './health-check.js';
+import { BaseTool, ToolDefinition, ToolResult } from './base-tool.js';
+
+// Orchestration tools
+import { JARVISTool } from './orchestration/jarvis-tool.js';
+import { IronManusStateGraphTool } from './orchestration/iron-manus-state-graph.js';
+
+// API tools
+import { APITaskAgent } from './api/api-task-agent.js';
+
+// Computation tools
+import { PythonComputationalTool } from './computation/python-computational-tool.js';
+
+// Content tools
+import { SlideGeneratorTool } from './content/slide-generator-tool.js';
+
+// System tools
+import { HealthCheckTool } from './system/health-check.js';
 
 /**
  * Tool Registry Class
@@ -29,14 +37,11 @@ export class ToolRegistry {
    */
   private registerDefaultTools(): void {
     this.registerTool(new JARVISTool());
-    this.registerTool(new MultiAPIFetchTool());
-    this.registerTool(new APISearchTool());
-    this.registerTool(new APIValidatorTool());
-    this.registerTool(new PythonDataAnalysisTool());
-    this.registerTool(new PythonExecutorTool());
-    this.registerTool(new EnhancedPythonDataScienceTool());
+    this.registerTool(new APITaskAgent());
+    this.registerTool(new PythonComputationalTool());
     this.registerTool(new IronManusStateGraphTool());
     this.registerTool(new HealthCheckTool());
+    this.registerTool(new SlideGeneratorTool());
   }
 
   /**
@@ -94,7 +99,7 @@ export class ToolRegistry {
   /**
    * Handle tool execution by name
    */
-  async executeTool(name: string, args: unknown): Promise<unknown> {
+  async executeTool(name: string, args: unknown): Promise<ToolResult> {
     const tool = this.getTool(name);
     if (!tool) {
       throw new Error(

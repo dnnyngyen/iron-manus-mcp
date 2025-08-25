@@ -3,13 +3,22 @@
  * Central export point for all tool modules
  */
 
+// Core tool infrastructure
 export { BaseTool, type ToolDefinition, type ToolResult, type ToolSchema } from './base-tool.js';
-export { JARVISTool, type JARVISArgs } from './jarvis-tool.js';
-export { MultiAPIFetchTool, type MultiAPIFetchArgs } from './multi-api-fetch.js';
-export { APISearchTool, type APISearchArgs } from './api-search.js';
-export { APIValidatorTool, type APIValidatorArgs, type ValidationResult } from './api-validator.js';
-export { PythonDataAnalysisTool, type PythonDataAnalysisArgs } from './python-data-analysis.js';
-export { PythonExecutorTool, EnhancedPythonDataScienceTool } from './python-executor.js';
-export { IronManusStateGraphTool } from './iron-manus-state-graph.js';
-export { HealthCheckTool } from './health-check.js';
 export { ToolRegistry, toolRegistry } from './tool-registry.js';
+
+// Orchestration tools (FSM control and workflow management)
+export { JARVISTool, type JARVISArgs } from './orchestration/jarvis-tool.js';
+export { IronManusStateGraphTool } from './orchestration/iron-manus-state-graph.js';
+
+// API tools (external data access and manipulation)
+export { APITaskAgent, type APITaskAgentArgs } from './api/api-task-agent.js';
+
+// Computation tools (data processing and analysis)
+export { PythonComputationalTool } from './computation/python-computational-tool.js';
+
+// Content tools (content generation and presentation)
+export { SlideGeneratorTool } from './content/slide-generator-tool.js';
+
+// System tools (infrastructure and monitoring)
+export { HealthCheckTool } from './system/health-check.js';

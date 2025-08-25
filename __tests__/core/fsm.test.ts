@@ -57,7 +57,7 @@ describe('FSM Core Functionality', () => {
 
       expect(result.next_phase).toBe('QUERY');
       expect(result.status).toBe('IN_PROGRESS');
-      expect(result.system_prompt).toContain('QUERY phase');
+      expect(result.system_prompt).toContain('analyzing the user\'s objective');
       expect(mockStateManager.updateSessionState).toHaveBeenCalled();
     });
 
@@ -413,10 +413,10 @@ describe('FSM Core Functionality', () => {
         { phase: 'INIT', expectedTools: ['JARVIS'] },
         { phase: 'QUERY', expectedTools: ['JARVIS'] },
         { phase: 'ENHANCE', expectedTools: ['JARVIS'] },
-        { phase: 'KNOWLEDGE', expectedTools: ['Task', 'WebSearch', 'WebFetch', 'APISearch', 'MultiAPIFetch', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'PythonExecutor', 'EnhancedPythonDataScience', 'JARVIS'] },
+        { phase: 'KNOWLEDGE', expectedTools: ['Task', 'WebSearch', 'WebFetch', 'APITaskAgent', 'mcp__ide__executeCode', 'PythonComputationalTool', 'JARVIS'] },
         { phase: 'PLAN', expectedTools: ['TodoWrite'] },
-        { phase: 'EXECUTE', expectedTools: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'PythonExecutor', 'EnhancedPythonDataScience'] },
-        { phase: 'VERIFY', expectedTools: ['TodoRead', 'Read', 'mcp__ide__executeCode', 'PythonDataAnalysis', 'EnhancedPythonDataScience'] },
+        { phase: 'EXECUTE', expectedTools: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit', 'Browser', 'mcp__ide__executeCode', 'PythonComputationalTool'] },
+        { phase: 'VERIFY', expectedTools: ['TodoRead', 'Read', 'mcp__ide__executeCode', 'PythonComputationalTool'] },
         { phase: 'DONE', expectedTools: [] }
       ];
 
