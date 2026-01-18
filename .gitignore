@@ -14,6 +14,7 @@ JARVIS_state.json
 manus_fsm_state.json
 manus_*.json
 *_state.json
+iron-manus-sessions/
 
 # Legacy JSON files (migrated to knowledge graph) - NEVER COMMIT THESE
 iron_manus_*.json
