@@ -16,10 +16,6 @@
 Iron Manus MCP is a Model Context Protocol (MCP) server that orchestrates AI workflows with a
 clear 8-phase control flow and a small set of focused tools.
 
-## Extended context management through agent delegation
-
-<div align="center">
-
 ### 📹 GIF Demo
 
 <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWpiYWd4eWx6bWlwcHA5Z3QxOGR1Nzh6aWcyY3hzMGlpaGpqYm12ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7fqy8AAeJusLTkSGzF/giphy.gif" alt="Iron Manus MCP Demo" width="650">
