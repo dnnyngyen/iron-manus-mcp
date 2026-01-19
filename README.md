@@ -1,5 +1,3 @@
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/dnnyngyen-iron-manus-mcp-badge.png)](https://mseep.ai/app/dnnyngyen-iron-manus-mcp)
-
 <img src="banner.png" alt="Iron Manus MCP Banner" width="100%" height="250">
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/dnnyngyen/iron-manus-mcp/actions)
@@ -118,6 +116,7 @@ npm run lint
 npm run format
 npm test
 ```
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/dnnyngyen-iron-manus-mcp-badge.png)](https://mseep.ai/app/dnnyngyen-iron-manus-mcp)
 
 ## Documentation
 
