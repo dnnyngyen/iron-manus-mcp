@@ -13,7 +13,7 @@
 
 # Iron Manus MCP (J.A.R.V.I.S.)
 
-**Model Context Protocol server for AI workflow orchestration** - An 8-phase finite state machine that manages complex AI workflows through structured phases and agent delegation with session state management.
+**Model Context Protocol server for AI workflow orchestration** - An 8-phase workflow engine that manages complex AI tasks through structured phases and agent delegation with session state management.
 
 ## Extended context management through agent delegation
 
