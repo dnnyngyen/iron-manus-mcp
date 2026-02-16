@@ -21,7 +21,7 @@
 
 ### Demo
 
-<img src="demo.png" alt="Iron Manus MCP Demo" width="650">
+<img src="demo.png" alt="Iron Manus MCP Demo" width="100%">
 
 #### 🎥 Video Tutorial
 
