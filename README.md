@@ -15,7 +15,7 @@
 
 **Model Context Protocol server for AI workflow orchestration** inspired by Manus AI's orchestration patterns and Andrej Karpathy's "Iron Man" analogy.
 
-## Extended context management through agent delegation
+## Extended context management through agent delegation and Todos as a custom agent dispatch tool
 
 <div align="center">
 
