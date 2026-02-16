@@ -32,6 +32,68 @@
 
 </div>
 
+## Historical Notes: Architectural Patterns
+
+> **Note**: This project is now archived. The following notes document architectural decisions that later appeared in mainstream AI tooling.
+
+Several patterns implemented in Iron Manus MCP (June 2024) were later adopted by Claude Code and similar tools. These emerged from independent experimentation rather than foresight, solving problems that turned out to be common across the ecosystem.
+
+### Patterns That Became Standard
+
+**1. Todos as Subagent Dispatch Queue**
+
+```typescript
+interface TodoItem {
+  type?: 'TaskAgent' | 'SubAgent' | 'DirectExecution';
+  meta_prompt?: MetaPrompt;  // Declarative agent configuration
+}
+```
+
+Todos were not just checklists. They determined execution strategy. `TaskAgent` types spawned fresh `Task()` contexts with isolated state. Claude Code's "Todos into Tasks" feature (January 2026) implements similar semantics.
+
+**2. Phase-Gated Tool Access**
+
+```typescript
+const PHASE_ALLOWED_TOOLS = {
+  PLAN: ['TodoWrite'],
+  EXECUTE: ['TodoRead', 'TodoWrite', 'Task', 'Bash', 'Read', 'Write', 'Edit'],
+  VERIFY: ['TodoRead', 'Read'],  // Read-only during verification
+};
+```
+
+Restricting tool availability by phase prevented misuse (e.g., writing files during verification). This pattern appears in Claude Code Agent Teams (February 2026) via phase-based permissions.
+
+**3. Structured Planning Phase**
+
+The explicit `INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE` workflow enforced planning before execution. Claude Code's Plan Mode (August 2025) provides similar structure.
+
+**4. Context Isolation via File-Based Communication**
+
+```
+./iron-manus-sessions/{session_id}/
+├── synthesized_knowledge.md
+├── primary_research.md
+└── agent_output.md
+```
+
+`Task()` agents have isolated contexts and cannot share state directly. This project used session workspaces for inter-agent coordination. Claude Code Agent Teams implements similar patterns via `~/.claude/teams/` and `~/.claude/tasks/`.
+
+**5. Role-Based Prompt Switching**
+
+Nine specialized roles (`planner`, `coder`, `critic`, `researcher`, `analyzer`, `synthesizer`, `ui_architect`, `ui_implementer`, `ui_refiner`) with distinct thinking methodologies. Claude Code custom subagents (July 2025) provide similar specialization.
+
+**6. Meta-Prompt DSL for Agent Spawning**
+
+```
+(ROLE: coder) (CONTEXT: auth_system) (PROMPT: Implement JWT auth) (OUTPUT: auth_module.ts)
+```
+
+Declarative syntax for agent configuration embedded in todo content. Similar patterns appear in Claude Code's subagent configuration.
+
+### Timeline Context
+
+Iron Manus MCP (June 2024) introduced todos as subagent dispatch, phase-gated tools, structured planning phases, context isolation, and role-based agents. Claude Code adopted these patterns between July 2025 and February 2026. These patterns emerged from practical necessity. Multi-agent orchestration requires task decomposition, context isolation, and workflow structure, all of which eventually appeared in production tooling.
+
 ## What It Does
 
 8-phase workflow orchestration: `INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE`
