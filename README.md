@@ -13,7 +13,7 @@
 
 # Iron Manus MCP
 
-**Model Context Protocol server for AI workflow orchestration** - An 8-phase workflow engine that manages complex AI tasks through structured phases and agent delegation with session state management.
+**Model Context Protocol server for AI workflow orchestration** inspired by Manus AI's orchestration patterns and Andrej Karpathy's "Iron Man" analogy.
 
 ## Extended context management through agent delegation
 
