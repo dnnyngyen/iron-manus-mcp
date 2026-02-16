@@ -48,7 +48,7 @@ interface TodoItem {
 }
 ```
 
-Todos were not just checklists. They determined execution strategy. `TaskAgent` types spawned fresh `Task()` contexts with isolated state. Claude Code's "Todos into Tasks" feature (January 2026) implements similar semantics.
+This MCP was the first to use todos as a subagent dispatch queue. Claude Code had TodoWrite/TodoRead at that point, but nobody (including Anthropic) was thinking of todos as an agent coordination primitive. The Task tool existed but was just non-specialized agents. Our implementation connected the two: todos become task dispatches. Boris Cherny announced "We're turning Todos into Tasks" on January 22, 2026, seven months after we shipped the same idea.
 
 **2. Phase-Gated Tool Access**
 
