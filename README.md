@@ -11,7 +11,7 @@
 [![GitHub Container Registry](https://img.shields.io/badge/GHCR-v0.2.3-blue.svg)](https://github.com/dnnynguyen/iron-manus-mcp/pkgs/container/iron-manus-mcp)
 [![Source Code](https://img.shields.io/badge/Source-v0.2.4-green.svg)](https://github.com/dnnynguyen/iron-manus-mcp)
 
-# Iron Manus MCP (J.A.R.V.I.S.)
+# Iron Manus MCP
 
 **Model Context Protocol server for AI workflow orchestration** - An 8-phase workflow engine that manages complex AI tasks through structured phases and agent delegation with session state management.
 
@@ -23,12 +23,11 @@
 
 <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWpiYWd4eWx6bWlwcHA5Z3QxOGR1Nzh6aWcyY3hzMGlpaGpqYm12ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7fqy8AAeJusLTkSGzF/giphy.gif" alt="Iron Manus MCP Demo" width="650">
 
-#### 🎥 Video Tutorials
+#### 🎥 Video Tutorial
 
-| **Quick Demo** | **Demo + Explanations** |
-|:---:|:---:|
-| [![Iron Manus MCP Demo](https://img.youtube.com/vi/CWuQ_PvZkOs/mqdefault.jpg)](https://www.youtube.com/watch?v=CWuQ_PvZkOs) | [![Iron Manus MCP Deep Dive](https://img.youtube.com/vi/EFVQT3pmyTc/mqdefault.jpg)](https://www.youtube.com/watch?v=EFVQT3pmyTc) |
-| **[Watch the quick demo](https://www.youtube.com/watch?v=CWuQ_PvZkOs)** | **[Watch the detailed walkthrough](https://www.youtube.com/watch?v=EFVQT3pmyTc)** |
+[![Iron Manus MCP Deep Dive](https://img.youtube.com/vi/EFVQT3pmyTc/mqdefault.jpg)](https://www.youtube.com/watch?v=EFVQT3pmyTc)
+
+**[Watch the detailed walkthrough](https://www.youtube.com/watch?v=EFVQT3pmyTc)**
 
 </div>
 
