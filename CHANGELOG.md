@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5] - 2025-01-04
+
+### Fixed
+- **System Prompt Initialization**: Fixed confusing system prompt that showed "You are in the QUERY phase" during initialization
+- Simplified prompt logic by combining INIT and QUERY phases
+- Updated QUERY phase prompt to clearly indicate "analyzing user objective and initializing workflow"
+- Removed complex conditional logic that caused timing issues
+- Improved user experience with clearer initialization messaging
+
 ## [0.2.4] - 2025-01-03
 
 ### Added
@@ -14,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Professional Documentation Standards**: Established consistent JSDoc patterns for all interfaces, classes, and functions
 - **Core System Documentation**: Complete documentation for FSM engine, types, configuration, and server setup
 - **Tool Documentation**: 100% JSDoc coverage for all 10 tools in src/tools/ directory
-- **Architecture Documentation**: Detailed explanations of 8-phase FSM, Component-Cognitive Duality, and fractal orchestration
 - **Developer Experience**: Significantly improved code maintainability and onboarding experience
 
 ### Enhanced
@@ -30,7 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical Improvements
 - **Documentation Quality**: Professional-grade JSDoc with examples, parameter descriptions, and integration notes
-- **Architectural Clarity**: Clear documentation of complex systems including FSM orchestration and cognitive enhancement
 - **Maintenance**: Established documentation standards for future development
 
 ## [0.2.3] - 2025-01-02
@@ -63,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documentation accuracy across README.md, CHANGELOG.md for global deployment readiness
 - Test count inconsistencies in documentation and badges
 
-## [0.2.1] - 2024-12-30
+## [0.2.1] - 2025-06-30
 
 ### Added
 - **Build Reliability**: Enhanced build script with mkdir -p dist to ensure output directory exists
@@ -76,10 +83,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - npm install hanging or failure scenarios
 - Missing directory creation before TypeScript compilation
 
-## [0.2.0] - 2024-12-29
+## [0.2.0] - 2025-06-29
 
 ### Added
-- **Enhanced 6-Phase FSM**: Improved 6-phase workflow (QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY) with INIT/DONE states
+- **8-Phase FSM**: Complete 8-phase workflow (INIT→QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY→DONE)
 - **Jest to Vitest Migration**: Complete test framework migration with 163/163 tests passing
 - **Repository Flattening**: Eliminated nested directory structure for cleaner architecture
 - **ESLint Integration**: Added comprehensive TypeScript linting with @typescript-eslint
@@ -88,7 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Type System Enhancements**: Full TypeScript 5.0 with strict mode enabled
 - **SSRF Security Enhancements**: Advanced URL validation and allowlist support
 
-### Changed  
+### Changed
 - **BREAKING**: Repository structure flattened (removed nested iron-manus-mcp/ directory)
 - **BREAKING**: Test framework changed from Jest to Vitest for better ES module support
 - **BREAKING**: Enhanced FSM workflow with improved state management
@@ -115,48 +122,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ESLint integration with TypeScript-specific rules
 - Improved CI/CD with parallel execution and debugging
 - Clean repository structure with flattened directories
-
-## [1.1.0] - 2024-06-27
-
-### Added
-- **Meta Thread-of-Thought Orchestration** - First implementation applying Thread-of-Thought patterns to FSM orchestration
-- Modular tool architecture with centralized registry system
-- Context segmentation solution for Claude Code's context window limitations
-- Software 3.0 principles implementation with natural language as programming interface
-- Academic research documentation (COGNITIVE_PARADIGMS.md)
-- Audience-specific documentation structure
-
-### Changed
-- **BREAKING**: Updated terminology from "Thread-of-Thought Meta-Orchestration" to "Meta Thread-of-Thought Orchestration"
-- Positioned architecture following Meta Chain-of-Thought academic precedent
-- Enhanced documentation for developers, researchers, and technical implementers
-- Refactored monolithic index.ts into focused modular architecture
-- Improved FSM controller with better context management
-
-### Fixed
-- Documentation accuracy and consistency across all files
-- Academic positioning and citations
-- Setup instructions using correct `claude mcp add` CLI commands
-- Context flow and audience targeting in documentation
-
-### Technical Improvements
-- Context segmentation at FSM phase and Task() agent levels
-- Enhanced role-based cognitive enhancement system
-- Improved error handling and response validation
-- Better TypeScript type safety and maintainability
-- Comprehensive test suite with 98.5% success rate
-
-### Migration Guide
-- Update any references to "Thread-of-Thought Meta-Orchestration" in documentation
-- Review academic citations for updated positioning
-- No code changes required for existing implementations
-
-## [1.0.0] - 2024-06-XX
-
-### Added
-- Initial release with JARVIS FSM controller
-- 6-phase agent loop implementation (QUERY→ENHANCE→KNOWLEDGE→PLAN→EXECUTE→VERIFY)
-- Native Claude Code tool integration (TodoWrite/TodoRead/Task)
-- Fractal orchestration capabilities with recursive agent spawning
-- Role-based cognitive enhancement with 9 specialized roles
-- 65+ API registry with intelligent selection and auto-connection

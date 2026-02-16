@@ -263,7 +263,7 @@ Good: "Create a React dashboard with user authentication and real-time data visu
 ### For Complex Multi-Part Projects
 - Break into logical phases and run separate sessions
 - Use meta-prompts to spawn specialized agents for each major component
-- Let the fractal orchestration handle deep task hierarchies
+- Let the agent spawning handle deep task hierarchies
 
 ---
 

@@ -16,7 +16,7 @@ This document defines the standardized language, terminology, and writing style 
 ### Marketing Hyperbole (Remove Immediately)
 - "revolutionary", "cutting-edge", "game-changing", "bleeding-edge"
 - "enterprise-grade", "blazing fast", "seamless", "comprehensive"
-- "beautiful dance", "elegant deception", "sophisticated"
+- "sophisticated"
 - "most technically precise", "advanced", "powerful"
 - "state-of-the-art", "next-generation", "world-class"
 

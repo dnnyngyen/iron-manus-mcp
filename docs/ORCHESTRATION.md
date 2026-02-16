@@ -1,80 +1,240 @@
-# Iron Manus MCP Meta Thread-of-Thought Orchestration: Complete Chronological Breakdown
+# Iron Manus MCP Workflow Phases
 
-**Note:** This document shows the detailed phase-by-phase breakdown of how Meta Thread-of-Thought orchestration works in practice, demonstrating context segmentation and agent spawning patterns.
+## Phase Sequence
 
-  Initial Invocation
+```
+INIT → QUERY → ENHANCE → KNOWLEDGE → PLAN → EXECUTE → VERIFY → DONE
+```
 
-  Natural Language: User asks for analysis of the Iron Manus codebase architecture
-  MCP Server: Receives initial call with session_id and initial_objective. The system initializes the session and automatically transitions to the INIT phase.
+## Phase Descriptions
 
-  ---
-  Phase 0: INIT - "System Initialization"
+### Phase 1: INIT
 
-  Natural Language: System automatically initializes the session
-  MCP Server: Sets up session state, detects role, and initializes the FSM. This phase immediately transitions to the QUERY phase.
+**What Happens:**
+- Auto-generates session ID
+- Initializes FSM state
+- Triggers role detection
+- Transitions immediately to QUERY
 
-  ---
-  Phase 1: QUERY - "Analyze Events"
+**Code:**
+```typescript
+if (input.initial_objective) {
+    session.initial_objective = input.initial_objective;
+    session.detected_role = detectRole(input.initial_objective);
+    session.current_phase = 'INIT';
+    session.payload = {
+        current_task_index: 0,
+        current_todos: [],
+        phase_transition_count: 0,
+        awaiting_role_selection: true,
+    };
+}
+```
 
-  Natural Language: I need to understand what the user is really asking for
-  MCP Server: Phase transitions from INIT→QUERY. For detailed prompt and purpose, refer to [PROMPTS.md](./PROMPTS.md).
-  Tool Call: JARVIS with phase_completed: 'QUERY' and payload: {interpreted_goal: "Conduct comprehensive architectural analysis..."}
+### Phase 2: QUERY
 
-  ---
-  Phase 2: ENHANCE - "Select Tools"
+**What Happens:**
+- Analyzes user's objective
+- Identifies core requirements and constraints
+- Selects appropriate role for the task
+- Stores interpreted goal
 
-  Natural Language: I need to refine and enhance the interpreted goal
-  MCP Server: Phase transitions QUERY→ENHANCE with interpreted goal stored. For detailed prompt and purpose, refer to [PROMPTS.md](./PROMPTS.md).
-  Tool Call: JARVIS with phase_completed: 'ENHANCE' and payload: {enhanced_goal: "Comprehensive architectural quality assessment..."}
+**Prompt Template:**
+```
+You are analyzing the user's objective and initializing the project workflow.
 
-  ---
-  Phase 3: KNOWLEDGE - "Wait for Execution"
+Think through your analysis approach:
+- What is the user really asking for at its core?
+- What are the key requirements and constraints?
+- What type of task is this (research, coding, deployment, etc.)?
 
-  Natural Language: I need to assess if I need external information
-  MCP Server: Phase transitions ENHANCE→KNOWLEDGE with enhanced goal stored. For detailed prompt and purpose, refer to [PROMPTS.md](./PROMPTS.md).
-  Tool Call: JARVIS with phase_completed: 'KNOWLEDGE' and payload: {knowledge_gathered: "Sufficient domain knowledge available..."}
+After role considerations:
+1. Parse the user's goal and identify key requirements
+2. Clarify any ambiguous aspects
+3. Call JARVIS with phase_completed: 'QUERY'
+```
 
-  ---
-  Phase 4: PLAN - "Iterate"
+### Phase 3: ENHANCE
 
-  Natural Language: I need to break down the enhanced goal into actionable steps
-  MCP Server: Phase transitions KNOWLEDGE→PLAN with knowledge assessment stored. For detailed prompt and purpose, refer to [PROMPTS.md](./PROMPTS.md).
-  Tool Call: TodoWrite with structured todo list
-  Then: JARVIS with phase_completed: 'PLAN' and payload: {plan_created: true}
+**What Happens:**
+- Applies role-specific thinking methodology
+- Enhances goal with technical details
+- Identifies edge cases and dependencies
+- Prepares for knowledge gathering
 
-  ---
-  Phase 5: EXECUTE - "Submit Results" (Fractal Iteration)
+**Prompt Template:**
+```
+Think through how to enhance and refine the interpreted goal:
+- What important details might be missing?
+- What edge cases or implicit requirements should be considered?
+- What information, resources, or tools will be needed?
+- What potential challenges or dependencies might arise?
+```
 
-  Natural Language: I need to execute tasks from the todo list
-  MCP Server: Phase transitions PLAN→EXECUTE with todos parsed and meta-prompts extracted. For detailed prompt and purpose, refer to [PROMPTS.md](./PROMPTS.md).
-  Fractal Iteration: The system can spawn Task() agents for complex todos with meta-prompts, which themselves can create sub-todos and spawn sub-agents.
+### Phase 4: KNOWLEDGE
 
-  ---
-  Phase 6: VERIFY - "Enter Standby"
+**What Happens:**
+- Gathers needed information (research, documentation, data)
+- Uses APITaskAgent for structured data research
+- Uses PythonComputationalTool for data analysis
+- Uses WebSearch/WebFetch for general research
+- Skips if no research needed
 
-  Natural Language: I need to verify task completion and quality
-  MCP Server: Phase transitions EXECUTE→VERIFY when all tasks complete. For detailed prompt and purpose, refer to [PROMPTS.md](./PROMPTS.md).
-  Tool Call: JARVIS with phase_completed: 'VERIFY' and payload: {verification_passed: true/false}
+**Available Tools:**
+- WebSearch
+- WebFetch
+- APITaskAgent
+- PythonComputationalTool
+- Task
 
-  ---
-  Phase 7: DONE - "Enter Standby"
+**Prompt Template:**
+```
+AUTO-CONNECTION ACTIVE: The system can automatically discover, fetch, and synthesize knowledge from relevant APIs.
 
-  Natural Language: Mission accomplished, all phases complete
-  MCP Server: Phase transitions VERIFY→DONE when validation passes. For detailed prompt and purpose, refer to [PROMPTS.md](./PROMPTS.md).
+AVAILABLE RESEARCH TOOLS:
+- APITaskAgent for structured API research workflows
+- PythonComputationalTool for data processing and analysis
+- WebSearch/WebFetch for general web research
+- Task agents for specialized research domains
 
-  What I See: Mission accomplished status with performance summary
-  What I Do: Enter standby mode, await new objectives
+Decide if you need external information. If not, call JARVIS with phase_completed: 'KNOWLEDGE'.
+```
 
-  ---
-  The Elegant Loop: Natural Reasoning with Systematic Guidance
+### Phase 5: PLAN
 
-  The system creates a beautiful dance between natural reasoning and systematic framework guidance:
+**What Happens:**
+- Breaks work into manageable tasks
+- Creates meta-prompts for complex work requiring specialized agents
+- Uses TodoWrite to create structured task list
 
-  1. Natural Thinking: Each phase begins with "Think through..." guidance
-  2. Thinking Methodologies: Role-specific thinking frameworks improve reasoning quality
-  3. Tool Guidance: Bounded choice provides structure while preserving autonomy
-  4. State Persistence: All reasoning captured and carried forward
-  5. Fractal Delegation: Complex tasks spawn specialized agents (including UI agents)
-  6. Systematic Validation: Clear completion criteria with intelligent workflow guidance
+**Prompt Template:**
+```
+Think strategically about how to break down this goal:
+- What is the optimal task breakdown strategy?
+- Which tasks require specialized Task() agent expertise vs direct execution?
+- What are the dependencies and sequencing?
+- What complexity challenges might arise?
 
-  The elegance lies in how it enhances Claude's natural strengths with systematic frameworks that provide structure while preserving full reasoning autonomy.
+AGENT SPAWNING: Mark todos that should spawn Task() agents:
+Format: "(ROLE: agent_type) (CONTEXT: domain_info) (PROMPT: detailed_instructions) (OUTPUT: deliverables)"
+```
+
+**Example Todo List:**
+```json
+[
+  {
+    "content": "(ROLE: coder) (CONTEXT: auth_infrastructure) (PROMPT: Set up project structure) (OUTPUT: project_setup)",
+    "status": "pending",
+    "priority": "high"
+  },
+  {
+    "content": "(ROLE: coder) (CONTEXT: user_auth) (PROMPT: Implement JWT auth) (OUTPUT: auth_endpoints)",
+    "status": "pending",
+    "priority": "high"
+  }
+]
+```
+
+### Phase 6: EXECUTE
+
+**What Happens:**
+- Iterates through tasks one by one
+- Direct execution for simple tasks (Bash, Read, Write, Edit)
+- Uses PythonComputationalTool for Python operations
+- Spawns Task() agents for meta-prompted tasks
+- Single tool per iteration
+
+**Prompt Template:**
+```
+EXECUTION CONTEXT:
+- Current Task Index: {{index}}
+- Total Tasks: {{total}}
+- Current Task: {{current_todo}}
+
+EXECUTION PROTOCOL:
+1. Check todo for meta-prompt patterns (ROLE:...)
+2. If meta-prompt → use Task() tool to spawn specialized agent
+3. If direct execution → use Bash/Browser/Read/Write/Edit
+4. **Single tool per iteration**
+
+Task() Tool Usage:
+When you see a todo formatted as "(ROLE: agent_type) (CONTEXT: domain) (PROMPT: instructions) (OUTPUT: deliverable)", convert it to Task() tool with enhanced prompts.
+```
+
+### Phase 7: VERIFY
+
+**What Happens:**
+- Mathematical validation (completion percentage)
+- Intelligent rollback if completion insufficient
+- Quality assessment and final checks
+- Integration of Claude Code Hooks feedback
+
+**Rollback Logic:**
+```typescript
+if (completionPercentage < 50) {
+    // Severe incompletion - restart from planning
+    return 'PLAN';
+} else if (completionPercentage < 80) {
+    // Moderate incompletion - retry from current task
+    return 'EXECUTE';
+} else {
+    // Minor incompletion - retry previous task
+    return 'EXECUTE';
+}
+```
+
+**Prompt Template:**
+```
+Think critically about the quality and completeness of the work:
+- How do the actual deliverables compare to the original objective?
+- Have all requirements been met?
+- What gaps or improvements might be needed?
+
+VERIFICATION REQUIREMENTS:
+- Critical tasks must be 100% complete
+- Overall completion must be >= 95%
+- verification_passed=true requires backing metrics
+```
+
+### Phase 8: DONE
+
+**What Happens:**
+- Task completion summary
+- Performance metrics and session data
+- System enters standby mode
+
+**Prompt Template:**
+```
+Task completed successfully. Entering standby mode.
+
+Provide a summary of:
+- What was accomplished
+- Key deliverables
+- Any remaining considerations
+```
+
+## Agent Spawning Details
+
+When a todo contains a meta-prompt pattern, the system extracts it:
+
+```typescript
+const roleMatch = todoContent.match(/\(ROLE:\s*([^)]+)\)/i);
+const contextMatch = todoContent.match(/\(CONTEXT:\s*([^)]+)\)/i);
+const promptMatch = todoContent.match(/\(PROMPT:\s*([^)]+)\)/i);
+const outputMatch = todoContent.match(/\(OUTPUT:\s*([^)]+)\)/i);
+```
+
+And spawns a Task() agent with role-enhanced prompts including thinking methodologies.
+
+## Session Data Flow
+
+Each phase expects specific data in `session.payload`:
+
+| Phase | Required Payload Fields |
+|-------|------------------------|
+| QUERY | `interpreted_goal`, `claude_response` (role selection) |
+| ENHANCE | `enhanced_goal` |
+| KNOWLEDGE | `knowledge_gathered`, `synthesized_knowledge` |
+| PLAN | `plan_created`, `todos_with_metaprompts` |
+| EXECUTE | `execution_success`, `task_results` |
+| VERIFY | `verification_passed`, `completion_percentage` |

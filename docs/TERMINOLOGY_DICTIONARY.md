@@ -140,8 +140,8 @@
 ### Vague Technical Terms
 - ❌ "framework" (use "orchestration system")
 - ❌ "architecture" (use "system design" or "implementation")
-- ❌ "Software 3.0" (use "natural language orchestration")
-- ❌ "Meta Thread-of-Thought" (use "role-based prompt generation")
+- ❌ "natural language orchestration" (use "prompt-based system")
+- ❌ "role-based prompt generation" (use "role-based enhancement")
 
 ### Inconsistent Naming
 - ❌ "Iron Manus MCP server" (use "Iron Manus MCP")
